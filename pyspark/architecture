@@ -1,1 +1,92 @@
+🔥 1. DRIVER (Brain of the job)
 
+👉 This is where your .py file runs
+Responsibilities:
+Creates SparkSession
+Builds execution plan (DAG)
+Sends tasks to executors
+
+Example:
+
+spark = SparkSession.builder.appName("Test").getOrCreate()
+👉 Driver only plans, doesn’t process big data
+
+⚙️ 2. CLUSTER MANAGER (Resource Allocator)
+
+Examples:
+
+Standalone
+YARN
+Kubernetes
+
+👉 It decides:
+
+How many executors
+How much memory
+Where to run them
+
+💪 3. EXECUTORS (Workers)
+
+👉 Actual work happens here
+
+Each executor:
+
+Runs on a node
+Executes tasks
+Stores data in memory
+
+📦 4. TASKS (Smallest Unit)
+A job is split into stages
+Each stage into tasks
+
+👉 Each task processes one partition of data
+
+📊 5. DAG (Directed Acyclic Graph)
+
+This is the real brain logic
+
+When you write:
+
+df.filter(...).groupBy(...).count()
+
+Spark builds a DAG of transformations
+
+👉 Nothing runs yet (lazy execution)
+
+⚡ 6. LAZY EVALUATION (Most asked interview concept)
+
+Transformations:
+
+filter
+select
+groupBy
+
+👉 Don’t execute immediately
+
+Action:
+
+show()
+count()
+collect()
+
+👉 Triggers execution
+
+🔄 7. SHUFFLE (Where performance dies)
+
+Happens during:
+
+groupBy
+join
+reduceByKey
+
+👉 Data moves across network → expensive
+
+⚠️ This is where optimization questions come from
+
+🔥 END-TO-END FLOW (Understand this clearly)
+You write PySpark code
+Driver creates DAG
+DAG split into stages
+Tasks sent to executors
+Executors process partitions
+Results returned

@@ -35,3 +35,11 @@ and each stage is further divided into tasks executed in parallel.
 
 
 9. A task is the smallest unit of execution in Spark, where each task processes one partition of data and runs on an executor core in parallel.”
+
+11 
+Spark does not store every intermediate result on disk
+👉 Instead, it keeps track of how data was derived (lineage graph)
+So if something fails:
+👉 It recomputes lost data using transformations
+Spark handles failures using lineage-based recomputation. If a task fails, it is retried. If an executor fails, lost partitions are recomputed using lineage. 
+In case of stage failure, the entire stage is re-executed, while driver failure causes the whole job to restart

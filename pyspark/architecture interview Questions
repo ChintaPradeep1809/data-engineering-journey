@@ -22,3 +22,16 @@ Answers:
 Standalone  :  Built-in cluster manager of Spark,Simple, lightweight
 YARN  : Cluster manager from Apache Hadoop, Used in Hadoop ecosystem
 Mesos : General-purpose cluster manager , Supports multiple distributed systems
+
+7 .
+a group of tasks that can be executed in parallel without requiring data shuffle
+A stage in Spark is a set of parallel tasks that can be executed without shuffle. Stages are created based on shuffle boundaries,
+where wide transformations like joins or groupBy trigger a new stage.
+
+8.
+a unit of execution triggered when an action is called on a DataFrame or RDD
+A job in Spark is triggered by an action and represents the execution of a DAG. It is divided into stages based on shuffle boundaries,
+and each stage is further divided into tasks executed in parallel.
+
+
+9. A task is the smallest unit of execution in Spark, where each task processes one partition of data and runs on an executor core in parallel.”

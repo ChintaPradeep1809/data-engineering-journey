@@ -1,1 +1,15 @@
-
+What is PySpark and how is it different from Spark?
+Explain Spark ecosystem components.
+What are the advantages of PySpark over MapReduce?
+What is lazy evaluation?
+What are transformations vs actions?
+What is DAG in Spark?
+How does Spark achieve fault tolerance?
+What is lineage in Spark?
+What is SparkSession?
+Difference between SparkContext and SparkSession?
+What is RDD?
+Why DataFrames over RDD?
+What is Catalyst Optimizer?
+What is Tungsten engine?
+What is driver and executor?

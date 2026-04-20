@@ -61,3 +61,15 @@ with storage systems and cluster managers
 
 3) PySpark is faster than MapReduce because it processes data in memory and uses DAG-based execution instead of disk-heavy MapReduce stages. 
 It also provides high-level APIs like DataFrames and supports both batch and streaming workloads,making it more flexible and efficient.
+
+4) Lazy evaluation in Spark means transformations are not executed immediately but are recorded as a DAG. Execution is triggered only when an action is called, 
+allowing Spark to optimize the entire workflow before running it
+
+5)
+Transformations → build the plan
+👉 Actions → execute the plan
+Transformations in Spark are lazy operations that define a DAG of computations without executing them, while actions trigger the execution of that DAG and return results.
+Each action results in a separate job
+
+6) A DAG in Spark is a logical execution plan representing a sequence of transformations. It is created during lazy evaluation and optimized before execution, 
+then divided into stages and tasks for parallel processing

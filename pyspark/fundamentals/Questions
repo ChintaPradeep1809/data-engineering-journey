@@ -73,3 +73,31 @@ Each action results in a separate job
 
 6) A DAG in Spark is a logical execution plan representing a sequence of transformations. It is created during lazy evaluation and optimized before execution, 
 then divided into stages and tasks for parallel processing
+
+7) Spark achieves fault tolerance using lineage-based recomputation. It tracks transformations as a DAG, so if a partition is lost due to task or executor failure, 
+it can be recomputed. Additionally, Spark retries failed tasks and can use checkpointing to avoid long recomputation chains
+
+8) In Apache Spark, lineage refers to the sequence of transformations applied to an RDD or DataFrame, represented as a DAG.
+Spark uses this lineage to recompute lost data in case of failures instead of storing intermediate results, which provides efficient fault tolerance.
+
+9) SparkSession is the unified entry point in Spark that allows users to create DataFrames, run SQL queries, and manage configurations.
+It replaces older contexts like SparkContext, SQLContext, and HiveContext, providing a single interface to interact with Spark
+
+10) SparkContext is the low-level entry point used for RDD-based operations and cluster communication, while SparkSession is a higher-level 
+unified interface introduced in Spark 2.0 that supports DataFrames, SQL, and configuration management,and internally uses SparkContext
+
+11) RDD is the fundamental data structure in Spark, representing an immutable, distributed collection of data that can be processed in parallel.
+It provides fault tolerance through lineage and supports lazy evaluation, but is mostly replaced by DataFrames in modern applications
+
+12) DataFrames are preferred over RDDs in Apache Spark because they provide higher-level abstractions with built-in optimizations like Catalyst Optimizer 
+and Tungsten execution engine. This leads to better performance, less memory usage, and simpler code. Additionally, DataFrames support SQL queries and
+schema-based processing, whereas RDDs are low-level, lack optimization, and require more manual coding
+
+13)In Apache Spark, Catalyst Optimizer is the query optimization engine used by Spark SQL that analyzes and optimizes 
+logical execution plans into efficient physical plans using rule-based and cost-based optimizations
+
+14) Tungsten is the execution engine in Spark that improves performance by optimizing memory management and CPU utilization through techniques 
+like off-heap memory usage, binary processing, and code generation
+
+15) In Spark, the Driver is the main program that builds the DAG, schedules tasks, and coordinates execution, while Executors are worker
+processes that run tasks in parallel and process data on cluster nodes

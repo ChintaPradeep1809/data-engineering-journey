@@ -36,6 +36,10 @@ and each stage is further divided into tasks executed in parallel.
 
 9. A task is the smallest unit of execution in Spark, where each task processes one partition of data and runs on an executor core in parallel.”
 
+10.
+Narrow dependency occurs when each output partition depends on a single input partition, so no shuffle is required. filter , select,map
+Wide dependency occurs when output partitions depend on multiple input partitions, requiring shuffle and creating a new stage.” groupby,join,reduceByKey
+
 11 
 Spark does not store every intermediate result on disk
 👉 Instead, it keeps track of how data was derived (lineage graph)

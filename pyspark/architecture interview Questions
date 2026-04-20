@@ -14,3 +14,11 @@
 13. What is checkpointing?
 14. What is shuffle? 
 15. Why is shuffle expensive?
+
+
+Answers:
+
+4.
+Standalone  :  Built-in cluster manager of Spark,Simple, lightweight
+YARN  : Cluster manager from Apache Hadoop, Used in Hadoop ecosystem
+Mesos : General-purpose cluster manager , Supports multiple distributed systems

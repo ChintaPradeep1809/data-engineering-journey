@@ -47,3 +47,15 @@ So if something fails:
 👉 It recomputes lost data using transformations
 Spark handles failures using lineage-based recomputation. If a task fails, it is retried. If an executor fails, lost partitions are recomputed using lineage. 
 In case of stage failure, the entire stage is re-executed, while driver failure causes the whole job to restart
+
+13
+Checkpointing in Spark is the process of saving data to reliable storage and truncating lineage to avoid expensive recomputation.
+It is mainly used when lineage becomes long or for iterative and streaming workloads
+
+14 
+Shuffle in Spark is the process of redistributing data across partitions during wide transformations like joins and aggregations,
+ensuring that related data is grouped together for processing
+
+15 
+Shuffle is expensive because it involves network transfer, disk I/O, and serialization, which are significantly slower than in-memory computation.
+

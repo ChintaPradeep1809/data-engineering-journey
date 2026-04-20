@@ -1,1 +1,16 @@
 
+1. Explain Spark architecture in detail.
+ 2. Role of Driver program? 
+3. What are Executors?
+4. What is Cluster Manager?
+5. Difference between Standalone, YARN, Mesos? 
+6. What is task scheduling? 
+7. What is stage in Spark? 
+8. What is job in Spark? 
+9. What is task?
+10. What is narrow vs wide dependency?
+11. What happens when Spark job runs?
+12. How does Spark handle failures?
+13. What is checkpointing?
+14. What is shuffle? 
+15. Why is shuffle expensive?

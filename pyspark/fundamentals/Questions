@@ -13,3 +13,51 @@ Why DataFrames over RDD?
 What is Catalyst Optimizer?
 What is Tungsten engine?
 What is driver and executor?
+
+Answers:
+1) the Python API for Apache Spark that allows you to write Spark applications using Python,PySpark is the Python API for Apache Spark that allows developers to 
+write distributed data processing applications in Python. While Spark runs on the JVM, PySpark communicates with it using Py4J,
+which introduces some overhead compared to native Scala Spark,but provides ease of use and integration with Python libraries
+
+2) 🔹 1. Spark Core
+👉 Foundation of everything
+Handles:
+Task scheduling
+Memory management
+Fault tolerance (lineage)
+👉 All other components depend on this
+🔹 2. Spark SQL
+👉 For structured data processing
+Works with:
+DataFrames
+SQL queries
+Uses:
+Catalyst Optimizer
+Tungsten engine
+👉 Most used in real data engineering jobs
+🔹 3. Spark Streaming / Structured Streaming
+👉 For real-time data processing
+Processes data in micro-batches
+Supports:
+Kafka
+File streams
+👉 Used in real-time pipelines
+🔹 4. MLlib (Machine Learning Library)
+👉 Built-in ML library
+Classification
+Regression
+Clustering
+👉 Less used now (often replaced by external ML tools)
+🔹 5. GraphX
+👉 Graph processing engine
+Works with graph data
+Nodes + edges
+👉 Rarely used in typical DE roles
+
+The Spark ecosystem consists of Spark Core for execution, Spark SQL for structured data processing, Structured Streaming for real-time processing,
+MLlib for machine learning, and GraphX for graph processing. These components work together on top of Spark’s distributed architecture and integrate 
+with storage systems and cluster managers
+
+
+3) PySpark is faster than MapReduce because it processes data in memory and uses DAG-based execution instead of disk-heavy MapReduce stages. 
+It also provides high-level APIs like DataFrames and supports both batch and streaming workloads,making it more flexible and efficient.

@@ -56,13 +56,13 @@ Used in text processing and flattening nested data.
 
 ---
 
-## 🔹 reduceByKey vs groupByKey
+3 🔹 reduceByKey vs groupByKey
 
-### Explanation
+# Explanation
 
 “reduceByKey performs aggregation locally before shuffle, making it more efficient, whereas groupByKey shuffles all data first and then aggregates, leading to higher network and memory cost.”
 
-### Code
+# Code
 
 ```python
 rdd = spark.sparkContext.parallelize([("a",1),("a",2),("b",1)])
@@ -71,13 +71,13 @@ print(rdd.reduceByKey(lambda x,y: x+y).collect())
 print(rdd.groupByKey().mapValues(list).collect())
 ```
 
-### Why it matters
+# Why it matters
 
 reduceByKey minimizes shuffle → critical for performance.
 
 ---
 
-## 🔹 repartition vs coalesce
+4🔹 repartition vs coalesce
 
 ### Explanation
 
@@ -98,7 +98,7 @@ Controls parallelism and performance tuning.
 
 ---
 
-## 🔹 Persistence
+##3    🔹 Persistence
 
 ### Explanation
 
@@ -165,8 +165,7 @@ Reduces network overhead significantly.
 
 ### Explanation
 
-“An accumulator is a variable used for aggregating information across tasks, typically for counters or sums, and is updated only by executors.”
-
+In Apache Spark, an accumulator is a shared variable used for aggregating values across tasks, where only executors can update it and the driver can read the final value.”
 ### Code
 
 ```python
@@ -327,32 +326,4 @@ print(rdd.distinct().collect())
 ### Why it matters
 
 Ensures data uniqueness.
-
----
-
-# 🚀 Now your repo looks professional
-
-This structure:
-
-* Clean
-* Interview-focused
-* Practical
-* Easy to revise
-
----
-
-# ⚡ Next move (important)
-
-Don’t stop here.
-
-👉 RDD is **not enough for interviews**
-👉 You need DataFrames + SQL (80% questions come from there)
-
----
-
-If you’re serious, say:
-
-👉 **“Next: DataFrame + SQL GitHub notes”**
-
-That’s where you actually crack interviews.
 

@@ -1,1 +1,358 @@
+What are RDD operations?
+Difference between map and flatMap?
+What is reduceByKey vs groupByKey?
+What is repartition vs coalesce?
+What is persistence?
+What are storage levels?
+What is broadcast variable?
+What is accumulator?
+When to use RDD over DataFrame?
+What is partitioning in RDD?
+What is lineage graph?
+What is fault recovery in RDD?
+What is zip operation?
+What is union operation?
+What is distinct operation?
+
+
+
+1🔹 RDD Operations
+
+# Explanation
+
+“In Apache Spark, RDD operations are of two types: transformations, which are lazy and create new RDDs, and actions, which trigger execution and return results.”
+
+# Code
+
+```python
+rdd = spark.sparkContext.parallelize([1,2,3,4])
+
+rdd2 = rdd.map(lambda x: x * 2)
+print(rdd2.collect())
+```
+
+#Why it matters
+
+Lazy evaluation enables optimization before execution.
+
+2🔹 map vs flatMap
+
+#Explanation
+
+“map applies a function to each element and returns one output per input, whereas flatMap can return multiple outputs per input and flattens the result.”
+
+# Code
+
+```python
+rdd = spark.sparkContext.parallelize(["hello world"])
+
+print(rdd.map(lambda x: x.split()).collect())
+print(rdd.flatMap(lambda x: x.split()).collect())
+```
+
+# Why it matters
+
+Used in text processing and flattening nested data.
+
+---
+
+## 🔹 reduceByKey vs groupByKey
+
+### Explanation
+
+“reduceByKey performs aggregation locally before shuffle, making it more efficient, whereas groupByKey shuffles all data first and then aggregates, leading to higher network and memory cost.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize([("a",1),("a",2),("b",1)])
+
+print(rdd.reduceByKey(lambda x,y: x+y).collect())
+print(rdd.groupByKey().mapValues(list).collect())
+```
+
+### Why it matters
+
+reduceByKey minimizes shuffle → critical for performance.
+
+---
+
+## 🔹 repartition vs coalesce
+
+### Explanation
+
+“repartition increases or decreases partitions with full shuffle, while coalesce reduces partitions without shuffle, making it more efficient for decreasing partitions.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize(range(10), 4)
+
+rdd2 = rdd.repartition(6)
+rdd3 = rdd.coalesce(2)
+```
+
+### Why it matters
+
+Controls parallelism and performance tuning.
+
+---
+
+## 🔹 Persistence
+
+### Explanation
+
+“Persistence is the mechanism of storing RDDs in memory or disk to avoid recomputation across multiple actions.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize(range(100))
+
+rdd.persist()
+rdd.count()
+rdd.collect()
+```
+
+### Why it matters
+
+Avoids repeated computation → faster jobs.
+
+---
+
+## 🔹 Storage Levels
+
+### Explanation
+
+“Storage levels define how RDDs are stored, such as MEMORY_ONLY, MEMORY_AND_DISK, or DISK_ONLY, balancing speed and fault tolerance.”
+
+### Code
+
+```python
+from pyspark import StorageLevel
+
+rdd.persist(StorageLevel.MEMORY_AND_DISK)
+```
+
+### Why it matters
+
+Trade-off between speed and reliability.
+
+---
+
+## 🔹 Broadcast Variable
+
+### Explanation
+
+“A broadcast variable is a read-only shared variable distributed to all executors to avoid sending large data repeatedly with each task.”
+
+### Code
+
+```python
+broadcast_var = spark.sparkContext.broadcast([1,2,3])
+
+rdd = spark.sparkContext.parallelize([1,2,3,4])
+print(rdd.map(lambda x: x in broadcast_var.value).collect())
+```
+
+### Why it matters
+
+Reduces network overhead significantly.
+
+---
+
+## 🔹 Accumulator
+
+### Explanation
+
+“An accumulator is a variable used for aggregating information across tasks, typically for counters or sums, and is updated only by executors.”
+
+### Code
+
+```python
+acc = spark.sparkContext.accumulator(0)
+
+rdd = spark.sparkContext.parallelize([1,2,3,4])
+
+def add(x):
+    global acc
+    acc += x
+
+rdd.foreach(add)
+
+print(acc.value)
+```
+
+### Why it matters
+
+Useful for debugging and tracking metrics.
+
+---
+
+## 🔹 When to use RDD over DataFrame
+
+### Explanation
+
+“RDDs are used when low-level transformations or fine-grained control is required, especially for unstructured data, while DataFrames are preferred for optimized structured processing.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize(["a b", "c d"])
+print(rdd.flatMap(lambda x: x.split()).collect())
+```
+
+### Why it matters
+
+Gives control where optimization is not required.
+
+---
+
+## 🔹 Partitioning in RDD
+
+### Explanation
+
+“Partitioning in RDD refers to how data is divided across nodes, which directly affects parallelism and performance.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize(range(10), 3)
+print(rdd.getNumPartitions())
+```
+
+### Why it matters
+
+Directly impacts execution speed.
+
+---
+
+## 🔹 Lineage Graph
+
+### Explanation
+
+“The lineage graph is a DAG of transformations that tracks how an RDD is derived, enabling fault recovery through recomputation.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize([1,2,3])
+rdd2 = rdd.map(lambda x: x*2)
+
+print(rdd2.toDebugString())
+```
+
+### Why it matters
+
+Key for fault tolerance.
+
+---
+
+## 🔹 Fault Recovery in RDD
+
+### Explanation
+
+“RDDs recover from failures by recomputing lost partitions using lineage instead of relying on data replication.”
+
+### Code
+
+```python
+# Automatic recovery handled by Spark
+rdd = spark.sparkContext.parallelize([1,2,3])
+rdd2 = rdd.map(lambda x: x*2)
+```
+
+### Why it matters
+
+Efficient fault tolerance mechanism.
+
+---
+
+## 🔹 zip Operation
+
+### Explanation
+
+“zip combines two RDDs element-wise into pairs, requiring both RDDs to have the same number of partitions and elements.”
+
+### Code
+
+```python
+rdd1 = spark.sparkContext.parallelize([1,2,3])
+rdd2 = spark.sparkContext.parallelize(["a","b","c"])
+
+print(rdd1.zip(rdd2).collect())
+```
+
+### Why it matters
+
+Used for pairing datasets.
+
+---
+
+## 🔹 union Operation
+
+### Explanation
+
+“union combines two RDDs into a single RDD without removing duplicates.”
+
+### Code
+
+```python
+rdd1 = spark.sparkContext.parallelize([1,2])
+rdd2 = spark.sparkContext.parallelize([2,3])
+
+print(rdd1.union(rdd2).collect())
+```
+
+### Why it matters
+
+Useful for merging datasets.
+
+---
+
+## 🔹 distinct Operation
+
+### Explanation
+
+“distinct removes duplicate elements from an RDD by performing a shuffle to ensure uniqueness.”
+
+### Code
+
+```python
+rdd = spark.sparkContext.parallelize([1,2,2,3,3])
+
+print(rdd.distinct().collect())
+```
+
+### Why it matters
+
+Ensures data uniqueness.
+
+---
+
+# 🚀 Now your repo looks professional
+
+This structure:
+
+* Clean
+* Interview-focused
+* Practical
+* Easy to revise
+
+---
+
+# ⚡ Next move (important)
+
+Don’t stop here.
+
+👉 RDD is **not enough for interviews**
+👉 You need DataFrames + SQL (80% questions come from there)
+
+---
+
+If you’re serious, say:
+
+👉 **“Next: DataFrame + SQL GitHub notes”**
+
+That’s where you actually crack interviews.
 

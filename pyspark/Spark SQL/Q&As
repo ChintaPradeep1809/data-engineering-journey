@@ -1,0 +1,232 @@
+What is Spark SQL?
+How to register temp table?
+Difference between temp view and global temp view?
+What is Hive support in Spark?
+What is SQLContext?
+How Spark executes SQL query?
+What is CTE in Spark SQL?
+What are window functions?
+Explain rank, dense_rank, row_number?
+What is subquery support?
+
+Answers:
+🔹 Spark SQL
+Explanation
+
+“Spark SQL in Apache Spark is a module that allows processing structured and semi-structured data using SQL queries, DataFrames, and Datasets, 
+with built-in optimization through the Catalyst Optimizer.”
+
+Code
+✔ Create DataFrame and Temp View
+df.createOrReplaceTempView("orders")
+✔ Run SQL Query
+spark.sql("SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id").show()
+
+2..
+🔹 How to register temp table (Temp View)
+Explanation
+
+“In Apache Spark, a temporary view can be created from a DataFrame using createOrReplaceTempView, allowing SQL queries to be executed on that DataFrame within the same session.”
+
+Code
+df.createOrReplaceTempView("orders")
+
+spark.sql("SELECT * FROM orders").show()
+
+3..
+🔹 Temp View vs Global Temp View
+Explanation
+
+“Temp views are session-scoped and accessible only within the current Spark session, whereas global temp views are application-scoped and 
+accessible across multiple sessions using a system-defined database.”
+
+Code
+# Temp View
+df.createOrReplaceTempView("orders")
+
+# Global Temp View
+df.createOrReplaceGlobalTempView("global_orders")
+
+# Access global temp view
+spark.sql("SELECT * FROM global_temp.global_orders").show()
+
+
+4..
+🔹 Hive Support in Spark
+Explanation
+
+“Hive support in Apache Hive allows Spark to interact with Hive tables, use HiveQL, and access the Hive metastore for structured data processing.”
+
+Code
+spark = SparkSession.builder \
+    .appName("HiveExample") \
+    .enableHiveSupport() \
+    .getOrCreate()
+
+spark.sql("SHOW TABLES").show()
+
+5..
+
+🔹 SQLContext
+Explanation
+
+“SQLContext is an older entry point used to work with structured data in Spark, which has been replaced by SparkSession in newer versions.”
+
+Code
+from pyspark.sql import SQLContext
+
+sqlContext = SQLContext(spark.sparkContext)
+
+6..
+How Spark Executes SQL Query
+Explanation
+
+“In Apache Spark, when a SQL query is executed, Spark converts it into a logical plan, optimizes it using the Catalyst Optimizer, transforms it into a physical plan, and then executes it as distributed tasks across executors.”
+
+Code
+df.createOrReplaceTempView("orders")
+
+spark.sql("""
+SELECT customer_id, SUM(amount) as total
+FROM orders
+GROUP BY customer_id
+""").show()
+Execution Flow (Important)
+SQL Query
+   ↓
+Logical Plan
+   ↓ (Catalyst Optimizer)
+Optimized Logical Plan
+   ↓
+Physical Plan
+   ↓
+Job → Stages → Tasks → Execution
+
+7..
+“A CTE (Common Table Expression) in Spark SQL is a temporary named result set defined using the WITH clause, which can be referenced within a 
+query to simplify complex SQL logic.”
+
+Code
+spark.sql("""
+WITH sales_cte AS (
+    SELECT customer_id, SUM(amount) as total
+    FROM orders
+    GROUP BY customer_id
+)
+SELECT * FROM sales_cte WHERE total > 1000
+""").show()
+
+8..
+🔹 Window Functions
+Explanation
+
+“In Apache Spark, window functions perform calculations across a set of rows related to the current row without collapsing the data, using a defined window specification with partitioning and ordering.”
+
+Code
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number
+
+window_spec = Window.partitionBy("department").orderBy("salary")
+
+df.withColumn("row_num", row_number().over(window_spec)).show()
+
+9..
+🔹 row_number
+Explanation
+
+“row_number assigns a unique sequential number to each row within a partition based on ordering.”
+
+Code
+from pyspark.sql.functions import row_number
+
+df.withColumn("row_num", row_number().over(window_spec)).show()
+Example Output
+dept | salary | row_num
+A    | 1000   | 1
+A    | 2000   | 2
+A    | 2000   | 3
+Interview Edge Line
+
+👉
+“row_number always assigns unique values, even for duplicate rows.”
+
+🔹 rank
+Explanation
+
+“rank assigns ranks to rows within a partition, but gives the same rank to duplicates and skips subsequent ranks.”
+
+Code
+from pyspark.sql.functions import rank
+
+df.withColumn("rank", rank().over(window_spec)).show()
+Example Output
+salary | rank
+1000   | 1
+2000   | 2
+2000   | 2
+3000   | 4
+Interview Edge Line
+
+👉
+“rank introduces gaps in ranking when duplicate values exist.”
+
+🔹 dense_rank
+Explanation
+
+“dense_rank assigns ranks without gaps, even when duplicate values exist.”
+
+Code
+from pyspark.sql.functions import dense_rank
+
+df.withColumn("dense_rank", dense_rank().over(window_spec)).show()
+Example Output
+salary | dense_rank
+1000   | 1
+2000   | 2
+2000   | 2
+3000   | 3
+Interview Edge Line
+
+👉
+“dense_rank avoids gaps in ranking, unlike rank.”
+
+10.
+
+🔹 Subquery Support in Spark SQL
+Explanation
+
+“In Apache Spark, subquery support refers to the ability to use a query inside another SQL query, allowing complex filtering and transformations using nested queries.”
+
+Types of Subqueries
+🔹 1. Scalar Subquery
+
+Returns a single value.
+
+spark.sql("""
+SELECT name
+FROM orders
+WHERE amount > (SELECT AVG(amount) FROM orders)
+""").show()
+🔹 2. Correlated Subquery
+
+Depends on outer query values.
+
+spark.sql("""
+SELECT o1.name
+FROM orders o1
+WHERE amount > (
+    SELECT AVG(o2.amount)
+    FROM orders o2
+    WHERE o1.customer_id = o2.customer_id
+)
+""").show()
+🔹 3. IN / EXISTS Subquery
+spark.sql("""
+SELECT *
+FROM orders
+WHERE customer_id IN (
+    SELECT customer_id FROM orders WHERE amount > 1000
+)
+""").show()
+
+

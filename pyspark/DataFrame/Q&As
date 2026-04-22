@@ -21,3 +21,298 @@ What is approxQuantile?
 
 
 Answers:
+1.
+In Apache Spark, a DataFrame is a distributed collection of data organized into named columns, 
+similar to a table in a relational database, with a defined schema and built-in optimizations for efficient processing.
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("DFExample").getOrCreate()
+
+data = [("Alice", 25), ("Bob", 30)]
+df = spark.createDataFrame(data, ["name", "age"])
+df.show()
+df.printSchema()
+
+2. 
+👉 Core Definition
+n Apache Spark, both DataFrame and Dataset are distributed collections of data, but the key difference is that DataFrames are untyped and
+provide a generic row-based structure, while Datasets are strongly typed and offer compile-time type safety using encoders.
+DataFrames are essentially Datasets of type Row and are widely used in PySpark due to simplicity, whereas Datasets are mainly used in Scala/Java
+for type-safe operations
+
+In Apache Spark:
+
+DataFrame → distributed data with schema (columns), but untyped (Row-based)
+Dataset → distributed data with schema + type safety (strongly typed objects)
+🧠 What “typed vs untyped” actually means
+
+🔹 DataFrame (Untyped)
+Data is accessed as generic Row
+Errors happen at runtime
+df.select("age")  # if column doesn't exist → runtime error
+
+👉 Spark doesn’t validate structure at compile time
+
+🔹 Dataset (Typed) — (Scala/Java only)
+Data is mapped to case classes / objects
+Errors caught at compile time
+case class Person(name: String, age: Int)
+
+val ds = spark.createDataset(Seq(Person("Alice", 25)))
+ds.map(p => p.age)  // type-safe
+
+👉 Compiler checks correctness before execution
+
+3..
+Explanation
+
+“In Apache Spark, schema inference is the process by which Spark automatically determines the structure (column names and data types) of a dataset when 
+reading data, instead of requiring the user to define it manually.”
+
+Code
+df = spark.read.csv("file:/tmp/orders.csv", header=True, inferSchema=True)
+
+df.printSchema()
+
+4..
+In Apache Spark, a schema can be defined manually using StructType and StructField, where you explicitly specify column names, data types, and nullability, avoiding the overhead and inconsistency of schema inference.”
+
+Code
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+
+schema = StructType([
+    StructField("order_id", IntegerType(), True),
+    StructField("customer_id", IntegerType(), True),
+    StructField("amount", IntegerType(), True)
+])
+
+df = spark.read.csv("file:/tmp/orders.csv", header=True, schema=schema)
+
+df.printSchema()
+df.show()
+
+5..
+select vs selectExpr
+Explanation
+
+“In Apache Spark, select is used to choose columns and apply column-based expressions using the DataFrame API,
+whereas selectExpr allows selecting columns using SQL expressions as strings, enabling more complex transformations in a concise way.”
+
+Code
+✔ Using select (Column API)
+from pyspark.sql.functions import col
+
+df.select(
+    col("name"),
+    col("age"),
+    (col("age") + 10).alias("age_plus_10")
+).show()
+✔ Using selectExpr (SQL style)
+df.selectExpr(
+    "name",
+    "age",
+    "age + 10 as age_plus_10"
+).show()
+
+6..
+🔹 withColumn
+Explanation
+
+“In Apache Spark, withColumn is used to add a new column or modify an existing column in a DataFrame by applying a column expression.”
+
+Code
+from pyspark.sql.functions import col
+
+df2 = df.withColumn("age_plus_10", col("age") + 10)
+df2.show()
+
+7..
+🔹 dropDuplicates
+Explanation
+
+“dropDuplicates removes duplicate rows from a DataFrame, either across all columns or based on selected columns.”
+
+Code
+df.dropDuplicates().show()
+
+df.dropDuplicates(["customer_id"]).show()
+
+8..
+🔹 filter vs where
+Explanation
+
+“filter and where are functionally equivalent in Spark; both are used to filter rows based on a condition, with where being an alias of filter.”
+
+Code
+df.filter(col("age") > 25).show()
+
+df.where("age > 25").show()
+
+9..
+🔹 alias
+Explanation
+
+“alias is used to rename a column or DataFrame temporarily, often used in joins or expressions for readability and disambiguation.”
+
+Code
+df.select(col("age").alias("user_age")).show()
+
+df1 = df.alias("a")
+df2 = df.alias("b")
+
+10..
+🔹 Column Expression
+Explanation
+
+“A column expression in Spark represents a transformation or computation applied to a column using the DataFrame API.”
+
+Code
+from pyspark.sql.functions import col
+
+df.select((col("age") * 2).alias("double_age")).show()
+
+
+11.
+🔹 Handling Null Values
+Explanation
+
+“In Apache Spark, null values can be handled using functions like drop, fill, and replace, allowing you to remove or substitute missing data based on business requirements.”
+
+Code
+✔ Drop nulls
+df.dropna().show()
+
+df.dropna(subset=["age"]).show()
+✔ Fill nulls
+df.fillna({"age": 0, "name": "unknown"}).show()
+✔ Replace values
+df.replace({None: "N/A"}).show()
+
+12.
+”
+
+🔹 explode Function
+Explanation
+
+“explode is used to transform an array or map column into multiple rows, effectively flattening nested data structures.”
+
+Code
+from pyspark.sql.functions import explode
+
+data = [("Alice", ["math", "science"]), ("Bob", ["english"])]
+df = spark.createDataFrame(data, ["name", "subjects"])
+
+df.select("name", explode("subjects").alias("subject")).show()
+Output Concept
+Alice → math  
+Alice → science  
+Bob → english  
+
+13..
+
+“In Apache Spark, pivot transforms unique values from one column into multiple columns and applies aggregation on another column.”
+
+🧠 Think Like This (Real Understanding)
+
+👉 Pivot = Rows → Columns + Aggregation
+
+🔍 Example (Step-by-step)
+📊 Original Data
+name | year | sales
+A    | 2023 | 100
+A    | 2024 | 200
+B    | 2023 | 150
+💻 Code
+df.groupBy("name").pivot("year").sum("sales").show()
+📊 Output
+name | 2023 | 2024
+A    | 100  | 200
+B    | 150  | null
+
+14..
+
+🔹 groupBy
+Explanation
+
+“groupBy in Apache Spark is used to group rows in a DataFrame based on one or more columns, enabling aggregation operations on each group.”
+
+Code
+df.groupBy("name").sum("sales").show()
+
+15..
+🔹 agg
+Explanation
+
+“agg is used to perform multiple aggregate functions on grouped data, allowing flexible and efficient aggregation operations in a single step.”
+
+Code
+from pyspark.sql.functions import sum, avg
+
+df.groupBy("name").agg(
+    sum("sales").alias("total_sales"),
+    avg("sales").alias("avg_sales")
+).show()
+
+16..
+🔹 orderBy vs sort
+Explanation
+
+“orderBy and sort are functionally equivalent in Spark and are used to sort DataFrame rows; orderBy is simply an alias of sort.”
+
+Code
+df.orderBy("sales").show()
+
+df.sort("sales", ascending=False).show()
+
+17..
+“limit is used to restrict the number of rows returned from a DataFrame.”
+
+Code
+df.limit(5).show()
+
+18..
+
+🔹 describe
+Explanation
+
+“describe in Apache Spark provides basic summary statistics for numeric columns, including count, mean, standard deviation, min, and max.”
+
+Code
+df.describe().show()
+Output Concept
+summary | age
+count   | 3
+mean    | 25.3
+stddev  | ...
+min     | 20
+max     | 30
+
+19..
+🔹 summary
+Explanation
+
+“summary provides extended statistics compared to describe, including percentiles such as 25%, 50%, and 75%.”
+
+Code
+df.summary().show()
+Custom Summary
+df.summary("count", "mean", "min", "max").show()
+
+
+20..
+👉
+“In Apache Spark, approxQuantile computes approximate percentiles of a column efficiently without sorting the entire dataset.”
+
+🧠 First—What is a Quantile?
+
+👉 Quantile = value below which a percentage of data falls
+
+Example dataset:
+
+[10, 20, 30, 40, 50]
+0.5 → median → 30
+0.25 → 25th percentile → 20
+0.75 → 75th percentile → 40
+
+df.approxQuantile("age", [0.25, 0.5, 0.75], 0.01)

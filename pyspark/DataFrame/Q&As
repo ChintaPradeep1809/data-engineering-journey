@@ -1,0 +1,23 @@
+What is DataFrame?
+Difference between DataFrame and Dataset?
+What is schema inference?
+How to define schema manually?
+What is select vs selectExpr?
+What is withColumn?
+What is dropDuplicates?
+What is filter vs where?
+What is alias?
+What is column expression?
+How to handle null values?
+What is explode function?
+What is pivot?
+What is groupBy?
+What is agg?
+What is orderBy vs sort?
+What is limit?
+What is describe?
+What is summary?
+What is approxQuantile?
+
+
+Answers:

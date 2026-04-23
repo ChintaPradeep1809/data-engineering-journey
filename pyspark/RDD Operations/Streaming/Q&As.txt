@@ -1,0 +1,289 @@
+Difference between batch and streaming?
+What is Structured Streaming?
+What is micro-batch?
+What is watermarking?
+What is window operation?
+What is checkpointing in streaming?
+What is exactly-once semantics?
+What is trigger?
+What are sinks?
+
+
+1) 🔹 Batch vs Streaming
+✅ Definition
+
+“In Apache Spark, batch processing handles large volumes of data at scheduled intervals, while streaming processing handles data continuously in real-time or near real-time as it arrives.”
+
+🧠 Simple Scenario
+
+👉 Batch
+
+Process yesterday’s sales at midnight
+Data is static
+
+👉 Streaming
+
+Process live transactions every second
+Data is continuously arriving
+✔ Batch
+df = spark.read.parquet("sales_data/")
+df.groupBy("product").sum("amount").show()
+✔ Streaming
+df = spark.readStream.format("kafka").load()
+
+df.writeStream.outputMode("append").start()
+
+================================================================================
+2) 🔹 Structured Streaming
+✅ Definition
+
+“In Apache Spark, Structured Streaming is a high-level API for real-time data processing that treats streaming data as an unbounded DataFrame and processes it using the same DataFrame and SQL operations.”
+
+💻 Example
+df = spark.readStream.format("kafka").load()
+
+df.writeStream \
+  .outputMode("append") \
+  .format("console") \
+  .start()
+
+==============================================
+
+3) ✅ Definition
+
+“In Apache Spark, a micro-batch is a small chunk of streaming data that Spark collects over a short time interval and processes as a batch.”
+
+💻 Example
+df = spark.readStream.format("kafka").load()
+
+df.writeStream \
+  .trigger(processingTime="5 seconds") \
+  .start()
+🧠 Simple Scenario
+
+👉 Instead of processing each event instantly:
+
+Event → process → Event → process ❌
+
+👉 Spark does:
+
+Collect 5 sec data → Process batch ✔  
+Collect next 5 sec → Process batch ✔
+
+====================================================================
+
+4)  🔹 Watermarking
+✅ Definition
+“In Apache Spark, watermarking is a technique in Structured Streaming used to handle late-arriving data by defining a time threshold, after which late data is ignored for aggregations.”
+
+💻 Example
+from pyspark.sql.functions import windowdf = df.withWatermark("event_time", "10 minutes") \       .groupBy(window("event_time", "5 minutes")) \       .count()
+
+🧠 Simple Scenario
+👉 Data arrives with delay:
+Event time: 10:00 → arrives at 10:01 ✔  Event time: 10:00 → arrives at 10:15 ❌ (too late)
+👉 With watermark = 10 minutes:
+
+
+Accept data up to 10 min late ✔
+
+Ignore anything beyond that ❌
+
+============================================
+5) 🔹 Window Operation (Streaming Context)
+✅ Definition
+
+“In Apache Spark, a window operation groups streaming data into time-based chunks (windows) and performs aggregations on those windows.”
+
+💻 Example
+from pyspark.sql.functions import window
+
+df.groupBy(
+    window("event_time", "10 minutes")
+).count().show()
+🧠 Simple Scenario
+
+👉 You receive events continuously
+
+Instead of:
+
+Count all data forever ❌
+
+👉 Spark does:
+
+10:00–10:10 → count  
+10:10–10:20 → count  
+
+👉 Data is processed in time windows ✔
+
+===============================================
+6) 🔹 Checkpointing in Streaming
+✅ Definition
+“In Apache Spark Structured Streaming, checkpointing is the process of saving the streaming query’s state and progress (like offsets and intermediate results) to reliable storage so the job can recover from failures without data loss.”
+
+💻 Example
+df.writeStream \  .outputMode("append") \  .option("checkpointLocation", "/tmp/checkpoints") \  .start()
+
+🧠 Simple Scenario
+👉 You are reading from Kafka
+
+
+Spark processes data till offset 1000
+
+
+Suddenly job crashes ❌
+
+
+👉 With checkpoint:
+
+
+Spark restarts from offset 1000 ✔
+
+
+No data loss ✔
+=================================================
+
+## 🔹 Exactly-Once Semantics
+
+### ✅ Definition
+
+“In Apache Spark Structured Streaming, exactly-once semantics ensures that each record is processed exactly once, without duplication or data loss, even in case of failures.”
+
+---
+
+### 🧠 Simple Scenario
+
+👉 Without exactly-once:
+
+```text
+Record processed twice ❌ (duplicate)
+```
+
+👉 With exactly-once:
+
+```text
+Record processed only once ✔
+```
+
+👉 Achieved using:
+
+* Checkpointing
+* Idempotent sinks
+
+---
+
+### 🎤 Interview Answer
+
+👉
+“Exactly-once semantics guarantees that each record is processed only once, ensuring no duplication or data loss even during failures.”
+
+---
+
+---
+
+## 🔹 Trigger
+
+### ✅ Definition
+
+“A trigger in Structured Streaming defines how often Spark processes the incoming data (i.e., how frequently micro-batches are executed).”
+
+---
+
+### 💻 Example
+
+```python id="trigger_ex"
+df.writeStream \
+  .trigger(processingTime="10 seconds") \
+  .start()
+```
+
+---
+
+### 🧠 Simple Scenario
+
+👉 Trigger = schedule
+
+```text
+Every 10 sec → process data ✔
+```
+
+---
+
+### ⚡ Types
+
+* **ProcessingTime** → fixed interval
+* **Once** → run once like batch
+* **Continuous** → near real-time (advanced)
+
+---
+
+### 🎤 Interview Answer
+
+👉
+“Trigger controls how frequently streaming data is processed, typically defining the interval of micro-batch execution.”
+
+---
+
+---
+
+## 🔹 Sinks
+
+### ✅ Definition
+
+“Sinks are the output destinations where processed streaming data is written.”
+
+---
+
+### 💻 Example
+
+```python id="sink_ex"
+df.writeStream \
+  .format("console") \
+  .start()
+```
+
+---
+
+### 🧠 Simple Scenario
+
+👉 After processing → where does data go?
+
+* Console
+* File (Parquet)
+* Kafka
+* Database
+
+👉 That destination = **sink** ✔
+
+---
+
+### ⚡ Types of Sinks
+
+* File (Parquet, CSV)
+* Kafka
+* Console
+* Memory
+
+---
+
+### 🎤 Interview Answer
+
+👉
+“Sinks are the output systems where processed streaming results are written, such as files, Kafka, or databases.”
+
+---
+
+---
+
+## 🚨 Important Insight
+
+👉
+Exactly-once = correctness
+👉
+Trigger = timing
+👉
+Sink = destination
+
+---
+
+👉 Next?

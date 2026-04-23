@@ -182,3 +182,85 @@ df.write.option("compression", "snappy").parquet("data/")
 
 Less disk usage ✔
 
+8 ) 
+
+🔹 Snappy Compression
+✅ Definition
+
+“Snappy compression is a fast compression algorithm used in Apache Spark that prioritizes speed over maximum compression, making it ideal for big data processing.”
+
+💻 Example
+df.write.option("compression", "snappy").parquet("data/")
+🧠 Simple Scenario
+
+👉 You have 100GB data
+
+Gzip → reduces to ~20GB (slow)
+Snappy → reduces to ~30–40GB (fast) ✔
+
+👉 In Spark:
+
+Faster read/write ✔
+Less CPU usage ✔
+⚙️ Key Insight
+
+👉
+Snappy = moderate compression + very fast speed
+
+⚡ Why Spark uses Snappy by default
+Faster processing
+Good enough compression
+Balanced performance
+🎤 Interview Answer
+
+👉
+“Snappy is a fast compression algorithm used in Spark that provides a balance between compression ratio and speed, making it suitable for large-scale data processing.”
+
+9 ) 🔹 How Spark Reads Files
+✅ Definition
+
+“In Apache Spark, Spark reads files by splitting them into partitions and processing those partitions in parallel across executors.”
+
+💻 Example
+df = spark.read.parquet("data/")
+df.show()
+🧠 Simple Scenario
+
+👉 You have a 1GB file
+
+Spark splits it into chunks (say 10 partitions)
+Each executor processes one chunk
+
+👉 Result:
+
+Parallel processing ✔
+Faster execution ✔
+⚙️ Step-by-Step Flow
+Read File
+   ↓
+Split into partitions
+   ↓
+Assign to executors
+   ↓
+Process in parallel
+⚡ What affects reading performance
+File format (Parquet faster than CSV)
+Number of partitions
+File size (avoid small files)
+Predicate pushdown
+🎤 Interview Answer
+
+👉
+“Spark reads files by dividing them into partitions and processing them in parallel across executors, which enables scalable and efficient data processing.”
+
+10 ) 🔹 Metadata in Parquet
+✅ Definition
+
+“In Apache Spark, metadata in Parquet refers to information stored alongside the data, such as schema, column types, and statistics, which helps Spark read and query data efficiently without scanning the entire file.”
+
+💻 Example (concept)
+df = spark.read.parquet("data/")
+df.printSchema()
+
+👉 Schema is read from metadata, not inferred ✔
+

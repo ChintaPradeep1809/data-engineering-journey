@@ -1,0 +1,250 @@
+What is partitioning?
+What is bucketing?
+What is caching vs persistence?
+What is checkpointing?
+What is shuffle partition tuning?
+What is spark.sql.shuffle.partitions?
+What is data skew?
+How to fix skew?
+What is broadcast hint?
+What is predicate pushdown?
+What is column pruning?
+What is serialization?
+Kryo vs Java serialization?
+What is Tungsten optimization?
+What is Catalyst optimizer rule?
+What is adaptive query execution (AQE)?
+What is dynamic partition pruning?
+How to optimize large joins?
+How to reduce shuffle?
+Explain memory tuning.
+
+1) Partitioning in Spark is the process of dividing data into smaller chunks distributed across executors, enabling parallel processing and directly impacting performance and scalability 
+
+rdd = spark.sparkContext.parallelize(range(10), 3)
+
+print(rdd.getNumPartitions())  # Output: 3
+⚙️ Types of Partitioning
+🔹 1. Hash Partitioning
+
+👉 Default in Spark
+👉 Data distributed based on hash of key
+
+🔹 2. Range Partitioning
+
+👉 Data distributed based on value ranges
+
+🔹 Repartition vs Coalesce
+df = df.repartition(5)   # shuffle (increase/decrease)
+
+df = df.coalesce(2)      # reduce partitions (no full shuffle)
+⚡ Key Insight
+
+👉
+“Partitioning directly impacts performance because it controls how data is distributed and processed in parallel across the cluster.”
+
+2)
+
+Explanation
+
+“In Apache Spark, bucketing is a data organization technique where data is divided into a fixed number of buckets based on a hash of a column, primarily used to optimize joins and queries.”
+
+🔍 How it works
+
+👉 Data is:
+
+Hashed on a column (e.g., id)
+Divided into fixed number of buckets
+Stored physically in separate files
+💻 Example
+df.write \
+  .bucketBy(4, "id") \
+  .sortBy("id") \
+  .saveAsTable("bucketed_table")
+⚙️ Key Characteristics
+Fixed number of buckets
+Based on hash function
+Data stored in structured format
+⚡ Why Bucketing is Useful
+🔹 1. Faster Joins
+
+👉 If both tables are bucketed on same key
+👉 Shuffle can be reduced
+
+🔹 2. Efficient Querying
+
+👉 Better data locality
+
+🔹 Partitioning vs Bucketing
+Feature	Partitioning	Bucketing
+Basis	Column value	Hash function
+Number	Dynamic	Fixed
+Storage	Directory-based	File-based
+Use case	Filtering	Joins
+==============================================
+3) Caching vs Persistence
+✅ Definition
+
+👉 In Apache Spark:
+
+Cache → Stores data in memory only (default)
+Persist → Stores data using different storage levels (memory, disk, etc.)
+⚙️ Key Difference
+Feature	Cache	Persist
+Storage	Memory only	Memory / Disk / Both
+Flexibility	❌ No	✔ Yes
+Default	MEMORY_ONLY	User-defined
+💻 Example
+# Cache (default: MEMORY_ONLY)
+df.cache()
+
+# Persist (custom storage)
+from pyspark import StorageLevel
+df.persist(StorageLevel.MEMORY_AND_DISK)
+==============================
+4 ) In Apache Spark, checkpointing is the process of saving a DataFrame/RDD to reliable storage and truncating its lineage to avoid expensive recomputation.”
+
+💻 Example
+spark.sparkContext.setCheckpointDir("/tmp/checkpoints")
+
+df_cp = df.checkpoint()
+df_cp.count()
+
+==========================
+5) Shuffle partition tuning involves adjusting the number of partitions used during shuffle operations to optimize parallelism and reduce execution time by balancing task size and overhead
+# Default is 200
+spark.conf.set("spark.sql.shuffle.partitions", "100")
+=========================================================================
+
+6) In Apache Spark, spark.sql.shuffle.partitions is a configuration parameter that defines the number of partitions created during shuffle operations like joins, groupBy, and aggregations.”
+
+💻 Example
+# Default value
+spark.conf.get("spark.sql.shuffle.partitions")   # usually 200
+
+# Change it
+spark.conf.set("spark.sql.shuffle.partitions", "100")
+
+=======================================
+
+7) In Apache Spark, data skew refers to an uneven distribution of data across partitions, where a few keys hold a large portion of the data, causing some tasks to run much longer than others.”
+
+🧠 Simple Scenario
+
+👉 You run a join on user_id
+
+user_id = 1 → 10,00,000 records  
+user_id = 2 → 100 records  
+user_id = 3 → 50 records
+One partition gets huge data
+Others get very little
+============================
+
+8) In Apache Spark, data skew can be mitigated by redistributing data more evenly across partitions or avoiding heavy keys during shuffle operations.”
+
+🧠 Simple Scenario
+
+👉 Problem:
+
+user_id = 1 → 10,00,000 rows  
+others → very small
+
+👉 One partition overloaded → job slow ❌
+
+🚀 Solutions
+🔹 1. Salting (Most Effective)
+
+👉 Split heavy keys into smaller chunks
+
+from pyspark.sql.functions import rand, floor
+
+df1 = df1.withColumn("salt", floor(rand()*10))
+df2 = df2.withColumn("salt", floor(rand()*10))
+
+df1.join(df2, ["user_id", "salt"]).show()
+
+👉 Heavy key distributed across partitions ✔
+
+🔹 2. Broadcast Join
+
+👉 If one table is small
+
+from pyspark.sql.functions import broadcast
+
+df_large.join(broadcast(df_small), "user_id").show()
+
+👉 Avoids shuffle ✔
+
+🔹 3. Repartition by Key
+df = df.repartition("user_id")
+
+👉 Improves distribution (but not always enough)
+
+🔹 4. Use AQE (Adaptive Query Execution)
+spark.conf.set("spark.sql.adaptive.enabled", "true")
+
+👉 Spark automatically handles skew ✔
+
+🔹 5. Filter Early
+df = df.filter("user_id IS NOT NULL")
+
+👉 Reduce unnecessary data ✔
+
+⚙️ Key Insight
+
+👉
+Goal = balance workload across partitions
+
+🎤 Interview Answer
+
+👉
+“To fix data skew in Spark, techniques like salting, broadcasting small tables, repartitioning data, and enabling Adaptive Query Execution can be used to distribute data more evenly and avoid performance bottlenecks.”
+
+
+==============================================
+
+9) In Apache Spark, a broadcast hint is a directive given to Spark to force broadcasting of a DataFrame during a join, even if it does not automatically meet the broadcast threshold.”
+
+💻 Example
+from pyspark.sql.functions import broadcast
+
+df1.join(broadcast(df2), "id").show()
+
+👉 OR using SQL:
+
+SELECT /*+ BROADCAST(df2) */
+*
+FROM df1
+JOIN df2
+ON df1.id = df2.id
+🧠 Simple Scenario
+
+👉 You have:
+
+df_large → 10 GB
+df_small → 50 MB
+
+Spark might not auto-broadcast
+
+Broadcast hint is used to explicitly instruct Spark to use broadcast join by distributing the smaller dataset to all executors, helping avoid shuffle and improve performance
+
+===================================================================================
+10) In Apache Spark, predicate pushdown is an optimization technique where filter conditions are pushed down to the data source level, so only the required data is read instead of scanning the entire dataset.”
+
+💻 Example
+df = spark.read.parquet("data.parquet")
+
+# Filter applied
+df.filter("age > 30").show()
+
+👉 With predicate pushdown:
+
+Filter is applied while reading data ✔
+Not after loading everything
+
+==================================================
+
+11) 
+
+
+

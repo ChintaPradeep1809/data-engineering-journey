@@ -1,1 +1,238 @@
+Types of joins in PySpark?
+Difference between inner and outer join?
+What is broadcast join?
+When to use broadcast join?
+What is sort-merge join?
+What is shuffle hash join?
+How to optimize joins?
+What is skewed data?
+How to handle skew join?
+Difference between join and union?
 
+🔹 Types of Joins in PySpark
+Explanation
+
+“In Apache Spark, joins are used to combine data from two DataFrames based on a common key, and different join types
+determine how matching and non-matching records are handled.”
+
+🔹 1. Inner Join
+Explanation
+
+“Returns only matching rows from both DataFrames.”
+
+Code
+df1.join(df2, "id", "inner").show()
+🔹 2. Left Join (Left Outer)
+Explanation
+
+“Returns all rows from the left DataFrame and matching rows from the right; non-matching rows get nulls.”
+
+Code
+df1.join(df2, "id", "left").show()
+🔹 3. Right Join (Right Outer)
+Explanation
+
+“Returns all rows from the right DataFrame and matching rows from the left.”
+
+Code
+df1.join(df2, "id", "right").show()
+🔹 4. Full Outer Join
+Explanation
+
+“Returns all rows from both DataFrames, with nulls for non-matching rows.”
+
+Code
+df1.join(df2, "id", "outer").show()
+🔹 5. Left Semi Join
+Explanation
+
+“Returns only rows from the left DataFrame that have a match in the right DataFrame (no columns from right).”
+
+Code
+df1.join(df2, "id", "left_semi").show()
+🔹 6. Left Anti Join
+Explanation
+
+“Returns rows from the left DataFrame that do NOT have a match in the right DataFrame.”
+
+Code
+df1.join(df2, "id", "left_anti").show()
+🔹 7. Cross Join
+Explanation
+
+“Returns the Cartesian product of both DataFrames (every row with every row).”
+
+Code
+df1.crossJoin(df2).show()
+
+
+2) “Inner join returns only matching records, while outer joins preserve unmatched data with null values, making them useful when data completeness is required.
+
+3) In Apache Spark, a broadcast join is an optimization technique where the smaller DataFrame is broadcasted to all executors, allowing the join to be performed locally without shuffling the larger DataFrame.
+Broadcast join avoids expensive shuffle by sending the smaller dataset to all executors, enabling local joins and improving performance
+
+4) In Apache Spark, broadcast join should be used when one of the DataFrames is small enough to fit in memory, allowing it to be distributed to all executors and avoiding expensive shuffle operations.
+Broadcast join is used when one dataset is small enough to fit in memory, allowing Spark to distribute it across all executors and perform the join locally, thereby avoiding expensive shuffle operations.
+
+5) In Apache Spark, a sort-merge join is a join strategy where both DataFrames are first partitioned and sorted on the join key, and then merged to produce the joined result efficiently.
+Sort-merge join is a join strategy used when both datasets are large, where Spark shuffles and sorts both datasets on the join key and then merges them. It is scalable but expensive due to shuffle and sorting
+
+6) In Apache Spark, a shuffle hash join is a join strategy where both DataFrames are shuffled based on the join key, and then a hash table is built on the smaller partition of one dataset to efficiently match rows from the other dataset
+Shuffle hash join is a join strategy where Spark shuffles both datasets and builds a hash table on the smaller side of each partition to perform the join efficiently, avoiding sorting but requiring sufficient memory
+
+7) In Apache Spark, join optimization involves reducing shuffle, choosing the right join strategy, and managing data distribution to improve performance and scalability
+1. Use Broadcast Join (Most Important)
+Explanation
+
+Broadcast the smaller dataset to avoid shuffle on the larger dataset.
+
+Code
+from pyspark.sql.functions import broadcast
+
+df_large.join(broadcast(df_small), "id").show()
+Why it matters
+
+Avoids expensive shuffle → fastest join strategy.
+
+🔹 2. Filter Data Before Join
+Explanation
+
+Reduce dataset size before joining.
+
+Code
+df1_filtered = df1.filter("amount > 1000")
+df1_filtered.join(df2, "id").show()
+Why it matters
+
+Less data → less shuffle → faster execution.
+
+🔹 3. Select Only Required Columns
+Explanation
+
+Avoid unnecessary data transfer.
+
+Code
+df1.select("id", "amount").join(df2.select("id", "name"), "id").show()
+Why it matters
+
+Reduces memory and network usage.
+
+🔹 4. Use Proper Join Type
+Explanation
+
+Use left_semi or left_anti when possible instead of full joins.
+
+Code
+df1.join(df2, "id", "left_semi").show()
+Why it matters
+
+Processes less data → faster.
+
+🔹 5. Repartition Data on Join Key
+Explanation
+
+Align partitions to reduce shuffle overhead.
+
+Code
+df1 = df1.repartition("id")
+df2 = df2.repartition("id")
+
+df1.join(df2, "id").show()
+Why it matters
+
+Improves data locality and reduces shuffle cost.
+
+🔹 6. Handle Data Skew
+Explanation
+
+Avoid uneven data distribution.
+
+Code (salting example)
+from pyspark.sql.functions import rand, floor
+
+df1 = df1.withColumn("salt", floor(rand()*10))
+df2 = df2.withColumn("salt", floor(rand()*10))
+
+df1.join(df2, ["id", "salt"]).show()
+Why it matters
+
+Prevents one executor from becoming a bottleneck.
+
+🔹 7. Tune Shuffle Partitions
+Explanation
+
+Adjust number of partitions.
+
+Code
+spark.conf.set("spark.sql.shuffle.partitions", "100")
+Why it matters
+
+Too many → overhead
+Too few → slow parallelism
+
+🔹 8. Avoid Cross Join
+Explanation
+
+Cross join produces Cartesian product.
+
+Code
+# Avoid unless necessary
+df1.crossJoin(df2)
+Why it matters
+
+Explodes data → huge performance impact.
+
+⚡ Key Insight
+
+👉
+“Join performance in Spark is primarily affected by shuffle, so minimizing shuffle is the most important optimization strategy.”
+-----------------------------------------------------------------
+
+8 & 9) In Apache Spark, skewed data refers to an uneven distribution of data across partitions, where a few keys or partitions contain a disproportionately large amount of data, leading to performance bottlenecks.
+How to Handle Skew
+🔹 1. Salting (Most common)
+from pyspark.sql.functions import rand, floor
+
+df1 = df1.withColumn("salt", floor(rand()*10))
+df2 = df2.withColumn("salt", floor(rand()*10))
+
+df1.join(df2, ["key", "salt"]).show()
+🔹 2. Broadcast Join
+
+👉 If one side is small
+
+from pyspark.sql.functions import broadcast
+
+df_large.join(broadcast(df_small), "key").show()
+🔹 3. Repartition
+df = df.repartition("key")
+🔹 4. Use AQE (Adaptive Query Execution)
+spark.conf.set("spark.sql.adaptive.enabled", "true")
+⚡ Key Insight
+
+👉
+“Skew causes uneven workload distribution, making one executor a bottleneck while others remain idle.”
+
+🎤 Strong Interview Answer
+
+👉
+“Data skew occurs when data is unevenly distributed across partitions, causing some tasks to process significantly more data than others, leading to performance bottlenecks. It can be handled using techniques like salting, broadcasting small tables, and repartitioning.”
+
+10)  
+In Apache Spark, a join combines two DataFrames based on a common key (horizontally), whereas a union combines two DataFrames by stacking rows (vertically) without any matching condition.”
+
+🔹 Join
+Explanation
+
+“Join merges columns from two DataFrames using a key.”
+
+Code
+df1.join(df2, "id", "inner").show()
+
+Union
+Explanation
+
+“Union combines rows of two DataFrames with the same schema.”
+
+Code
+df1.union(df2).show()

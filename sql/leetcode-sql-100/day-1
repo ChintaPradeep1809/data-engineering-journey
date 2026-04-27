@@ -1,0 +1,172 @@
+# Day 1 Focus Areas
+* Subqueries
+* Ranking logic
+* Aggregation
+* Joins
+* Distinct thinking
+---
+# Question 1 — Second Highest Salary
+## Table: Employee
+| id | salary |
+| -- | ------ |
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
+## Task
+Find the **second highest distinct salary**.
+## Example
+Highest = 300
+Second Highest = 200
+---
+# Question 2 — Nth Highest Salary
+## Table: Employee
+| id | salary |
+| -- | ------ |
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
+| 4  | 400    |
+## Task
+Write query to find **3rd highest distinct salary**
+## Example
+Sorted distinct salaries:
+400, 300, 200, 100
+Answer = 20
+---
+# Question 3 — Duplicate Emails
+
+## Table: Person
+
+| id | email                             |
+| -- | --------------------------------- |
+| 1  | [a@gmail.com](mailto:a@gmail.com) |
+| 2  | [b@gmail.com](mailto:b@gmail.com) |
+| 3  | [a@gmail.com](mailto:a@gmail.com) |
+## Task
+Find duplicate emails.
+## Example
+`a@gmail.com` appears twice.
+---
+# Question 4 — Customers Who Never Order
+## Customers
+| id | name |
+| -- | ---- |
+| 1  | Joe  |
+| 2  | Sam  |
+| 3  | Max  |
+
+## Orders
+| id | customerId |
+| -- | ---------- |
+| 1  | 3          |
+| 2  | 1          |
+
+## Task
+Find customers who never ordered.
+## Example
+Joe ordered
+Max ordered
+Sam never ordered
+Answer = Sam
+---
+
+# Question 5 — Highest Salary by Department
+## Employee
+| id | name | salary | departmentId |
+| -- | ---- | ------ | ------------ |
+| 1  | A    | 9000   | 1            |
+| 2  | B    | 8000   | 1            |
+| 3  | C    | 9500   | 2            |
+
+## Department
+| id | name |
+| -- | ---- |
+| 1  | IT   |
+| 2  | HR   |
+## Task
+Find highest paid employee in each department.
+## Example
+IT → A
+HR → C
+---
+# Stop Here and Solve First
+Try yourself before seeing answers.
+---
+
+
+
+
+  =========================================================================
+# Day 1 Answers (Optimized Solutions)
+
+---
+
+## Answer 1 — Second Highest Salary
+SELECT MAX(salary) AS SecondHighestSalary
+FROM Employee
+WHERE salary < (SELECT MAX(salary) FROM Employee);
+```
+### Why Efficient
+
+Only two max scans.
+
+---
+
+## Answer 2 — 3rd Highest Salary
+
+```sql id="z7d9xj"
+SELECT DISTINCT salary
+FROM Employee
+ORDER BY salary DESC
+LIMIT 1 OFFSET N;
+```
+### Why
+Offset N skips first two rows.
+---
+
+## Answer 3 — Duplicate Emails
+
+```sql id="g6qjqn"
+SELECT email
+FROM Person
+GROUP BY email
+HAVING COUNT(*) > 1;
+```
+### Why
+Grouping detects repeated values.
+---
+
+## Answer 4 — Customers Who Never Order
+
+```sql id="lgnpnr"
+SELECT c.name AS Customers
+FROM Customers c
+LEFT JOIN Orders o
+ON c.id = o.customerId
+WHERE o.customerId IS NULL;
+```
+### Why
+Left join keeps all customers .
+---
+
+## Answer 5 — Highest Salary by Department
+
+WITH ranked AS (
+    SELECT 
+        e.name AS employee,
+        e.salary,
+        d.name AS department,
+        DENSE_RANK() OVER (
+            PARTITION BY e.departmentId
+            ORDER BY e.salary DESC
+        ) AS rnk
+    FROM Employee e
+    JOIN Department d
+      ON e.departmentId = d.id
+)
+
+SELECT department, employee, salary
+FROM ranked
+WHERE rnk = 1;
+```
+--

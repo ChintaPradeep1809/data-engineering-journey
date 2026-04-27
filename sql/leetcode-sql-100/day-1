@@ -112,9 +112,8 @@ Only two max scans.
 
 ---
 
-## Answer 2 — 3rd Highest Salary
+## Answer 2 — Nth Highest Salary
 
-```sql id="z7d9xj"
 SELECT DISTINCT salary
 FROM Employee
 ORDER BY salary DESC
@@ -126,7 +125,6 @@ Offset N skips first two rows.
 
 ## Answer 3 — Duplicate Emails
 
-```sql id="g6qjqn"
 SELECT email
 FROM Person
 GROUP BY email
@@ -138,7 +136,6 @@ Grouping detects repeated values.
 
 ## Answer 4 — Customers Who Never Order
 
-```sql id="lgnpnr"
 SELECT c.name AS Customers
 FROM Customers c
 LEFT JOIN Orders o

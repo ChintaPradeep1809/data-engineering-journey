@@ -1,0 +1,196 @@
+
+day-02/
+ q1_rising_temperature.sql
+ q2_big_countries.sql
+ q3_not_boring_movies.sql
+ q4_average_selling_price.sql
+ q5_managers_5_reports.sql
+```
+
+
+Today Focus:Joins, CASE, Aggregation, Subqueries, Date Logic
+# Question 1 — Rising Temperature
+## Table: Weather
+
+| id | recordDate | temperature |
+| -- | ---------- | ----------- |
+| 1  | 2026-01-01 | 10          |
+| 2  | 2026-01-02 | 25          |
+| 3  | 2026-01-03 | 20          |
+
+## Task
+Find IDs where temperature is **higher than previous day**.
+
+## Example
+
+Jan 2 > Jan 1 → include id 2
+Jan 3 < Jan 2 → exclude
+
+---
+
+# Question 2 — Big Countries
+
+## Table: World
+
+| name    | population | area |
+| ------- | ---------- | ---- |
+| India   | 1400       | 3287 |
+| Iceland | 0.4        | 103  |
+| China   | 1410       | 9597 |
+
+## Task
+
+Return countries where:
+
+* area >= 3000
+  OR
+* population >= 250
+
+---
+
+# Question 3 — Not Boring Movies
+
+## Table: Cinema
+
+| id | movie | rating | description |
+| -- | ----- | ------ | ----------- |
+| 1  | A     | 8.9    | great       |
+| 2  | B     | 7.0    | boring      |
+| 3  | C     | 9.1    | fun         |
+
+## Task
+
+Return movies where:
+
+* id is odd
+* description is not boring
+
+Sort by rating desc.
+---
+
+# Question 4 — Average Selling Price
+
+## Prices
+
+| product_id | start_date | end_date   | price |
+| ---------- | ---------- | ---------- | ----- |
+| 1          | 2026-01-01 | 2026-01-31 | 10    |
+
+## UnitsSold
+
+| product_id | purchase_date | units |
+| ---------- | ------------- | ----- |
+| 1          | 2026-01-10    | 5     |
+| 1          | 2026-01-15    | 3     |
+
+## Task
+
+Find average selling price per product.
+
+## Formula
+
+[
+\frac{\sum(price \times units)}{\sum(units)}
+]
+
+---
+
+# Question 5 — Managers with At Least 5 Direct Reports
+
+## Employee
+
+| id | name | managerId |
+| -- | ---- | --------- |
+| 1  | A    | null      |
+| 2  | B    | 1         |
+| 3  | C    | 1         |
+| 4  | D    | 1         |
+| 5  | E    | 1         |
+| 6  | F    | 1         |
+
+## Task
+
+Return manager names having **5 or more direct reports**
+
+---
+
+# Try First Before Looking Below
+
+---
+================================================================================================================
+# Answers (Optimized Solutions)
+---
+
+## Answer 1 — Rising Temperature
+
+SELECT w1.id
+FROM Weather w1
+JOIN Weather w2
+ON DATEDIFF(w1.recordDate, w2.recordDate) = 1
+WHERE w1.temperature > w2.temperature;
+```
+
+### Better Modern Alternative (Window Function)
+
+WITH cte AS (
+SELECT id,
+       temperature,
+       LAG(temperature) OVER(ORDER BY recordDate) prev_temp
+FROM Weather
+)
+SELECT id
+FROM cte
+WHERE temperature > prev_temp;
+```
+
+---
+
+## Answer 2 — Big Countries
+
+SELECT name, population, area
+FROM World
+WHERE area >= 3000
+   OR population >= 250;
+```
+
+---
+
+## Answer 3 — Not Boring Movies
+
+SELECT *
+FROM Cinema
+WHERE id % 2 = 1
+  AND description <> 'boring'
+ORDER BY rating DESC;
+```
+
+---
+
+## Answer 4 — Average Selling Price
+
+SELECT p.product_id,
+ROUND(SUM(p.price * u.units) / SUM(u.units), 2) AS average_price
+FROM Prices p
+JOIN UnitsSold u
+ON p.product_id = u.product_id
+AND u.purchase_date BETWEEN p.start_date AND p.end_date
+GROUP BY p.product_id;
+```
+
+---
+
+## Answer 5 — Managers with 5+ Reports
+
+SELECT e.name
+FROM Employee e
+JOIN Employee r
+ON e.id = r.managerId
+GROUP BY e.id, e.name
+HAVING COUNT(*) >= 5;
+```
+
+---
+
+
+
+

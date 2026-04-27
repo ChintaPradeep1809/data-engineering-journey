@@ -1,0 +1,97 @@
+What is Spark Streaming?
+Difference between batch and streaming?
+What is Structured Streaming?
+What is micro-batch?
+What is watermarking?
+What is window operation?
+What is checkpointing in streaming?
+What is exactly-once semantics?
+What is trigger?
+What are sinks?
+
+
+
+1. ## 🔹 Spark Streaming
+### ✅ Definition
+“In Apache Spark, Spark Streaming is a stream processing framework used to process live data streams in near real-time by dividing 
+incoming data into small batches and processing them using Spark.”
+---
+### 🧠 Simple Scenario
+👉 Live data coming from:
+* Kafka
+* Logs
+* Sensors
+* Transactions
+
+Instead of waiting for end-of-day batch:
+Incoming data every second
+→ collect small batch
+→ process
+→ output
+```
+### 💻 Example
+```python id="spark_streaming_ex"
+df = spark.readStream.format("kafka").load()
+df.writeStream \
+  .format("console") \
+  .start()
+``
+---
+### ⚙️ How it works
+Incoming Stream
+   ↓
+Micro-batches
+   ↓
+Spark Processing
+   ↓
+Output Sink
+```
+---
+### ⚡ Types
+#### 🔹 Legacy Spark Streaming
+* DStreams (older API)
+#### 🔹 Structured Streaming (modern)
+* DataFrame/SQL based ✔ preferred
+---
+
+### 🎤 Interview Answer
+👉
+“Spark Streaming is a near real-time stream processing system that processes incoming data as micro-batches. 
+Modern Spark uses Structured Streaming, which provides a DataFrame-based streaming API.”
+==========================================================================================================================================
+2.
+In Apache Spark, batch processing handles stored data in large chunks at scheduled times, while streaming processes continuously arriving data in near real-time.
+
+| Feature  | Batch               | Streaming              |
+| -------- | ------------------- | ---------------------- |
+| Data     | Historical / stored | Continuous incoming    |
+| Timing   | Scheduled           | Continuous             |
+| Latency  | Minutes / hours     | Seconds / milliseconds |
+| Use Case | Reports, ETL        | Alerts, live analytics |
+
+
+3.
+🔹 Structured Streaming
+✅ Definition
+
+“In Apache Spark, Structured Streaming is Spark’s scalable stream processing engine that treats incoming live data as an unbounded DataFrame and 
+allows processing it using the same DataFrame and SQL APIs used for batch data.”
+
+🧠 Simple Scenario
+
+👉 Live transactions are coming continuously from Apache Kafka
+
+Instead of writing separate streaming logic:
+
+Incoming records
+→ DataFrame transformations
+→ Aggregation
+→ Output
+
+Live Data
+   ↓
+Micro-batches / continuous processing
+   ↓
+DataFrame / SQL operations
+   ↓
+Sink (Kafka, file, DB, console)

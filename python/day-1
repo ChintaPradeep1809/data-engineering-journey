@@ -1,0 +1,158 @@
+# Day 1 — Python Foundations (Serious Mode for DE Switch)
+---
+# Day 1 Goals
+
+✅ Variables
+✅ Data Types
+✅ Input / Output
+✅ Type Conversion
+✅ Operators
+✅ Memory basics
+✅ Writing clean Python syntax
+✅ Beginner interview traps
+---
+---
+# 1. Variables
+A variable stores a value.
+name = "Pradeep"
+age = 25
+salary = 7.5
+is_active = True
+---
+
+# 2. Core Data Types
+```python
+name = "Data"        # str
+age = 25            # int
+price = 99.99       # float
+active = True       # bool
+items = [1,2,3]     # list
+coords = (1,2)      # tuple
+unique = {1,2,3}    # set
+user = {"id":1}     # dict
+```
+Use:
+```python
+print(type(name))
+```
+
+---
+
+# 3. Type Conversion
+Very common in ETL.
+```python
+x = "100"
+num = int(x)
+price = "99.5"
+val = float(price)
+n = 25
+text = str(n)
+```
+
+---
+# 4. Operators
+## Arithmetic
+```python
++ - * / // % **
+```
+```python
+10 // 3   # 3
+10 % 3    # 1
+2 ** 3    # 8
+```
+## Comparison
+
+```python
+>, <, ==, !=, >=, <=
+```
+## Logical
+```python
+and or not
+```
+---
+# 5. Input / Output
+```python
+name = input("Enter name: ")
+print(name)
+```
+```python
+age = int(input("Enter age: "))
+```
+---
+# 6. Memory Truth (Interview Useful)
+```python
+a = 10
+b = a
+```
+Both refer to same immutable int value conceptually.
+But:
+```python
+x = [1,2]
+y = x
+y.append(3)
+print(x)
+```
+Output:
+```python
+[1,2,3]
+```
+
+# 7. Interview Questions (Must Know)
+
+## Q1 Difference between `=` and `==`
+
+* `=` assignment
+* `==` comparison
+
+## Q2 Difference int vs float
+
+* int whole number
+* float decimal
+
+## Q3 Why use `//`
+
+Floor division.
+
+## Q4 Mutable vs Immutable examples
+
+Mutable: list, dict, set
+Immutable: int, str, tuple
+
+---
+
+
+---
+
+## Q3 Find output
+
+```python
+x = 10
+y = 3
+print(x / y)
+print(x // y)
+print(x % y)
+```
+
+# Leetcode for Day 1 (Easy Warmup)
+
+1. LeetCode Two Sum
+2. LeetCode Palindrome Number
+3. LeetCode Fizz Buzz
+
+Do at least 2 today.
+---
+
+# Data Engineering Real Use Case
+
+CSV values come as strings:
+
+```python
+row = {"id":"101", "salary":"55000"}
+```
+Need conversion:
+```python
+emp_id = int(row["id"])
+salary = float(row["salary"])
+```
+
+ery + 10 Interview Questions + DE parsing use cases**

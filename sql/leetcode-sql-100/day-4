@@ -1,0 +1,135 @@
+# SQL 100 Challenge — Day 4
+
+**Format:** 5 Questions First → Solve Yourself → Answers at End
+**Today Focus:** Subqueries, HAVING, Conditional Aggregation, Date Logic, Grouping
+
+# Question 1 — Customer Placing the Largest Number of Orders
+## Table: Orders
+| order_number | customer_number |
+| ------------ | --------------- |
+| 1            | 1               |
+| 2            | 2               |
+| 3            | 2               |
+| 4            | 3               |
+| 5            | 3               |
+| 6            | 3               |
+## Task
+Find the customer who placed the **most orders**.
+## Example
+Customer 3 placed 3 orders → highest.
+---
+# Question 2 — Classes More Than 5 Students
+## Table: Courses
+
+| student | class   |
+| ------- | ------- |
+| A       | Math    |
+| B       | Math    |
+| C       | Math    |
+| D       | Math    |
+| E       | Math    |
+| F       | Math    |
+| G       | Science |
+
+## Task
+Return classes having **5 or more students**.
+---
+# Question 3 — Immediate Food Delivery I
+## Table: Delivery
+
+| delivery_id | customer_id | order_date | customer_pref_delivery_date |
+| ----------- | ----------- | ---------- | --------------------------- |
+| 1           | 1           | 2026-01-01 | 2026-01-01                  |
+| 2           | 2           | 2026-01-01 | 2026-01-03                  |
+
+## Task
+
+Find percentage of orders where:
+`order_date = customer_pref_delivery_date`
+---
+# Question 4 — Monthly Transactions I
+## Table: Transactions
+| id | country | state    | amount | trans_date |
+| -- | ------- | -------- | ------ | ---------- |
+| 1  | US      | approved | 1000   | 2026-01-10 |
+| 2  | US      | declined | 200    | 2026-01-12 |
+| 3  | IN      | approved | 500    | 2026-01-15 |
+## Task
+For each month + country return:
+* total transactions
+* approved transactions
+* total amount
+* approved amount
+---
+# Question 5 — Product Sales Analysis I
+## Sales
+| sale_id | product_id | year | quantity | price |
+| ------- | ---------- | ---- | -------- | ----- |
+| 1       | 100        | 2025 | 10       | 500   |
+## Product
+| product_id | product_name |
+| ---------- | ------------ |
+| 100        | Laptop       |
+## Task
+Return:
+* product_name
+* year
+* price
+---
+# Solve First Before Seeing Answers
+---
+# Answers (Optimized Solutions)
+---
+## Answer 1 — Largest Number of Orders
+SELECT customer_number
+FROM Orders
+GROUP BY customer_number
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+```
+### Why
+Count orders per customer, pick highest.
+---
+
+## Answer 2 — Classes More Than 5 Students
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(*) >= 5;
+```
+### Why
+`HAVING` filters grouped results.
+---
+## Answer 3 — Immediate Food Delivery I
+SELECT ROUND(
+    100.0 * SUM(
+        CASE 
+          WHEN order_date = customer_pref_delivery_date THEN 1
+          ELSE 0
+        END
+    ) / COUNT(*), 2
+) AS immediate_percentage
+FROM Delivery;
+```
+### Why
+Conditional aggregation.
+---
+## Answer 4 — Monthly Transactions I
+SELECT DATE_FORMAT(trans_date, '%Y-%m') AS month,
+       country,
+       COUNT(*) AS trans_count,
+       SUM(state = 'approved') AS approved_count,
+       SUM(amount) AS trans_total_amount,
+       SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount
+FROM Transactions
+GROUP BY DATE_FORMAT(trans_date, '%Y-%m'), country;
+```
+## Answer 5 — Product Sales Analysis I
+SELECT p.product_name,
+       s.year,
+       s.price
+FROM Sales s
+JOIN Product p
+ON s.product_id = p.product_id;
+```
+---

@@ -1,0 +1,157 @@
+# SQL 100 Challenge — Day 8
+
+---
+# Question 1 — Monthly Approved Transaction Rate
+## Table: Transactions
+| id | country | state    | amount | trans_date |
+| -- | ------- | -------- | ------ | ---------- |
+| 1  | US      | approved | 100    | 2026-01-01 |
+| 2  | US      | declined | 200    | 2026-01-02 |
+| 3  | IN      | approved | 150    | 2026-01-03 |
+## Task
+For each country return:
+* total transactions
+* approved transactions
+* approval rate %
+
+---
+
+# Question 2 — Customers Spending Above Average
+## Table: Orders
+
+| order_id | customer_id | amount |
+| -------- | ----------- | ------ |
+| 1        | 101         | 500    |
+| 2        | 101         | 300    |
+| 3        | 102         | 200    |
+| 4        | 103         | 900    |
+
+## Task
+Return customers whose **total spending** is above average customer spending.
+---
+# Question 3 — Products Never Sold
+
+## Product
+
+| product_id | product_name |
+| ---------- | ------------ |
+| 1          | Laptop       |
+| 2          | Mouse        |
+| 3          | Keyboard     |
+
+## Sales
+| sale_id | product_id |
+| ------- | ---------- |
+| 1       | 1          |
+| 2       | 3          |
+
+## Task
+Return products never sold.
+---
+
+# Question 4 — Daily Revenue with Weekend Flag
+
+## Orders
+| order_id | order_date | amount |
+| -------- | ---------- | ------ |
+| 1        | 2026-01-03 | 500    |
+| 2        | 2026-01-04 | 300    |
+| 3        | 2026-01-05 | 200    |
+
+## Task
+Return:
+* order_date
+* total revenue
+* Weekend / Weekday flag
+---
+# Question 5 — Users with Both Login and Purchase
+## Activity
+| user_id | activity_type |
+| ------- | ------------- |
+| 1       | login         |
+| 1       | purchase      |
+| 2       | login         |
+| 3       | purchase      |
+
+## Task
+Return users who did **both**:
+* login
+* purchase
+---
+
+# Solve First Before Looking Below
+---
+# Answers (Optimized Solutions)
+---
+
+## Answer 1 — Monthly Approved Transaction Rate
+SELECT country,
+       COUNT(*) AS total_transactions,
+       SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) AS approved_transactions,
+       ROUND(
+         100.0 * SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) / COUNT(*), 2
+       ) AS approval_rate
+FROM Transactions
+GROUP BY country;
+```
+
+### Why
+Conditional aggregation = core analytics skill.
+---
+
+## Answer 2 — Customers Spending Above Average
+WITH customer_spend AS (
+    SELECT customer_id,
+           SUM(amount) AS total_spend
+    FROM Orders
+    GROUP BY customer_id
+),
+avg_spend AS (
+    SELECT AVG(total_spend) AS avg_total
+    FROM customer_spend
+)
+SELECT c.customer_id, c.total_spend
+FROM customer_spend c
+CROSS JOIN avg_spend a
+WHERE c.total_spend > a.avg_total;
+```
+---
+
+## Answer 3 — Products Never Sold
+SELECT p.product_name
+FROM Product p
+LEFT JOIN Sales s
+ON p.product_id = s.product_id
+WHERE s.product_id IS NULL;
+```
+---
+
+## Answer 4 — Daily Revenue with Weekend Flag
+SELECT order_date,
+       SUM(amount) AS total_revenue,
+       CASE
+         WHEN DAYOFWEEK(order_date) IN (1,7) THEN 'Weekend'
+         ELSE 'Weekday'
+       END AS day_type
+FROM Orders
+GROUP BY order_date,
+         CASE
+           WHEN DAYOFWEEK(order_date) IN (1,7) THEN 'Weekend'
+           ELSE 'Weekday'
+         END;
+```
+
+## Answer 5 — Users with Both Login and Purchase
+SELECT user_id
+FROM Activity
+GROUP BY user_id
+HAVING SUM(activity_type = 'login') > 0
+   AND SUM(activity_type = 'purchase') > 0;
+```
+
+### Portable Version
+SELECT user_id
+FROM Activity
+GROUP BY user_id
+HAVING COUNT(DISTINCT activity_type) = 2;
+```

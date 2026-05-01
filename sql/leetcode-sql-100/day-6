@@ -1,0 +1,143 @@
+# SQL 100 Challenge — Day 6
+
+# Question 1 — Previous Month Salary Change
+## Table: EmployeeSalary
+| emp_id | month | salary |
+| ------ | ----- | ------ |
+| 1      | Jan   | 1000   |
+| 1      | Feb   | 1200   |
+| 1      | Mar   | 1100   |
+## Task
+Return:
+* emp_id
+* month
+* salary
+* previous_month_salary
+* difference
+## Example
+| month | salary | prev | diff |
+| ----- | ------ | ---- | ---- |
+| Feb   | 1200   | 1000 | 200  |
+
+---
+# Question 2 — Next Login Date
+## Table: Logins
+| user_id | login_date |
+| ------- | ---------- |
+| 1       | 2026-01-01 |
+| 1       | 2026-01-05 |
+| 1       | 2026-01-09 |
+## Task
+Return each login date with next login date.
+---
+# Question 3 — Consecutive Login Gap
+## Table: Logins
+| user_id | login_date |
+| ------- | ---------- |
+| 1       | 2026-01-01 |
+| 1       | 2026-01-03 |
+| 1       | 2026-01-10 |
+## Task
+Return gap in days between current login and previous login
+---
+# Question 4 — First Order per Customer
+## Table: Orders
+| order_id | customer_id | order_date |
+| -------- | ----------- | ---------- |
+| 1        | 10          | 2026-01-01 |
+| 2        | 10          | 2026-01-05 |
+| 3        | 11          | 2026-01-02 |
+## Task
+
+Return only first order for each customer.
+---
+# Question 5 — Detect Salary Drop
+
+## Table: EmployeeSalary
+
+| emp_id | month | salary |
+| ------ | ----- | ------ |
+| 1      | Jan   | 1000   |
+| 1      | Feb   | 1200   |
+| 1      | Mar   | 900    |
+
+## Task
+Return rows where salary dropped compared to previous month.
+---
+# Solve First Before Looking Below
+---
+
+# Answers (Optimized Solutions)
+---
+
+## Answer 1 — Previous Month Salary Change
+SELECT emp_id,
+       month,
+       salary,
+       LAG(salary) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) AS prev_salary,
+       salary - LAG(salary) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) AS diff
+FROM EmployeeSalary;
+```
+---
+
+## Answer 2 — Next Login Date
+SELECT user_id,
+       login_date,
+       LEAD(login_date) OVER(
+           PARTITION BY user_id
+           ORDER BY login_date
+       ) AS next_login
+FROM Logins;
+```
+---
+
+## Answer 3 — Consecutive Login Gap
+SELECT user_id,
+       login_date,
+       DATEDIFF(
+         login_date,
+         LAG(login_date) OVER(
+             PARTITION BY user_id
+             ORDER BY login_date
+         )
+       ) AS gap_days
+FROM Logins;
+```
+---
+## Answer 4 — First Order per Custome
+WITH ranked AS (
+SELECT *,
+       ROW_NUMBER() OVER(
+           PARTITION BY customer_id
+           ORDER BY order_date
+       ) rn
+FROM Orders
+)
+SELECT order_id, customer_id, order_date
+FROM ranked
+WHERE rn = 1;
+```---
+
+## Answer 5 — Detect Salary Drop
+WITH cte AS (
+SELECT emp_id,
+       month,
+       salary,
+       LAG(salary) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) AS prev_salary
+FROM EmployeeSalary
+)
+SELECT *
+FROM cte
+WHERE salary < prev_salary;
+```
+
+---

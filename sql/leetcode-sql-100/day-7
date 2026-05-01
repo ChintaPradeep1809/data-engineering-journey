@@ -1,0 +1,141 @@
+# SQL 100 Challenge — Day 7
+---
+
+# Question 1 — Customers with More Than One Order
+## Table: Orders
+
+| order_id | customer_id | amount |
+| -------- | ----------- | ------ |
+| 1        | 101         | 500    |
+| 2        | 101         | 300    |
+| 3        | 102         | 200    |
+
+## Task
+Return customers who placed more than 1 order.
+---
+# Question 2 — Highest Paid Employee in Each Department
+
+## Table: Employee
+
+| emp_id | name | dept | salary |
+| ------ | ---- | ---- | ------ |
+| 1      | A    | IT   | 9000   |
+| 2      | B    | IT   | 8500   |
+| 3      | C    | HR   | 9500   |
+| 4      | D    | HR   | 9500   |
+
+## Task
+
+Return highest paid employee(s) in each department.
+---
+# Question 3 — Monthly Revenue Per Customer
+
+## Table: Orders
+
+| order_id | customer_id | order_date | amount |
+| -------- | ----------- | ---------- | ------ |
+| 1        | 101         | 2026-01-05 | 500    |
+| 2        | 101         | 2026-01-20 | 300    |
+| 3        | 102         | 2026-02-01 | 700    |
+
+## Task
+
+Return:
+
+* month
+* customer_id
+* total revenue
+---
+
+# Question 4 — Employees Above Company Average Salary
+## Table: Employee
+
+| emp_id | name | salary |
+| ------ | ---- | ------ |
+| 1      | A    | 5000   |
+| 2      | B    | 7000   |
+| 3      | C    | 9000   |
+
+## Task
+Return employees earning above company average salary.
+---
+
+# Question 5 — Repeat Customers (Ordered in 2+ Different Months)
+## Table: Orders
+
+| order_id | customer_id | order_date |
+| -------- | ----------- | ---------- |
+| 1        | 101         | 2026-01-10 |
+| 2        | 101         | 2026-02-10 |
+| 3        | 102         | 2026-01-05 |
+
+## Task
+Return customers who ordered in at least 2 different months.
+---
+# Solve First Before Looking Below
+---
+
+# Answers (Optimized Solutions)
+
+---
+
+## Answer 1 — Customers with More Than One Order
+SELECT customer_id
+FROM Orders
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+```
+---
+
+## Answer 2 — Highest Paid Employee in Each Department
+WITH ranked AS (
+SELECT *,
+       DENSE_RANK() OVER(
+           PARTITION BY dept
+           ORDER BY salary DESC
+       ) rnk
+FROM Employee
+)
+SELECT emp_id, name, dept, salary
+FROM ranked
+WHERE rnk = 1;
+```
+---
+
+## Answer 3 — Monthly Revenue Per Customer
+
+SELECT DATE_FORMAT(order_date, '%Y-%m') AS month,
+       customer_id,
+       SUM(amount) AS total_revenue
+FROM Orders
+GROUP BY DATE_FORMAT(order_date, '%Y-%m'), customer_id;
+```
+---
+
+## Answer 4 — Employees Above Company Average Salary
+
+WITH avg_cte AS (
+SELECT AVG(salary) AS avg_salary
+FROM Employee
+)
+SELECT e.emp_id, e.name, e.salary
+FROM Employee e
+CROSS JOIN avg_cte a
+WHERE e.salary > a.avg_salary;
+```
+
+### Simpler Version
+SELECT emp_id, name, salary
+FROM Employee
+WHERE salary > (SELECT AVG(salary) FROM Employee);
+```
+---
+
+## Answer 5 — Repeat Customers (2+ Months)
+SELECT customer_id
+FROM Orders
+GROUP BY customer_id
+HAVING COUNT(DISTINCT DATE_FORMAT(order_date, '%Y-%m')) >= 2;
+```
+---
+N + conditional metrics + real analyst SQL patterns**.

@@ -1,0 +1,156 @@
+# SQL 100 Challenge — Day 9
+
+# Question 1 — Top 3 Salaries per Department
+## Table: Employee
+
+| emp_id | name | dept | salary |
+| ------ | ---- | ---- | ------ |
+| 1      | A    | IT   | 9000   |
+| 2      | B    | IT   | 8500   |
+| 3      | C    | IT   | 8000   |
+| 4      | D    | HR   | 9500   |
+| 5      | E    | HR   | 9000   |
+
+## Task
+Return top **3 salary levels** in each department.
+---
+
+# Question 2 — Running Revenue by Customer
+## Table: Orders
+
+| order_id | customer_id | order_date | amount |
+| -------- | ----------- | ---------- | ------ |
+| 1        | 101         | 2026-01-01 | 100    |
+| 2        | 101         | 2026-01-05 | 200    |
+| 3        | 101         | 2026-01-10 | 300    |
+
+## Task
+Return cumulative spend per customer over time.
+---
+
+# Question 3 — Latest Order Per Customer
+
+## Table: Orders
+| order_id | customer_id | order_date |
+| -------- | ----------- | ---------- |
+| 1        | 101         | 2026-01-01 |
+| 2        | 101         | 2026-01-08 |
+| 3        | 102         | 2026-01-03 |
+
+## Task
+
+Return latest order for each customer.
+---
+
+# Question 4 — Consecutive Login Streak (2+ Days)
+## Table: Logins
+
+| user_id | login_date |
+| ------- | ---------- |
+| 1       | 2026-01-01 |
+| 1       | 2026-01-02 |
+| 1       | 2026-01-05 |
+| 2       | 2026-01-03 |
+| 2       | 2026-01-04 |
+
+## Task
+
+Return users having at least **2 consecutive login days**.
+---
+
+# Question 5 — Highest Order Amount Per Month
+
+## Table: Orders
+| order_id | order_date | amount |
+| -------- | ---------- | ------ |
+| 1        | 2026-01-01 | 500    |
+| 2        | 2026-01-10 | 700    |
+| 3        | 2026-02-05 | 600    |
+
+## Task
+
+Return highest order each month.
+---
+
+# Answers (Optimized Solutions)
+
+---
+
+## Answer 1 — Top 3 Salaries per Department
+WITH ranked AS (
+SELECT *,
+       DENSE_RANK() OVER(
+           PARTITION BY dept
+           ORDER BY salary DESC
+       ) rnk
+FROM Employee
+)
+SELECT emp_id, name, dept, salary
+FROM ranked
+WHERE rnk <= 3;
+```
+---
+
+## Answer 2 — Running Revenue by Customer
+SELECT customer_id,
+       order_date,
+       amount,
+       SUM(amount) OVER(
+           PARTITION BY customer_id
+           ORDER BY order_date
+       ) AS running_total
+FROM Orders;
+```
+---
+
+## Answer 3 — Latest Order Per Customer
+WITH ranked AS (
+SELECT *,
+       ROW_NUMBER() OVER(
+           PARTITION BY customer_id
+           ORDER BY order_date DESC
+       ) rn
+FROM Orders
+)
+SELECT order_id, customer_id, order_date
+FROM ranked
+WHERE rn = 1;
+```
+---
+
+## Answer 4 — Consecutive Login Streak
+WITH cte AS (
+SELECT user_id,
+       login_date,
+       LAG(login_date) OVER(
+           PARTITION BY user_id
+           ORDER BY login_date
+       ) AS prev_login
+FROM Logins
+)
+SELECT DISTINCT user_id
+FROM cte
+WHERE DATEDIFF(login_date, prev_login) = 1;
+```
+
+### Note
+
+For 3+, more advanced gaps-and-islands later.
+
+---
+
+## Answer 5 — Highest Order Amount Per Month
+WITH ranked AS (
+SELECT *,
+       ROW_NUMBER() OVER(
+           PARTITION BY DATE_FORMAT(order_date, '%Y-%m')
+           ORDER BY amount DESC
+       ) rn
+FROM Orders
+)
+SELECT order_id, order_date, amount
+FROM ranked
+WHERE rn = 1;
+```
+
+---

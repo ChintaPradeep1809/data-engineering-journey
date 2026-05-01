@@ -1,0 +1,203 @@
+# SQL 100 Challenge — Day 11
+---
+
+# Question 1 — Users Logged In 3 Consecutive Days
+## Table: Logins
+
+| user_id | login_date |
+| ------- | ---------- |
+| 1       | 2026-01-01 |
+| 1       | 2026-01-02 |
+| 1       | 2026-01-03 |
+| 2       | 2026-01-01 |
+| 2       | 2026-01-03 |
+
+## Task
+Return users who logged in **3 consecutive days**.
+---
+
+# Question 2 — Longest Consecutive Order Streak Per Customer
+## Table: Orders
+
+| customer_id | order_date |
+| ----------- | ---------- |
+| 101         | 2026-01-01 |
+| 101         | 2026-01-02 |
+| 101         | 2026-01-05 |
+| 101         | 2026-01-06 |
+
+## Task
+Return longest consecutive day streak for each customer.
+---
+
+# Question 3 — Missing Dates in Sequence
+
+## Table: Attendance
+| attend_date |
+| ----------- |
+| 2026-01-01  |
+| 2026-01-02  |
+| 2026-01-04  |
+
+## Task
+
+Find missing dates.
+
+## Example
+
+Missing = 2026-01-03
+---
+
+# Question 4 — Customers Ordering in Back-to-Back Months
+
+## Table: Orders
+
+| customer_id | order_date |
+| ----------- | ---------- |
+| 101         | 2026-01-10 |
+| 101         | 2026-02-12 |
+| 102         | 2026-01-05 |
+| 102         | 2026-03-01 |
+
+## Task
+
+Return customers who ordered in consecutive months.
+
+---
+# Question 5 — Employees with 2 Consecutive Salary Drops
+## Table: SalaryHistory
+
+| emp_id | month | salary |
+| ------ | ----- | ------ |
+| 1      | Jan   | 5000   |
+| 1      | Feb   | 4800   |
+| 1      | Mar   | 4500   |
+| 2      | Jan   | 6000   |
+| 2      | Feb   | 6200   |
+
+## Task
+
+Return employees whose salary dropped in **2 consecutive months**.
+---
+
+# Solve First Before Looking Below
+
+---
+# Answers (Optimized Solutions)
+---
+
+## Answer 1 — Users Logged In 3 Consecutive Days
+WITH cte AS (
+SELECT user_id,
+       login_date,
+       LAG(login_date,1) OVER(
+           PARTITION BY user_id
+           ORDER BY login_date
+       ) AS prev1,
+       LAG(login_date,2) OVER(
+           PARTITION BY user_id
+           ORDER BY login_date
+       ) AS prev2
+FROM Logins
+)
+SELECT DISTINCT user_id
+FROM cte
+WHERE DATEDIFF(login_date, prev1) = 1
+  AND DATEDIFF(prev1, prev2) = 1;
+```
+---
+
+## Answer 2 — Longest Consecutive Order Streak
+WITH numbered AS (
+SELECT customer_id,
+       order_date,
+       ROW_NUMBER() OVER(
+           PARTITION BY customer_id
+           ORDER BY order_date
+       ) rn
+FROM Orders
+),
+grp AS (
+SELECT customer_id,
+       order_date,
+       DATE_SUB(order_date, INTERVAL rn DAY) grp_key
+FROM numbered
+)
+SELECT customer_id,
+       COUNT(*) AS longest_streak
+FROM grp
+GROUP BY customer_id, grp_key;
+```
+
+### Note
+
+To get max streak only, wrap with another aggregation using `MAX()`.
+
+---
+
+## Answer 3 — Missing Dates in Sequence
+
+WITH RECURSIVE dates AS (
+SELECT MIN(attend_date) AS dt
+FROM Attendance
+UNION ALL
+SELECT DATE_ADD(dt, INTERVAL 1 DAY)
+FROM dates
+WHERE dt < (SELECT MAX(attend_date) FROM Attendance)
+)
+SELECT dt AS missing_date
+FROM dates
+WHERE dt NOT IN (
+    SELECT attend_date FROM Attendance
+);
+```
+
+---
+
+## Answer 4 — Customers Ordering Back-to-Back Months
+WITH months_cte AS (
+SELECT DISTINCT customer_id,
+       DATE_FORMAT(order_date, '%Y-%m') AS order_month
+FROM Orders
+),
+x AS (
+SELECT customer_id,
+       order_month,
+       LAG(order_month) OVER(
+           PARTITION BY customer_id
+           ORDER BY order_month
+       ) prev_month
+FROM months_cte
+)
+SELECT DISTINCT customer_id
+FROM x
+WHERE PERIOD_DIFF(
+      REPLACE(order_month,'-',''),
+      REPLACE(prev_month,'-','')
+) = 1;
+```
+
+---
+
+## Answer 5 — 2 Consecutive Salary Drops
+WITH cte AS (
+SELECT emp_id,
+       month,
+       salary,
+       LAG(salary,1) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) prev1,
+       LAG(salary,2) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) prev2
+FROM SalaryHistory
+)
+SELECT DISTINCT emp_id
+FROM cte
+WHERE salary < prev1
+  AND prev1 < prev2;
+```
+
+---

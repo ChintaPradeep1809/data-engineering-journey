@@ -1,0 +1,153 @@
+# SQL 100 Challenge — Day 5
+
+# Question 1 — Rank Scores (Window Method)
+## Table: Scores
+| id | score |
+| -- | ----- |
+| 1  | 100   |
+| 2  | 95    |
+| 3  | 95    |
+| 4  | 80    |
+## Task
+Return scores with rank (no gaps).
+## Expected
+| score | rank |
+| ----- | ---- |
+| 100   | 1    |
+| 95    | 2    |
+| 95    | 2    |
+| 80    | 3    |
+
+---
+# Question 2 — Consecutive Numbers
+## Table: Logs
+| id | num |
+| -- | --- |
+| 1  | 1   |
+| 2  | 1   |
+| 3  | 1   |
+| 4  | 2   |
+| 5  | 1   |
+
+## Task
+Find numbers appearing **at least 3 times consecutively**.
+## Example
+`1` appears in rows 1,2,3 consecutively.
+Answer = 1
+---
+# Question 3 — Rising Temperature (Window Version)
+## Table: Weather
+| id | recordDate | temperature |
+| -- | ---------- | ----------- |
+| 1  | 2026-01-01 | 10          |
+| 2  | 2026-01-02 | 20          |
+| 3  | 2026-01-03 | 15          |
+
+## Task
+Return IDs where temperature > previous day.
+---
+# Question 4 — Running Total of Salary
+## Table: EmployeeSalary
+
+| emp_id | month | salary |
+| ------ | ----- | ------ |
+| 1      | Jan   | 1000   |
+| 1      | Feb   | 1200   |
+| 1      | Mar   | 1500   |
+
+## Task
+
+Return cumulative salary month by month.
+## Expected
+| month | salary | running_total |
+| ----- | ------ | ------------- |
+| Jan   | 1000   | 1000          |
+| Feb   | 1200   | 2200          |
+| Mar   | 1500   | 3700          |
+
+---
+# Question 5 — Top 2 Salaries per Department
+## Employee
+
+| id | name | dept | salary |
+| -- | ---- | ---- | ------ |
+| 1  | A    | IT   | 9000   |
+| 2  | B    | IT   | 8500   |
+| 3  | C    | IT   | 8500   |
+| 4  | D    | HR   | 7000   |
+
+## Task
+Return top 2 salary levels in each department.-
+# Solve First Before Looking Below
+
+---
+# Answers (Optimized Solutions)
+---
+
+## Answer 1 — Rank Scores
+SELECT score,
+DENSE_RANK() OVER(ORDER BY score DESC) AS rank_num
+FROM Scores;
+```
+### Why
+Ties share rank, no gaps.
+---
+
+## Answer 2 — Consecutive Numbers
+SELECT DISTINCT num AS ConsecutiveNums
+FROM (
+    SELECT num,
+           LAG(num,1) OVER(ORDER BY id) AS prev1,
+           LAG(num,2) OVER(ORDER BY id) AS prev2
+    FROM Logs
+) x
+WHERE num = prev1
+  AND num = prev2;
+```
+
+---
+
+## Answer 3 — Rising Temperature
+WITH cte AS (
+SELECT id,
+       temperature,
+       LAG(temperature) OVER(ORDER BY recordDate) AS prev_temp
+FROM Weather
+)
+SELECT id
+FROM cte
+WHERE temperature > prev_temp;
+```
+---
+## Answer 4 — Running Total Salary
+SELECT emp_id,
+       month,
+       salary,
+       SUM(salary) OVER(
+           PARTITION BY emp_id
+           ORDER BY month
+       ) AS running_total
+FROM EmployeeSalary;
+```
+
+---
+
+## Answer 5 — Top 2 Salaries per Department
+
+```sql id="fd4klo"
+WITH ranked AS (
+SELECT name,
+       dept,
+       salary,
+       DENSE_RANK() OVER(
+           PARTITION BY dept
+           ORDER BY salary DESC
+       ) rnk
+FROM Employee
+)
+SELECT dept, name, salary
+FROM ranked
+WHERE rnk <= 2;
+`````````
+
+We move into **LEAD/LAG advanced + sessionization + analytics patterns**.

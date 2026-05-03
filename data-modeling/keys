@@ -292,5 +292,77 @@ Artificial generated key.
 Ensures uniqueness.
 ```
 ---
+Why Warehouses Prefer Surrogate Keys ⭐
 
-Say **next topic**.
+Warehouses in Snowflake, Databricks, Google Cloud BigQuery environments commonly use surrogate keys.
+
+Reason 1: Faster Joins
+
+Joining on:
+
+(customer_id + source_system + region_code)
+
+is heavier than joining on:
+
+customer_key = 12345
+
+Integer joins usually perform better.
+
+Reason 2: Business Keys Change
+
+Example:
+
+Customer code changes from:
+
+CUST101 → IND_CUST101
+
+If natural/composite key used everywhere, painful updates.
+
+Surrogate key remains same.
+
+Reason 3: Multiple Source Systems
+
+CRM has customer_id = 101
+App has customer_id = 101
+
+Collision problem.
+
+Use warehouse surrogate key:
+
+customer_key	source	customer_id
+1	CRM	101
+2	APP	101
+Reason 4: SCD Type 2 History ⭐
+
+Same customer, different versions over time.
+
+customer_key	customer_id	city	active
+1	C101	Mumbai	N
+2	C101	Pune	Y
+
+Need multiple rows for same business id.
+
+Surrogate key solves elegantly.
+
+When Composite Key Is Better
+
+Do not blindly use surrogate everywhere.
+
+Use Composite Key When:
+1. Bridge / Junction Tables
+
+Student-Course Enrollment:
+
+| student_id | course_id |
+
+Natural composite key makes sense.
+
+2. True Business Uniqueness Needed
+
+Order line uniqueness:
+
+(order_id, line_number)
+
+3. OLTP transactional systems
+
+Sometimes composite key acceptable if stable and small.

@@ -1,0 +1,267 @@
+# Data Modelling – Normalization (Master Theory + Interview Style)
+# What is Normalization?
+## Theory
+**Normalization** is the process of organizing data into well-structured tables to reduce:
+* duplicate data
+* update anomalies
+* insert anomalies
+* delete anomalies
+* inconsistent data
+
+Goal:
+* cleaner schema
+* better integrity
+* easier maintenance
+
+---
+
+# Why Normalization Exists (Real Problem)
+
+## Bad Table Example
+
+| student_id | student_name | course | instructor |
+| ---------- | ------------ | ------ | ---------- |
+| 101        | Ravi         | SQL    | John       |
+| 101        | Ravi         | Python | Mike       |
+| 102        | Priya        | SQL    | John       |
+
+Problems:
+
+### Redundancy
+
+Ravi repeated. John repeated.
+
+### Update Anomaly
+
+If John changes to Jonathan, must update multiple rows.
+
+### Insert Anomaly
+
+Cannot add new instructor unless student enrolled.
+
+### Delete Anomaly
+
+Delete last SQL student → lose instructor John data.
+
+This is why normalization exists.
+
+---
+
+# Core Idea
+
+Break one bad table into logical smaller tables.
+
+Example:
+
+## Students
+
+| student_id | student_name |
+
+## Courses
+
+| course_id | course_name |
+
+## Enrollments
+
+| student_id | course_id |
+
+## Instructors
+
+| course_id | instructor |
+
+Now cleaner.
+
+---
+
+---
+
+# 1NF – First Normal Form ⭐
+
+# Theory
+
+A table is in **1NF** if:
+
+* each column has atomic values
+* no repeating groups
+* no arrays / comma-separated values
+* each row identifiable
+
+---
+# Violating Example
+
+| emp_id | name | skills           |
+| ------ | ---- | ---------------- |
+| 1      | Ravi | SQL,Python,Excel |
+
+`skills` has multiple values.
+
+Not atomic.
+---
+
+# Convert to 1NF
+
+| emp_id | name | skill  |
+| ------ | ---- | ------ |
+| 1      | Ravi | SQL    |
+| 1      | Ravi | Python |
+| 1      | Ravi | Excel  |
+
+Now each cell has one value.
+
+---
+
+---
+
+# 2NF – Second Normal Form ⭐
+
+# Theory
+
+A table must:
+
+* already be in 1NF
+* have no partial dependency
+
+Means non-key columns must depend on **entire composite key**, not part of it.
+---
+
+# Example Table
+
+| order_id | product_id | product_name | qty |
+| -------- | ---------- | ------------ | --- |
+
+Composite key = `(order_id, product_id)`
+
+But:
+
+`product_name` depends only on `product_id`, not full key.
+
+This is partial dependency.
+
+---
+# Fix for 2NF
+## Order Items
+| order_id | product_id | qty |
+## Products
+| product_id | product_name |
+
+Now product_name moved correctly.
+---
+---
+
+# 3NF – Third Normal Form ⭐⭐⭐
+
+# Theory
+
+A table must:
+
+* already be in 2NF
+* have no transitive dependency
+
+Meaning:
+
+Non-key columns should depend only on key, not another non-key column.
+
+---
+
+# Example
+
+| emp_id | emp_name | dept_id | dept_name |
+| ------ | -------- | ------- | --------- |
+
+PK = emp_id
+
+But:
+
+`dept_name` depends on `dept_id`, not directly on emp_id.
+
+Transitive dependency:
+
+emp_id → dept_id → dept_name
+
+---
+
+# Fix for 3NF
+
+## Employees
+
+| emp_id | emp_name | dept_id |
+
+## Departments
+
+| dept_id | dept_name |
+
+Now clean design.
+
+---
+
+# Interview Line
+
+3NF removes transitive dependency.
+
+---
+
+# Visual Summary
+
+1NF = Atomic values
+2NF = No partial dependency
+3NF = No transitive dependency
+```
+
+---
+
+# Real World Example – E-commerce
+
+At Amazon
+
+## Bad Orders Table
+
+| order_id | customer_name | customer_city | product_name | product_price |
+
+Massive duplication.
+
+## Better Normalized Design
+
+### Customers
+
+| customer_id | name | city |
+
+### Products
+
+| product_id | name | price |
+
+### Orders
+
+| order_id | customer_id |
+
+### Order_Items
+
+| order_id | product_id | qty |
+
+This is scalable.
+
+---
+
+# Why OLTP Systems Prefer Normalization
+
+Transactional systems at Uber, banks, ERPs often prefer normalized design because:
+
+* fewer duplicates
+* safer updates
+* better consistency
+* smaller storage
+
+---
+
+# Why Warehouses Often Denormalize
+
+Analytics systems may prefer star schema instead of heavy normalization because:
+
+* faster reads
+* fewer joins
+* BI friendly
+
+This is key interview insight.
+
+---
+
+

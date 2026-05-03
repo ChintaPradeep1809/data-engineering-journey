@@ -1,0 +1,147 @@
+# Data Modelling – Topic 3: Denormalization
+# What is Denormalization?
+
+## Theory
+**Denormalization** is the process of combining normalized tables or adding redundant data to improve read/query performance.
+It intentionally introduces duplication for speed.
+
+Goal:
+* fewer joins
+* faster reporting
+* simpler dashboards
+* better analytical performance
+---
+
+# Simple Definition
+Normalization = optimize data integrity
+Denormalization = optimize query speed
+---
+
+# Example: Normalized Design
+
+## Customers
+| customer_id | name | city   |
+| ----------- | ---- | ------ |
+| 101         | Ravi | Mumbai |
+## Orders
+
+| order_id | customer_id | amount |
+| -------- | ----------- | ------ |
+| 5001     | 101         | 2500   |
+
+To get report:
+SELECT o.order_id, c.name, c.city, o.amount
+FROM orders o
+JOIN customers c
+ON o.customer_id = c.customer_id;
+```
+Need join every time.
+---
+
+# Denormalized Version
+## Orders_Report Table
+
+| order_id | customer_name | city   | amount |
+| -------- | ------------- | ------ | ------ |
+| 5001     | Ravi          | Mumbai | 2500   |
+
+Now report query:
+SELECT * FROM orders_report;
+```
+
+Much faster / simpler.
+---
+
+# Why Denormalization Exists
+Large-scale analytics at Amazon, Netflix, Uber care about:
+
+* dashboard speed
+* BI query latency
+* aggregations over billions of rows
+
+Repeated joins across huge tables can be expensive.
+
+So denormalization is common in warehouses.
+
+---
+
+# Where Denormalization Is Used
+## 1. Data Warehouses
+Star schemas often denormalize dimensions.
+## 2. BI Dashboards
+Power BI / Tableau source tables often flattened.
+## 3. Reporting Layers
+Daily sales summary tables.
+## 4. Search Systems
+User profile duplicated for quick retrieval.
+---
+
+# Types of Denormalization
+# 1. Merge Tables
+Customers + Orders data flattened.
+---
+# 2. Duplicate Columns
+Store `customer_city` in orders table.
+---
+# 3. Precomputed Aggregates
+Daily sales table:
+
+| sales_date | total_sales |
+| ---------- | ----------- |
+Instead of recalculating every time.
+---
+# 4. Materialized Views
+Prebuilt query results.
+Used in many platforms.
+---
+# Real Example – E-commerce
+## Normalized
+* customers
+* orders
+* order_items
+* products
+
+Need many joins for dashboard.
+## Denormalized Analytics Table
+| order_id | customer_name | city | product_name | qty | amount | category |
+Single table for BI.
+---
+
+# Advantages of Denormalization ⭐
+## 1. Faster Reads
+Less joins.
+## 2. Better Dashboard Performance
+Great for BI tools.
+## 3. Simpler Queries
+Business users write easier SQL.
+## 4. Better for Massive Reporting Loads
+---
+#
+
+# Example in Warehouse
+
+At Snowflake or Google Cloud BigQuery:
+
+Fact table + dimensions may still be logically separate, but reporting layers often flatten outputs.
+
+---
+
+# Common Interview Questions
+
+## Q1. Why denormalize data?
+
+To improve query performance and reduce joins.
+
+## Q2. Does denormalization violate best practice?
+
+Not necessarily. Depends on workload.
+
+## Q3. Where would you use it?
+
+Warehouses, dashboards, reporting marts.
+
+## Q4. Why not use in OLTP?
+
+Updates become harder and consistency risk increases.
+
+---

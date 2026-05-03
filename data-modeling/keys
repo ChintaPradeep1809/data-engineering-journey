@@ -1,0 +1,296 @@
+# Data Modelling – Theory of Keys (With Examples)
+# What is a Key in DBMS?
+A key is one or more attributes (columns) used to:
+
+* uniquely identify rows
+* establish relationships between tables
+* enforce data integrity
+* reduce duplication
+* optimize searching and joining
+
+---
+# Example Base Table
+
+## Student Table
+
+| student_id | roll_no | email                                     | name  |
+| ---------- | ------- | ----------------------------------------- | ----- |
+| 101        | A001    | [ravi@gmail.com](mailto:ravi@gmail.com)   | Ravi  |
+| 102        | A002    | [priya@gmail.com](mailto:priya@gmail.com) | Priya |
+
+Now let’s learn all key types from this.
+---
+
+# 1. Super Key
+## Theory
+
+A **Super Key** is any set of one or more columns that can uniquely identify a row.
+It may contain extra unnecessary columns.
+If uniqueness is guaranteed, it is a super key.
+
+## Examples from Student Table
+
+These are Super Keys:
+
+* student_id
+* roll_no
+* email
+* student_id + name
+* roll_no + email
+
+Because each combination uniquely identifies one row.
+
+## Important Insight
+
+Every candidate key is a super key, but not every super key is minimal.
+
+---
+
+# 2. Candidate Key
+
+## Theory
+
+A **Candidate Key** is a minimal super key.
+
+Meaning:
+
+* uniquely identifies row
+* no extra column included
+
+## Examples
+
+From Student table:
+
+* student_id
+* roll_no
+* email
+
+All can uniquely identify rows.
+
+These are candidate keys.
+
+## Why “Candidate”?
+
+Because any one of them can be chosen as primary key.
+
+---
+
+# 3. Primary Key ⭐
+
+## Theory
+
+A **Primary Key** is the candidate key selected to uniquely identify rows officially.
+
+Rules:
+
+* Unique
+* Not NULL
+* Stable
+* One primary key per table
+
+## Example
+
+Choose `student_id`
+
+| student_id (PK) | name |
+| --------------- | ---- |
+| 101             | Ravi |
+
+## Why Usually ID Column?
+
+Because email can change, roll number policy may change.
+
+---
+
+# 4. Alternate Key
+
+## Theory
+
+Candidate keys not chosen as primary key become **Alternate Keys**.
+
+## Example
+
+If Primary Key = `student_id`
+
+Then:
+
+* roll_no
+* email
+
+are alternate keys.
+
+---
+
+# 5. Composite Key
+
+## Theory
+
+When two or more columns together uniquely identify a row, it is a composite key.
+
+Used when one column alone is not enough.
+
+## Example: Enrollment Table
+
+| student_id | course_id | semester |
+| ---------- | --------- | -------- |
+| 101        | C10       | 1        |
+| 101        | C20       | 1        |
+
+Neither `student_id` nor `course_id` alone is unique.
+
+But:
+
+`student_id + course_id`
+
+uniquely identifies enrollment.
+
+So composite key = `(student_id, course_id)`
+
+---
+
+# 6. Foreign Key ⭐
+
+## Theory
+
+A **Foreign Key** is a column in one table that references the primary key of another table.
+
+Used to create relationships and maintain referential integrity.
+
+## Example
+
+## Student Table
+
+| student_id |
+| ---------- |
+| 101        |
+
+## Orders Table
+
+| order_id | student_id |
+| -------- | ---------- |
+| 5001     | 101        |
+
+`Orders.student_id` is foreign key referencing `Student.student_id`
+
+## Why Important?
+
+Cannot insert invalid student_id = 999 if not present.
+
+---
+
+# 7. Natural Key
+
+## Theory
+
+A real-world meaningful business attribute used as key.
+
+Examples:
+
+* Email
+* Passport Number
+* PAN
+* Aadhaar
+* Employee Code
+
+## Example
+
+Use email as key.
+
+## Problem
+
+Business values can change.
+
+---
+
+# 8. Surrogate Key ⭐ Important for Data Engineering
+
+## Theory
+
+Artificial/generated key with no business meaning.
+
+Usually numeric auto-increment or UUID.
+
+## Example
+
+| customer_key | customer_id | name |
+| ------------ | ----------- | ---- |
+| 1            | C101        | Ravi |
+
+`customer_key` = surrogate key
+
+## Why Used?
+
+* Faster joins
+* Stable
+* Source system independent
+* Great for warehouses
+
+Used in Snowflake, Databricks, Amazon Web Services warehouses.
+
+---
+
+# 9. Unique Key
+
+## Theory
+
+Ensures values in column are unique.
+
+Usually allows NULL depending database system.
+
+## Example
+
+Email must be unique.
+
+| email                                     |
+| ----------------------------------------- |
+| [ravi@gmail.com](mailto:ravi@gmail.com)   |
+| [priya@gmail.com](mailto:priya@gmail.com) |
+
+No duplicates allowed.
+
+---
+
+# Relationship of All Keys
+
+```text
+Super Key
+ ├── Candidate Key
+      ├── Primary Key
+      └── Alternate Key
+```
+
+---
+
+# Keys in DBMS
+
+## Super Key
+Any attribute(s) uniquely identifying row.
+
+## Candidate Key
+Minimal super key.
+
+## Primary Key
+Chosen candidate key.
+Unique + Not Null.
+
+## Alternate Key
+Candidate keys not selected as PK.
+
+## Composite Key
+Multiple columns together unique.
+
+## Foreign Key
+References primary key of another table.
+
+## Natural Key
+Business meaningful key.
+
+## Surrogate Key
+Artificial generated key.
+
+## Unique Key
+Ensures uniqueness.
+```
+---
+
+Say **next topic**.

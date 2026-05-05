@@ -1,0 +1,178 @@
+# Data Modelling – Topic 6: Star Schema ⭐
+# What is a Star Schema?
+## Theory
+A **Star Schema** is a data modelling design where:
+* a central **fact table** is connected to multiple **dimension tables**
+* relationships are simple (one-to-many)
+* structure looks like a **star**
+
+---
+# Basic Structure
+
+```
+          Dim_Customer
+                |
+Dim_Product — Fact_Sales — Dim_Date
+                |
+          Dim_Store
+```
+* Fact table in center
+* Dimensions around it
+---
+
+# Real Example – E-commerce
+At Amazon:
+## Fact Table: fact_sales
+
+| customer_key | product_key | date_key | store_key | qty | revenue |
+| ------------ | ----------- | -------- | --------- | --- | ------- |
+
+---
+## Dimension Tables
+### dim_customer
+| customer_key | name | city | age_group |
+### dim_product
+| product_key | product_name | category |
+### dim_date
+| date_key | day | month | year |
+### dim_store
+| store_key | city | region |
+---
+# Why Star Schema Exists
+
+Without it:
+
+* too many joins
+* messy queries
+* slow dashboards
+
+With it:
+
+* structured
+* scalable
+* easy analytics
+
+---
+
+# Key Characteristics ⭐
+
+## 1. Central Fact Table
+
+* contains measures (qty, revenue)
+* contains foreign keys
+---
+
+## 2. Denormalized Dimensions
+Dimensions are usually **flattened**
+Example:
+Product table contains:
+* category
+* brand
+* type
+
+(not split into multiple tables)
+---
+
+## 3. Simple Joins
+
+Fact → Dimension joins are:
+
+* direct
+* one-to-many
+* fast
+---
+## 4. Optimized for Analytics
+
+Designed for:
+* aggregations
+* dashboards
+* reporting
+
+---
+# Example Query (Real Interview Level)
+
+Find revenue by category:
+
+```sql
+SELECT p.category, SUM(f.revenue)
+FROM fact_sales f
+JOIN dim_product p
+ON f.product_key = p.product_key
+GROUP BY p.category;
+```
+Clean and efficient.
+---
+# Why Not Fully Normalize?
+Because:
+* too many joins
+* complex queries
+* slow BI tools
+Star schema intentionally **denormalizes dimensions**.
+---
+# Star Schema vs Normalized Model
+
+| Feature     | Normalized           | Star Schema |
+| ----------- | -------------------- | ----------- |
+| Joins       | Many                 | Few         |
+| Complexity  | High                 | Low         |
+| Performance | Slower for analytics | Faster      |
+| Design      | OLTP                 | OLAP        |
+
+---
+
+# Advantages ⭐
+## 1. Fast Queries
+Fewer joins → faster execution
+---
+## 2. Simple for BI Tools
+Power BI / Tableau work better
+---
+## 3. Easy to Understand
+Business users can read schema
+---
+## 4. Scalable
+Handles billions of row
+---
+# Disadvantages ⚠️
+## 1. Data Redundancy
+Dimensions are denormalized
+---
+## 2. Storage Cost
+Duplicate attributes
+---
+## 3. Update Complexity
+Changes need ETL handling
+---
+# Real Systems Using Star Schema
+* Snowflake
+* Databricks
+* Amazon Web Services Redshift
+* Google Cloud BigQuery
+---
+# Interview Questions
+## Q1. What is Star Schema?
+A dimensional model with a central fact table connected to denormalized dimension tables.
+---
+## Q2. Why use Star Schema?
+* faster queries
+* simpler joins
+* optimized for analytics
+---
+## Q3. Why dimensions denormalized?
+To reduce joins and improve performance.
+---
+## Q4. Difference from Snowflake?
+Star = denormalized
+Snowflake = normalized dimensions (next topic)
+
+---
+
+# Brutal Truth
+If you say:
+“Star schema is fact + dimension tables”
+Basic.
+Say:
+“Star schema is a denormalized dimensional modelling approach optimized for analytical workloads with a central fact table and surrounding dimensions.”
+
+That’s strong.
+

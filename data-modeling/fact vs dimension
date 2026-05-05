@@ -1,0 +1,196 @@
+# Data Modelling – Topic 5: Fact Table vs Dimension Table
+
+---
+# First — Simple Intuition
+
+Think like this:
+
+* **Fact = measurable events (numbers)**
+* **Dimension = descriptive context (details)**
+---
+
+# Real Example
+At Amazon:
+
+A customer buys a product.
+That event generates:
+* amount
+* quantity
+* discount
+This is a **fact**.
+But you also need:
+* who bought (customer)
+* what product
+* when
+* where
+
+These are **dimensions**.
+---
+# What is a Fact Table?
+## Theory
+A **Fact Table** stores:
+* measurable metrics (numbers)
+* business events
+* foreign keys to dimensions
+
+---
+## Example: Sales Fact Table
+| customer_key | product_key | date_key | qty | revenue |
+| ------------ | ----------- | -------- | --- | ------- |
+| 101          | 2001        | 20250101 | 2   | 5000    |
+
+---
+
+## Characteristics
+
+* large (millions/billions rows)
+* numeric columns (measures)
+* contains foreign keys
+* grows continuously
+* used in aggregations
+
+---
+# Types of Measures in Fact Table
+## Additive
+Can sum across all dimensions
+Example: revenue, quantity
+## Semi-Additive
+Cannot sum across some dimensions (like time)
+Example: account balance
+## Non-Additive
+Cannot be summed
+Example: ratio, percentage
+
+---
+# What is a Dimension Table?
+## Theory
+A **Dimension Table** stores descriptive attributes that provide context to facts.
+
+---
+## Example: Customer Dimension
+
+| customer_key | name | city   | age_group |
+| ------------ | ---- | ------ | --------- |
+| 101          | Ravi | Mumbai | 20-30     |
+
+---
+## Characteristics
+
+* smaller than fact tables
+* descriptive columns
+* used in filtering and grouping
+* contain surrogate keys
+* used in joins
+
+---
+# Key Difference
+| Feature   | Fact Table    | Dimension Table    |
+| --------- | ------------- | ------------------ |
+| Purpose   | Store metrics | Store context      |
+| Data Type | Numeric       | Text/attributes    |
+| Size      | Large         | Small              |
+| Keys      | Foreign keys  | Primary key        |
+| Usage     | Aggregation   | Filtering/grouping |
+
+---
+
+# Example Query (Real Use)
+
+Find revenue by city:
+SELECT d.city, SUM(f.revenue)
+FROM fact_sales f
+JOIN dim_customer d
+ON f.customer_key = d.customer_key
+GROUP BY d.city;
+```
+
+Fact provides numbers
+Dimension provides grouping
+
+---
+
+# How They Work Together
+
+Fact = “What happened”
+Dimension = “Context of what happened”
+
+---
+
+
+# Types of Fact Tables ⭐
+
+## 1. Transaction Fact
+One row per event
+Example:
+Each order line
+---
+## 2. Snapshot Fact
+State at a point in time
+Example:
+Daily account balance
+---
+## 3. Accumulating Snapshot
+Tracks lifecycle
+Example:
+Order stages:
+* ordered
+* shipped
+* delivered
+---
+
+# Dimension Types (Basic)
+## 1. Conformed Dimension
+Shared across multiple fact tables
+Example:
+Date dimension
+## 2. Slowly Changing Dimension (covered later)
+Handles historical changes
+---
+# Design Pattern (Very Important)
+## Fact Table
+* only keys + measures
+* no descriptive columns
+## Dimension Table
+* all descriptive attributes
+---
+# Bad Design Example ❌
+| order_id | customer_name | city | product_name | revenue |
+Everything in one table.
+* redundant
+* hard to manage
+* not scalable
+---
+
+# Good Design Example ✅
+
+## Fact Sales
+| customer_key | product_key | revenue |
+## Dim Customer
+| customer_key | name | city |
+## Dim Product
+| product_key | name | category |
+
+---
+# Interview Questions
+
+## Q1. What is fact table?
+
+Stores measurable business events with foreign keys.
+
+## Q2. What is dimension table?
+
+Stores descriptive attributes used for filtering/grouping.
+
+## Q3. Why separate them?
+
+* reduce redundancy
+* improve performance
+* enable scalable analytics
+
+## Q4. Can fact table exist without dimension?
+
+Not useful.
+
+Context is required.
+
+---

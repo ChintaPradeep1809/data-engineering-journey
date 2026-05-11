@@ -1,0 +1,480 @@
+# Data Modelling – Topic 8: Grain / Granularity ⭐⭐⭐
+
+# (One of the Most Important Warehouse Concepts)
+
+This topic is a massive interview separator.
+
+Many candidates know:
+
+* fact tables
+* star schema
+* dimensions
+
+But fail when interviewer asks:
+
+> “What is the grain of your fact table?”
+
+That question tests real warehouse thinking.
+
+---
+
+# What is Grain?
+
+## Theory
+
+**Grain** defines:
+
+> “What exactly does one row in a fact table represent?”
+
+This is the fundamental meaning of a fact table row.
+
+---
+
+# Simple Definition
+
+Grain = level of detail stored in the table.
+
+---
+
+# Why Grain Matters
+
+Wrong grain causes:
+
+* duplicate metrics
+* incorrect reports
+* broken aggregations
+* inconsistent dashboards
+* huge warehouse problems
+
+Grain must be decided BEFORE building fact table.
+
+---
+
+# Real Example — Sales System
+
+At Amazon:
+
+Customer buys:
+
+* 2 iPhones
+* 1 charger
+
+Question:
+
+How should fact table store data?
+
+---
+
+# Option 1 — Order Level Grain
+
+## One Row Per Order
+
+| order_id | customer_key | total_amount |
+| -------- | ------------ | ------------ |
+| 1001     | 101          | 150000       |
+
+Grain:
+
+> One row = one order
+
+---
+
+# Option 2 — Order Item Grain ⭐
+
+| order_id | product_key | qty | amount |
+| -------- | ----------- | --- | ------ |
+| 1001     | P10         | 2   | 140000 |
+| 1001     | P20         | 1   | 10000  |
+
+Grain:
+
+> One row = one product inside an order
+
+This is more detailed.
+
+---
+
+# Important Insight ⭐
+
+Lower grain = more detailed data
+
+Higher grain = more summarized data
+
+---
+
+# Example
+
+## Daily Sales Grain
+
+| date  | store  | sales |
+| ----- | ------ | ----- |
+| Jan-1 | Mumbai | 50000 |
+
+One row per day.
+
+---
+
+## Transaction Grain
+
+| transaction_id | product | amount |
+| -------------- | ------- | ------ |
+| TX100          | iPhone  | 70000  |
+
+One row per transaction.
+
+More detailed.
+
+---
+
+# Core Rule ⭐
+
+You must clearly define grain before:
+
+* choosing dimensions
+* defining measures
+* loading data
+* building reports
+
+---
+
+# Grain Determines Everything
+
+Grain affects:
+
+* table size
+* query performance
+* aggregation logic
+* storage
+* reporting capability
+
+---
+
+# Interview Gold Statement ⭐
+
+> “The grain declaration is the single most important step in fact table design.”
+
+Very strong line.
+
+---
+
+# Common Types of Grain
+
+# 1. Transaction Grain
+
+One row per event.
+
+Example:
+
+* each order item
+* each payment
+* each click
+
+Most detailed.
+
+---
+
+# 2. Daily Snapshot Grain
+
+One row per day.
+
+Example:
+
+| date | account_balance |
+
+Used in banking.
+
+---
+
+# 3. Monthly Aggregate Grain
+
+One row per month.
+
+Example:
+
+| month | city | total_sales |
+
+Highly summarized.
+
+---
+
+# Real Warehouse Thinking
+
+Suppose management asks:
+
+> “Top products by hour.”
+
+If warehouse only stores monthly grain:
+
+Impossible.
+
+Low-detail grain supports more analytics flexibility.
+
+---
+
+# Tradeoff of Detailed Grain
+
+Detailed grain:
+
+✅ flexible analytics
+✅ drill-down reporting
+
+BUT:
+
+❌ larger tables
+❌ more storage
+❌ slower aggregations sometimes
+
+---
+
+# Mixed Grain Problem ⚠️
+
+One of the biggest mistakes.
+
+---
+
+# Bad Example
+
+| order_id | product | daily_sales |
+| -------- | ------- | ----------- |
+
+Mixing:
+
+* transaction grain
+* daily aggregate grain
+
+in same table.
+
+This creates inconsistent reporting.
+
+---
+
+# Grain Must Stay Consistent ⭐
+
+Every row in a fact table must represent same level of detail.
+
+---
+
+# Real Example — Netflix
+
+At Netflix
+
+Possible grains:
+
+## Watch Event Grain
+
+One row per content watch.
+
+---
+
+## Daily User Activity Grain
+
+One row per user per day.
+
+---
+
+## Monthly Subscription Revenue Grain
+
+One row per user per month.
+
+Each table has different purpose.
+
+---
+
+# How to Identify Grain
+
+Ask:
+
+## “What business event does this row represent?”
+
+Example:
+
+* one order?
+* one product purchase?
+* one customer per day?
+* one login event?
+
+That answer = grain.
+
+---
+
+# Grain and Dimensions Relationship
+
+Grain determines dimensions needed.
+
+Example:
+
+If grain = one product per order
+
+Need:
+
+* product dimension
+* customer dimension
+* date dimension
+
+---
+
+# Grain and Measures Relationship
+
+Measures must match grain.
+
+Bad design example:
+
+Monthly revenue stored in transaction-level fact.
+
+Leads to duplication.
+
+---
+
+# Common Interview Questions
+
+## Q1. What is grain?
+
+The level of detail represented by one row in a fact table.
+
+---
+
+## Q2. Why define grain first?
+
+Because dimensions, measures, and ETL depend on it.
+
+---
+
+## Q3. What happens with mixed grain?
+
+Inconsistent metrics and aggregation problems.
+
+---
+
+## Q4. Which grain is best?
+
+Depends on business requirements.
+
+Usually lowest practical grain preferred.
+
+---
+
+# Common Mistakes Candidates Make
+
+## Mistake 1
+
+Not defining grain explicitly.
+
+---
+
+## Mistake 2
+
+Mixing daily + transaction metrics.
+
+---
+
+## Mistake 3
+
+Building overly summarized fact tables.
+
+Lose analytical flexibility.
+
+---
+
+## Mistake 4
+
+Using different grains in same fact table.
+
+Dangerous.
+
+---
+
+# Real Industry Practice ⭐
+
+Warehouses in:
+
+* Snowflake
+* Databricks
+* Google Cloud BigQuery
+
+often store:
+
+* low-level transaction grain
+* then create aggregate summary tables separately
+
+Best practice.
+
+---
+
+# GitHub Notes Version
+
+```md id="b7n2qa"
+# Grain / Granularity
+
+## Definition
+Grain defines what one row in a fact table represents.
+
+## Examples
+- One row per order
+- One row per order item
+- One row per day
+
+## Rule
+Define grain before designing fact table.
+
+## Low Grain
+More detailed data.
+
+## High Grain
+More summarized data.
+
+## Common Problem
+Mixed grain causes incorrect aggregation.
+
+## Best Practice
+Keep consistent grain in fact table.
+```
+
+---
+
+# Brutal Truth
+
+If you say:
+
+“Grain means detail level.”
+
+Basic answer.
+
+Say:
+
+“Grain formally defines the business event represented by each fact table row and drives dimensional design, aggregation behavior, and warehouse correctness.”
+
+That sounds experienced.
+
+---
+
+# What You Just Achieved
+
+Now you understand:
+
+* why fact tables are designed differently
+* why duplicate metrics happen
+* why dashboards break
+* how real warehouses think
+
+This is a major milestone.
+
+---
+
+# Next Best Topic
+
+## Fact Table Types (deep refinement)
+
+OR
+
+## Slowly Changing Dimensions (SCD Type 1/2/3) ⭐⭐⭐
+
+Recommendation:
+Go directly to:
+
+# SCD Type 1/2/3
+
+This is one of the highest-frequency DE interview topics.
+
+Say:
+
+## “SCD start”

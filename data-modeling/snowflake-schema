@@ -1,0 +1,208 @@
+# Data Modelling – Topic 7: Snowflake Schema
+
+# First — Recall Star Schema
+
+In a **Star Schema**:
+
+* fact table at center
+* dimensions around it
+* dimensions are usually denormalized
+
+Example:
+## dim_product
+| product_key | product_name | category | brand |
+| ----------- | ------------ | -------- | ----- |
+Everything inside one dimension table.
+Simple and fast.
+---
+# What is Snowflake Schema?
+## Theory
+A **Snowflake Schema** is a dimensional model where dimension tables are further normalized into multiple related tables.
+Meaning:
+Instead of one large dimension table, dimensions are split into smaller tables.
+---
+
+# Example — Product Dimension
+## Star Schema Version
+### dim_product
+| product_key | product_name | category | brand |
+| ----------- | ------------ | -------- | ----- |
+Single dimension table.
+---
+## Snowflake Version
+### dim_product
+| product_key | product_name | category_key | brand_key |
+### dim_category
+| category_key | category_name |
+### dim_brand
+| brand_key | brand_name |
+Now dimensions themselves are normalized.
+---
+Star schema:
+* simple star shape
+Snowflake:
+* branching normalized structure
+---
+
+# Core Difference from Star Schema
+
+| Feature     | Star Schema  | Snowflake Schema |
+| ----------- | ------------ | ---------------- |
+| Dimensions  | Denormalized | Normalized       |
+| Joins       | Fewer        | More             |
+| Query Speed | Faster       | Slightly slower  |
+| Redundancy  | More         | Less             |
+| Complexity  | Simple       | More complex     |
+| Storage     | More         | Less             |
+
+---
+
+# Why Snowflake Schema Exists
+Normalization inside dimensions helps:
+* reduce redundancy
+* improve consistency
+* save storage
+* centralize hierarchy management
+---
+
+# Example — Real Retail Hierarchy
+Suppose thousands of products belong to categories.
+If category repeated in every product row:
+
+| product | category    |
+| ------- | ----------- |
+| iPhone  | Electronics |
+| TV      | Electronics |
+| Laptop  | Electronics |
+“Electronics” repeated everywhere.
+Snowflake schema separates category table.
+---
+
+# Real Warehouse Example
+At Amazon:
+## Fact Table
+fact_sales
+---
+## Snowflaked Product Dimension
+dim_product
+   |
+dim_subcategory
+   |
+dim_category
+```
+Product hierarchy normalized.
+---
+# Advantages of Snowflake Schema ⭐
+## 1. Reduced Redundancy
+Less duplicate data.
+---
+## 2. Better Data Integrity
+Category updates happen in one place.
+---
+## 3. Smaller Storage
+Useful for huge dimensions.
+---
+## 4. Better Hierarchy Management
+Complex organizational structures easier.
+---
+# Disadvantages ⚠️
+## 1. More Joins
+Analytics queries become more complex.
+---
+## 2. Slower Queries
+Compared to star schema.
+---
+## 3. Harder for BI Users
+Business teams prefer simpler star schema.
+---
+# Important Interview Insight ⭐
+Most modern warehouses prefer:
+✅ Star Schema for performance & simplicity
+Snowflake used selectively when:
+* dimensions huge
+* hierarchies complex
+* redundancy problematic
+This is the practical answer.
+---
+
+# Example Query Comparison
+## Star Schema Query
+SELECT category, SUM(revenue)
+FROM fact_sales f
+JOIN dim_product p
+ON f.product_key = p.product_key
+GROUP BY category;
+```
+Simple.
+---
+## Snowflake Query
+SELECT c.category_name, SUM(f.revenue)
+FROM fact_sales f
+JOIN dim_product p
+ON f.product_key = p.product_key
+JOIN dim_category c
+ON p.category_key = c.category_key
+GROUP BY c.category_name;
+```
+Extra joins.
+---
+# Star vs Snowflake — Real Thinking
+## Star Schema Optimizes
+* performance
+* simplicity
+* BI usability
+---
+
+## Snowflake Optimizes
+* storage
+* normalization
+* hierarchy consistency
+---
+
+# Common Interview Questions
+## Q1. Difference between Star and Snowflake?
+Star uses denormalized dimensions.
+Snowflake normalizes dimensions into multiple related tables.
+---
+
+## Q2. Which performs better?
+Usually Star Schema.
+---
+
+## Q3. Why use Snowflake then?
+Better storage efficiency and hierarchy management.
+---
+## Q4. Which is more normalized?
+Snowflake schema.
+---
+
+# GitHub Notes Version
+# Snowflake Schema
+## Definition
+A dimensional model where dimensions are normalized into multiple related tables.
+
+## Difference from Star Schema
+Star:
+- Denormalized dimensions
+- Faster queries
+
+Snowflake:
+- Normalized dimensions
+- More joins
+
+## Advantages
+- Less redundancy
+- Better integrity
+- Smaller storage
+
+## Disadvantages
+- Complex queries
+- More joins
+- Slower analytics
+
+## Use Case
+Complex hierarchies and large dimensions
+```
+
+---
+

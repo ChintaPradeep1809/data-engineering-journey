@@ -1,0 +1,331 @@
+# Phase 5 – Real Data Engineering
+
+# Topic 19: Late Arriving Dimensions ⭐⭐⭐
+
+# (One of the Most Practical Warehouse Problems)
+
+This is a real production issue.
+
+Many candidates know:
+
+* star schema
+* SCD
+* incremental loading
+
+But fail when interviewer asks:
+
+> “What happens if fact data arrives before dimension data?”
+
+That problem is:
+
+# Late Arriving Dimensions
+
+---
+
+# First — Understand the Problem
+
+In warehouses:
+
+Fact tables depend on:
+
+* dimension keys
+
+Example:
+
+## fact_sales
+
+| customer_key | product_key | revenue |
+
+Fact rows require valid dimension rows.
+
+---
+
+# Real Problem Scenario
+
+At Amazon:
+
+Order arrives:
+
+| customer_id | amount |
+| ----------- | ------ |
+| C101        | 5000   |
+
+BUT:
+
+Customer dimension record for C101 has not yet arrived in warehouse.
+
+Now ETL pipeline has problem:
+
+```text id="m2x8qa"
+Fact arrived first
+Dimension arrived later
+```
+
+This is:
+
+# Late Arriving Dimension
+
+---
+
+# Why This Happens in Real Systems
+
+Because:
+
+* pipelines run independently
+* source systems delayed
+* CDC lag exists
+* network latency
+* asynchronous ingestion
+
+Very common production issue.
+
+---
+
+# What is a Late Arriving Dimension?
+
+## Theory
+
+A **Late Arriving Dimension** occurs when fact data reaches the warehouse before the corresponding dimension record is available.
+
+---
+
+# Main Problem ⭐
+
+Fact table needs:
+
+```text id="k7v3pn"
+customer_key
+```
+
+But dimension row not yet present.
+
+So:
+
+* foreign key missing
+* joins fail
+* analytics break
+
+---
+
+# Common Solutions ⭐⭐⭐
+
+# 1. Unknown / Default Dimension Row ⭐
+
+Most common enterprise solution.
+
+---
+
+# Create Placeholder Record
+
+## dim_customer
+
+| customer_key | customer_name    |
+| ------------ | ---------------- |
+| -1           | Unknown Customer |
+
+---
+
+# Fact Table Loads Temporarily
+
+| customer_key | revenue |
+| ------------ | ------- |
+| -1           | 5000    |
+
+Later corrected when actual customer arrives.
+
+---
+
+# Why This Is Powerful
+
+Fact pipeline does NOT fail.
+
+Warehouse remains operational.
+
+Very important enterprise practice.
+
+---
+
+# 2. Early Arriving Facts Strategy
+
+Fact loads first with placeholder dimension.
+
+Later ETL updates correct surrogate key.
+
+---
+
+# Example
+
+Initially:
+
+| customer_key | revenue |
+| ------------ | ------- |
+| -1           | 5000    |
+
+Later:
+
+```text id="v4r9yt"
+-1 -> actual customer_key
+```
+
+---
+
+# 3. Reject & Retry Strategy
+
+Pipeline rejects fact row temporarily.
+
+Retries later after dimension arrives.
+
+---
+
+# Problem ⚠️
+
+Can create:
+
+* pipeline delays
+* backlog
+* operational complexity
+
+Less preferred for high-scale systems.
+
+---
+
+# 4. Inferred Members ⭐⭐
+
+Advanced warehouse technique.
+
+---
+
+# Idea
+
+Create temporary minimal dimension row automatically.
+
+Example:
+
+## dim_customer
+
+| customer_key | customer_id | customer_name |
+| ------------ | ----------- | ------------- |
+| 101          | C101        | UNKNOWN       |
+
+Later update full attributes.
+
+---
+
+# Important Insight ⭐
+
+Inferred member =
+placeholder dimension row created before full details arrive.
+
+Very common interview topic.
+
+---
+
+# Real Example — Netflix
+
+At Netflix:
+
+Watch event arrives before:
+
+* user profile sync complete
+
+Warehouse creates temporary user dimension.
+
+Later enriches attributes.
+
+---
+
+# Why Late Arriving Dimensions Matter ⭐⭐⭐
+
+Without handling:
+
+* ETL failures
+* broken joins
+* missing analytics
+* referential integrity problems
+
+Real warehouse reliability issue.
+
+---
+
+# Late Arriving Dimension vs Late Arriving Fact ⭐
+
+Very important distinction.
+
+| Problem                 | Meaning                      |
+| ----------------------- | ---------------------------- |
+| Late Arriving Dimension | Fact comes first             |
+| Late Arriving Fact      | Historical fact arrives late |
+
+Different problems.
+
+---
+
+# Example — Late Fact
+
+January sale arrives in March.
+
+That’s different issue.
+
+---
+
+# ETL Flow Example ⭐
+
+```text id="x5q2wk"
+Fact arrives
+     |
+Dimension missing
+     |
+Use unknown member / inferred member
+     |
+Dimension later arrives
+     |
+Update warehouse relationships
+```
+
+Real production workflow.
+
+---
+
+# Important Warehouse Practice ⭐
+
+Most warehouses maintain:
+
+```text id="r8n1zc"
+Unknown Dimension Rows
+```
+
+Examples:
+
+* customer = unknown
+* product = unknown
+* region = unknown
+
+Very common enterprise pattern.
+
+---
+
+# Common Interview Questions
+
+## Q1. What is late arriving dimension?
+
+Dimension record arrives after corresponding fact record.
+
+---
+
+## Q2. Main problem?
+
+Missing foreign key relationships.
+
+---
+
+## Q3. Common solution?
+
+Unknown member or inferred member.
+
+---
+
+## Q4. What is inferred member?
+
+Temporary dimension row created before full details arrive.
+
+---

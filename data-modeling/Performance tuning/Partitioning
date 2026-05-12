@@ -1,0 +1,233 @@
+Data Modelling – Partitioning ⭐⭐⭐
+
+(One of the Most Important Performance Topics in Data Engineering)
+
+First — What Problem Does Partitioning Solve?
+
+Imagine a huge fact table at Amazon:
+
+fact_sales
+
+date	customer	revenue
+
+Suppose:
+10 billion rows
+5 years of data
+
+Now query:
+SELECT *
+FROM fact_sales
+WHERE sale_date = '2026-01-01';
+
+Without partitioning:
+
+database scans huge table
+
+query becomes slow
+
+massive I/O cost
+
+
+Partitioning solves this.
+
+---
+
+What is Partitioning?
+
+Theory
+
+Partitioning divides a large table into smaller physical segments based on a column.
+
+Each segment is called:
+
+partition
+
+
+---
+
+Simple Definition
+Instead of one huge table:
+split data into manageable chunks
+---
+
+Example — Date Partitioning ⭐
+fact_sales
+Partitioned by month:
+fact_sales_2026_jan
+fact_sales_2026_feb
+fact_sales_2026_mar
+
+Now query for January only scans January partition.
+
+Huge performance improvement.
+
+
+---
+
+Important Insight ⭐
+
+Partitioning:
+changes physical storage
+not logical business meaning
+Users still query same table.
+---
+Most Common Partition Column
+Date / Time ⭐⭐⭐
+Because:
+data naturally grows over time
+most queries filter by date
+Extremely common in:
+warehouses
+Spark
+BigQuery
+Snowflake
+---
+How Query Performance Improves
+
+Without partitioning:
+Scan 10 billion rows
+With partitioning:
+Scan only January partition
+This is called:
+Partition Pruning ⭐
+
+Very important interview term.
+---
+
+What is Partition Pruning?
+
+Database reads only relevant partitions instead of entire table.
+---
+Example
+WHERE sale_date = '2026-01-01'
+Only January partition scanned.
+---
+
+Types of Partitioning
+1. Range Partitioning ⭐
+Data split by ranges.
+Example:
+monthly
+yearly
+salary ranges
+Most common warehouse type.
+---
+
+Example
+2025 partition
+2026 partition
+2027 partition
+
+
+---
+
+2. List Partitioning
+Based on fixed categories.
+Example:
+India partition
+US partition
+UK partition
+---
+3. Hash Partitioning
+Rows distributed using hash function.
+Used for:
+balancing data
+parallelism
+---
+4. Composite Partitioning
+Combination of multiple methods.
+Example:
+range + hash
+Advanced systems.
+---
+
+Real Warehouse Example
+At Netflix
+Watch events table may partition by:
+watch_date
+Because most analytics are time-based.
+---
+
+Why Partitioning Is Important ⭐⭐⭐
+
+1. Faster Queries
+Most important advantage.
+---
+2. Reduced I/O
+Less disk scanning.
+---
+
+3. Better Parallel Processing
+
+Multiple partitions processed simultaneously.
+---
+
+4. Easier Data Management
+
+Can archive/drop old partitions.
+---
+
+Example — Archiving
+
+Drop old 2020 partition directly.
+Instead of deleting billions of rows.
+Huge operational benefit.
+---
+
+Partitioning vs Indexing ⭐
+Very common interview question.
+
+Partitioning	Indexing
+Splits table physically	Creates lookup structure
+Reduces scan size	Speeds row search
+Good for huge scans	Good for point lookups
+
+Both solve different problems.
+---
+Important Interview Insight ⭐
+Partitioning works best when queries frequently filter on partition column.
+
+Very important statement.
+
+
+---
+
+
+
+Common Interview Questions
+
+Q1. What is partitioning?
+
+Splitting large tables into smaller physical segments.
+
+
+---
+
+Q2. Why partition tables?
+
+Improve query performance and scalability.
+
+
+---
+
+Q3. Most common partition column?
+
+Date/time.
+
+
+---
+
+Q4. What is partition pruning?
+
+Scanning only required partitions.
+
+
+---
+
+Q5. Difference between partitioning and indexing?
+
+Partitioning reduces scanned data volume; indexing improves lookup access.
+
+
+---
+

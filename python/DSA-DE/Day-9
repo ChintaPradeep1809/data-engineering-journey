@@ -1,0 +1,291 @@
+Day 9 — Exception Handling
+
+Topics Covered
+
+✅ try
+✅ except
+✅ finally
+✅ else
+✅ multiple exceptions
+✅ custom exceptions basics
+✅ raising exceptions
+
+
+---
+
+Q1 Basic Exception Handling
+
+basic_exception.py
+
+try:
+
+    num = int(input("Enter number: "))
+
+    print(num)
+
+except ValueError:
+
+    print("Invalid Input")
+
+
+---
+
+Q2 Division Exception
+
+division_exception.py
+
+try:
+
+    a = 10
+    b = 0
+
+    print(a / b)
+
+except ZeroDivisionError:
+
+    print("Cannot divide by zero")
+
+Output:
+
+Cannot divide by zero
+
+
+---
+
+Q3 Multiple Exceptions
+
+multiple_exceptions.py
+
+try:
+
+    nums = [1,2,3]
+
+    print(nums[5])
+
+except IndexError:
+
+    print("Index out of range")
+
+except Exception as e:
+
+    print(e)
+
+Output:
+
+Index out of range
+
+
+---
+
+Q4 finally Block
+
+finally_block.py
+
+try:
+
+    print("Trying")
+
+except:
+
+    print("Error")
+
+finally:
+
+    print("Execution Completed")
+
+Output:
+
+Trying
+Execution Completed
+
+
+---
+
+Q5 else Block
+
+else_block.py
+
+try:
+
+    num = 10
+
+    print(num)
+
+except:
+
+    print("Error")
+
+else:
+
+    print("No Exception Occurred")
+
+Output:
+
+10
+No Exception Occurred
+
+
+---
+
+Q6 Raise Exception
+
+raise_exception.py
+
+age = -5
+
+if age < 0:
+
+    raise ValueError("Age cannot be negative")
+
+
+---
+
+Q7 Custom Exception
+
+custom_exception.py
+
+class InvalidSalaryError(Exception):
+    pass
+
+
+salary = -1000
+
+if salary < 0:
+
+    raise InvalidSalaryError("Salary cannot be negative")
+
+
+---
+
+LeetCode 1 — Valid Parentheses
+
+valid_parentheses.py
+
+class Solution:
+
+    def isValid(self, s):
+
+        stack = []
+
+        mapping = {
+            ')': '(',
+            '}': '{',
+            ']': '['
+        }
+
+        for char in s:
+
+            if char in mapping.values():
+
+                stack.append(char)
+
+            elif char in mapping.keys():
+
+                if not stack or stack.pop() != mapping[char]:
+                    return False
+
+        return len(stack) == 0
+
+
+obj = Solution()
+
+print(obj.isValid("()[]{}"))
+
+Output:
+
+True
+
+
+---
+
+LeetCode 2 — Remove Element
+
+remove_element.py
+
+class Solution:
+
+    def removeElement(self, nums, val):
+
+        k = 0
+
+        for num in nums:
+
+            if num != val:
+
+                nums[k] = num
+
+                k += 1
+
+        return k
+
+
+obj = Solution()
+
+print(obj.removeElement([3,2,2,3], 3))
+
+Output:
+
+2
+
+
+---
+
+LeetCode 3 — Plus One
+
+plus_one.py
+
+class Solution:
+
+    def plusOne(self, digits):
+
+        number = int("".join(map(str, digits)))
+
+        number += 1
+
+        return list(map(int, str(number)))
+
+
+obj = Solution()
+
+print(obj.plusOne([1,2,3]))
+
+Output:
+
+[1, 2, 4]
+
+
+---
+
+notes.md
+
+# Day 9 - Exception Handling
+
+## Topics Learned
+- try
+- except
+- finally
+- else
+- raise
+- custom exceptions
+
+## Important Learnings
+
+### Why Exception Handling Matters
+Prevents program crashes.
+
+### finally
+Always executes.
+
+### else
+Executes if no exception occurs.
+
+### raise
+Used to manually throw exceptions.
+
+## Real Importance
+Critical in production pipelines and ETL jobs.
+
+
+---
+
+

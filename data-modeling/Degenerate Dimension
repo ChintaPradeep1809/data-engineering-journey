@@ -1,0 +1,178 @@
+# Data Modelling – Degenerate Dimensions
+---
+
+# First — Recall Normal Dimensions
+Normally in star schema:
+## Fact Table
+| customer_key | product_key | revenue |
+connects to:
+## Dimension Tables
+* dim_customer
+* dim_product
+* dim_date
+
+Dimensions contain descriptive attributes.
+---
+# But Sometimes…
+Certain business identifiers:
+* do not need separate dimension tables
+* have no additional attributes
+* still useful for analysis
+These become:
+# Degenerate Dimensions
+---
+
+# What is a Degenerate Dimension?
+
+## Theory
+A **Degenerate Dimension** is a dimension attribute stored directly inside the fact table without a separate dimension table.
+Usually:
+* transaction identifiers
+* invoice numbers
+* ticket numbers
+* order numbers
+---
+
+# Real Example — E-commerce
+At Amazon
+## Fact Sales
+| order_number | customer_key | product_key | revenue |
+| ------------ | ------------ | ----------- | ------- |
+| ORD1001      | 101          | P10         | 5000    |
+
+`order_number` is useful for:
+* drill-down
+* tracing orders
+* auditing
+But:
+No separate dimension table needed.
+---
+# Why No Separate Dimension Table?
+Suppose:
+## dim_order
+
+| order_number |
+| ------------ |
+| ORD1001      |
+
+No meaningful attributes.
+Useless table.
+So keep directly in fact table.
+---
+
+# Important Insight ⭐
+Degenerate dimension:
+* behaves like dimension attribute
+* but physically stays in fact table
+No dimension table created.
+---
+# Common Examples ⭐
+| Example        | Why Degenerate?           |
+| -------------- | ------------------------- |
+| order_number   | transaction identifier    |
+| invoice_id     | no descriptive attributes |
+| ticket_number  | tracing only              |
+| receipt_number | operational reference     |
+---
+# Not a Measure
+Very important.
+Degenerate dimension is:
+❌ not numeric metric
+❌ not aggregation field
+
+It is still dimensional information.
+---
+# Real Warehouse Example
+## Fact Orders
+| order_number | customer_key | date_key | amount |
+| ------------ | ------------ | -------- | ------ |
+
+Here:
+
+* customer_key → dimension FK
+* date_key → dimension FK
+* amount → measure
+* order_number → degenerate dimension
+---
+
+# Why Useful?
+Business users often want:
+> “Show details for order ORD1001”
+
+Degenerate dimension supports drill-through analysis.
+---
+
+# Advantages ⭐
+## 1. Simpler Schema
+Avoid unnecessary dimension table.
+---
+## 2. Faster Queries
+No extra joins.
+---
+## 3. Useful Operational Tracking
+Transaction tracing easier.
+---
+# Disadvantages ⚠️
+## 1. Fact Table Slightly Larger
+Extra identifier stored directly.
+---
+## 2. Limited Reusability
+Not useful as standalone dimension.
+---
+# Difference from Regular Dimension
+
+| Feature        | Regular Dimension | Degenerate Dimension  |
+| -------------- | ----------------- | --------------------- |
+| Separate Table | Yes               | No                    |
+| Attributes     | Many              | Usually none          |
+| Stored In      | Dimension table   | Fact table            |
+| Purpose        | Context           | Transaction reference |
+
+---
+
+
+
+# Common Interview Questions
+
+## Q1. What is degenerate dimension?
+
+A dimension attribute stored directly in fact table without separate dimension table.
+
+---
+
+## Q2. Why no separate dimension table?
+
+No meaningful descriptive attributes exist.
+
+---
+
+## Q3. Common examples?
+
+* order number
+* invoice id
+* ticket number
+
+---
+
+## Q4. Is it a measure?
+
+No.
+
+It is still dimensional information.
+
+---
+
+You now understand:
+
+| Concept              | Solves                  |
+| -------------------- | ----------------------- |
+| Bridge Table         | many-to-many            |
+| Junk Dimension       | repetitive flags        |
+| Degenerate Dimension | transaction identifiers |
+
+This is advanced warehouse modelling thinking now.
+
+---
+
+
+## “Conformed dimension start”

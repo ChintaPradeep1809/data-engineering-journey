@@ -1,0 +1,405 @@
+# Phase 5 – Real Data Engineering
+
+# Topic 17: CDC (Change Data Capture) ⭐⭐⭐
+
+# (One of the Most Important Real-World Data Engineering Concepts)
+
+Until now you learned:
+
+* how warehouses are designed
+* how they scale
+
+Now we move into:
+
+# “How data actually moves and updates in production systems.”
+
+CDC is one of the most important concepts in:
+
+* ETL pipelines
+* streaming systems
+* real-time analytics
+* warehouse synchronization
+
+---
+
+# First — What Problem Does CDC Solve?
+
+Suppose at Amazon:
+
+## customers table
+
+| customer_id | city   |
+| ----------- | ------ |
+| C101        | Mumbai |
+
+Later:
+
+```text id="a4m9zx"
+Mumbai -> Bangalore
+```
+
+Warehouse must know:
+
+* what changed
+* when it changed
+* which rows changed
+
+Without scanning entire table every time.
+
+CDC solves this.
+
+---
+
+# What is CDC?
+
+## Theory
+
+**Change Data Capture (CDC)** is a technique used to identify and capture changes made to source data systems.
+
+Changes include:
+
+* INSERT
+* UPDATE
+* DELETE
+
+---
+
+# Simple Definition
+
+CDC tracks only changed data instead of reprocessing full tables.
+
+---
+
+# Why CDC Is Important ⭐⭐⭐
+
+Without CDC:
+
+Every ETL run must:
+
+```text id="u6k2wr"
+Read entire table
+```
+
+Very expensive at scale.
+
+Imagine:
+
+* 10 billion rows
+* only 100 changed rows
+
+Full scan wastes:
+
+* compute
+* network
+* time
+* cloud cost
+
+CDC avoids this.
+
+---
+
+# Real Example
+
+## Source System
+
+Before:
+
+| customer_id | city   |
+| ----------- | ------ |
+| C101        | Mumbai |
+
+---
+
+After:
+
+| customer_id | city      |
+| ----------- | --------- |
+| C101        | Bangalore |
+
+CDC captures:
+
+```text id="k8v5pq"
+UPDATE:
+customer_id = C101
+old_city = Mumbai
+new_city = Bangalore
+```
+
+Only changed row processed.
+
+---
+
+# Types of Changes CDC Captures
+
+| Operation | Meaning              |
+| --------- | -------------------- |
+| INSERT    | new row added        |
+| UPDATE    | existing row changed |
+| DELETE    | row removed          |
+
+---
+
+# Why CDC Is Critical in Warehouses
+
+Warehouses need:
+
+* fresh data
+* incremental updates
+* low latency
+* scalable pipelines
+
+CDC enables this efficiently.
+
+---
+
+# Real Pipeline Flow ⭐
+
+```text id="c3n7ys"
+OLTP Database
+      |
+     CDC
+      |
+Streaming / ETL Pipeline
+      |
+Data Warehouse
+```
+
+This is real production architecture.
+
+---
+
+# Common CDC Approaches ⭐
+
+# 1. Timestamp-Based CDC
+
+Most common beginner approach.
+
+---
+
+## Idea
+
+Source table contains:
+
+```text id="p1x4mu"
+last_updated_time
+```
+
+ETL loads rows where:
+
+```sql id="j9r2tv"
+last_updated_time > previous_run_time
+```
+
+---
+
+# Example
+
+| customer_id | city      | updated_at |
+| ----------- | --------- | ---------- |
+| C101        | Bangalore | 2026-01-10 |
+
+Only latest rows fetched.
+
+---
+
+# Advantages
+
+* simple
+* easy implementation
+
+---
+
+# Disadvantages ⚠️
+
+* may miss deletes
+* depends on timestamps accuracy
+
+---
+
+# 2. Log-Based CDC ⭐⭐⭐
+
+Most important enterprise method.
+
+---
+
+# Idea
+
+Database transaction logs tracked directly.
+
+Examples:
+
+* MySQL binlog
+* PostgreSQL WAL
+* Oracle redo logs
+
+CDC tools read logs continuously.
+
+---
+
+# Advantages ⭐
+
+## 1. Real-Time Updates
+
+Very fast.
+
+---
+
+## 2. Captures All Operations
+
+Insert/update/delete.
+
+---
+
+## 3. No Full Table Scans
+
+Highly scalable.
+
+---
+
+# Disadvantages
+
+* more complex
+* database-level setup required
+
+---
+
+# Real Tools Using CDC ⭐
+
+| Tool         | Purpose               |
+| ------------ | --------------------- |
+| Debezium     | log-based CDC         |
+| Apache Kafka | streaming transport   |
+| AWS DMS      | migration + CDC       |
+| Fivetran     | managed CDC pipelines |
+
+---
+
+# 3. Trigger-Based CDC
+
+Database triggers capture changes.
+
+---
+
+# Example
+
+```text id="e5q8zl"
+AFTER UPDATE trigger
+```
+
+writes changes into audit table.
+
+---
+
+# Problem
+
+Triggers may slow transactional systems.
+
+Less preferred at scale.
+
+---
+
+# CDC vs Full Load ⭐
+
+| Full Load           | CDC                 |
+| ------------------- | ------------------- |
+| Entire table loaded | Only changes loaded |
+| Expensive           | Efficient           |
+| Slow                | Faster              |
+| High compute cost   | Lower cost          |
+
+---
+
+# CDC + SCD Connection ⭐⭐⭐
+
+Very important relationship.
+
+CDC detects:
+
+```text id="v7n1kc"
+what changed
+```
+
+SCD decides:
+
+```text id="d2r6pt"
+how warehouse stores change
+```
+
+Excellent interview insight.
+
+---
+
+# Example
+
+CDC detects:
+
+```text id="x9m3ua"
+city changed
+```
+
+Then:
+
+* SCD Type 1 → overwrite
+* SCD Type 2 → preserve history
+
+This is real warehouse engineering flow.
+
+---
+
+# Real Industry Example
+
+At Netflix:
+
+User changes subscription plan.
+
+CDC captures:
+
+```text id="h8q4wx"
+Premium -> Family Plan
+```
+
+Warehouse updates dimensions incrementally.
+
+---
+
+# Advantages of CDC ⭐⭐⭐
+
+## 1. Faster ETL Pipelines
+
+---
+
+## 2. Lower Compute Cost
+
+---
+
+## 3. Near Real-Time Analytics
+
+---
+
+## 4. Reduced Data Movement
+
+---
+
+# Challenges ⚠️
+
+## 1. Handling Deletes
+
+Especially timestamp-based CDC.
+
+---
+
+## 2. Ordering Events Correctly
+
+---
+
+## 3. Schema Changes
+
+Source table evolution complicated.
+
+---
+
+## 4. Duplicate Event Handling
+
+Very important in streaming systems.
+
+---

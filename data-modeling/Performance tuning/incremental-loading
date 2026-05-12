@@ -1,0 +1,367 @@
+# Phase 5 – Real Data Engineering
+
+---
+
+# First — What Problem Does Incremental Loading Solve?
+
+Suppose at Amazon:
+
+## orders table
+
+Contains:
+
+* 5 billion rows
+
+Every hour new data arrives:
+
+* only 10,000 rows changed
+
+Bad approach:
+
+```text id="s4m8qx"
+Reload all 5 billion rows
+```
+
+Huge waste.
+
+Incremental loading solves this.
+
+---
+
+# What is Incremental Loading?
+
+## Theory
+
+**Incremental Loading** is a process where only new or changed data is loaded into the target system instead of reloading the entire dataset.
+
+---
+
+# Simple Definition
+
+Load only delta changes.
+
+---
+
+# Important Insight ⭐
+
+Incremental loading depends heavily on:
+
+* CDC
+* timestamps
+* version tracking
+* primary keys
+
+This is why CDC topic came first.
+
+---
+
+# Full Load vs Incremental Load ⭐⭐⭐
+
+| Full Load         | Incremental Load  |
+| ----------------- | ----------------- |
+| Reload everything | Load only changes |
+| Expensive         | Efficient         |
+| Slow              | Faster            |
+| Heavy compute     | Lower cost        |
+| Simple logic      | More complex      |
+
+---
+
+# Real Example
+
+## Source Table
+
+| order_id | amount | updated_at |
+| -------- | ------ | ---------- |
+| 101      | 500    | 10:00      |
+| 102      | 700    | 10:05      |
+
+---
+
+# ETL Run at 10:10
+
+Stores:
+
+```text id="g7p2vn"
+last_run_time = 10:10
+```
+
+---
+
+# Next ETL Run
+
+Query:
+
+```sql id="y4t8kr"
+SELECT *
+FROM orders
+WHERE updated_at > '10:10';
+```
+
+Only new/changed rows loaded.
+
+That is incremental loading.
+
+---
+
+# Why Incremental Loading Is Important ⭐⭐⭐
+
+## 1. Faster Pipelines
+
+Most important advantage.
+
+---
+
+## 2. Lower Cloud Cost
+
+Less compute and scanning.
+
+---
+
+## 3. Better Scalability
+
+Supports huge datasets.
+
+---
+
+## 4. Near Real-Time Analytics
+
+Smaller batches load quickly.
+
+---
+
+# Common Incremental Strategies ⭐
+
+# 1. Timestamp-Based Incremental Loading
+
+Most common.
+
+---
+
+# Logic
+
+Load rows where:
+
+```sql id="r2x6pm"
+updated_at > last_run_time
+```
+
+---
+
+# Advantages
+
+* simple
+* easy implementation
+
+---
+
+# Problems ⚠️
+
+* clock synchronization issues
+* missed late records
+* delete handling difficult
+
+---
+
+# 2. CDC-Based Incremental Loading ⭐⭐⭐
+
+CDC detects:
+
+* insert
+* update
+* delete
+
+Pipeline incrementally processes changes.
+
+Most enterprise-grade approach.
+
+---
+
+# Example Flow
+
+```text id="n8w4zc"
+Database Logs
+      |
+     CDC
+      |
+Incremental ETL
+      |
+Warehouse
+```
+
+---
+
+# 3. Batch Incremental Loading
+
+Runs periodically:
+
+* hourly
+* daily
+* every 15 minutes
+
+Most common enterprise pattern.
+
+---
+
+# 4. Streaming Incremental Loading
+
+Near real-time continuous ingestion.
+
+Used in:
+
+* Kafka pipelines
+* event systems
+* streaming analytics
+
+Advanced architecture.
+
+---
+
+# Important ETL Concepts ⭐
+
+# Append Strategy
+
+Only new rows inserted.
+
+Example:
+
+* logs
+* transactions
+
+---
+
+# Merge / Upsert Strategy ⭐
+
+Update existing rows if record exists.
+
+Insert if new.
+
+Very important warehouse pattern.
+
+---
+
+# Example
+
+```text id="k3m9qa"
+If customer exists -> UPDATE
+Else -> INSERT
+```
+
+---
+
+# SQL-Style Merge Example
+
+```sql id="u6v1pt"
+MERGE INTO dim_customer t
+USING staging_customer s
+ON t.customer_id = s.customer_id
+WHEN MATCHED THEN UPDATE
+WHEN NOT MATCHED THEN INSERT;
+```
+
+Very common DE interview pattern.
+
+---
+
+# Watermark Concept ⭐⭐⭐
+
+One of the most important incremental load concepts.
+
+---
+
+# What is Watermark?
+
+Stores latest successfully processed value.
+
+Example:
+
+```text id="d5r8xy"
+last_processed_timestamp = 2026-01-10 10:00
+```
+
+Next ETL starts after this point.
+
+---
+
+# Why Watermark Important?
+
+Prevents:
+
+* duplicate loads
+* missed records
+* reprocessing issues
+
+---
+
+# Late Arriving Data Problem ⚠️
+
+Suppose:
+
+* record created at 10:05
+* arrives at 11:00
+
+Simple timestamp logic may miss it.
+
+Huge real-world problem.
+
+We’ll cover later.
+
+---
+
+# Incremental Load + SCD Connection ⭐
+
+Incremental pipeline detects changed dimension row.
+
+Then:
+
+* SCD Type 1 → overwrite
+* SCD Type 2 → insert historical version
+
+This is actual warehouse ETL flow.
+
+---
+
+# Real Warehouse Example
+
+At Netflix:
+
+Watch events continuously arrive.
+
+Incremental loading processes:
+
+* only new watch events
+* not entire history daily
+
+---
+
+# Common Interview Questions
+
+## Q1. What is incremental loading?
+
+Loading only new or changed records instead of full dataset reload.
+
+---
+
+## Q2. Why incremental loading important?
+
+Improves performance and reduces cost.
+
+---
+
+## Q3. Difference between CDC and incremental load?
+
+CDC detects changes; incremental loading processes those changes.
+
+---
+
+## Q4. What is watermark?
+
+Checkpoint storing latest processed record/time.
+
+---
+
+## Q5. What is upsert?
+
+Update existing row or insert new row.
+
+---

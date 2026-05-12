@@ -1,0 +1,193 @@
+Data Modelling – SCD Type 3
+
+(Limited Historical Tracking)
+Now Type 3 is a middle approach.
+---
+
+Why SCD Type 3 Exists
+Sometimes business does NOT need full history.
+But still wants:
+previous value
+recent comparison
+limited tracking
+Instead of creating multiple rows like Type 2:
+Type 3 adds extra columns to store previous values.
+---
+Core Theory
+Definition
+SCD Type 3 preserves limited history by storing old and new values in separate columns within the same row.
+---
+Real Example
+At Amazon
+Customer Ravi moves:
+Mumbai → Bangalore
+---
+Before Change
+
+customer_id	current_city	previous_city
+C101	Mumbai	NULL
+---
+
+After Change
+customer_id	current_city	previous_city
+C101	Bangalore	Mumbai
+Old value stored in another column.
+---
+Important Difference from Type 2 ⭐
+Type 2
+Creates NEW ROWS
+---
+
+Type 3
+Creates NEW COLUMNS
+---
+How Updates Work
+
+When city changes:
+Step 1
+Current city copied into previous_city
+Step 2
+New city placed into current_city
+---
+Another Example — Employee Department
+emp_id	current_department	previous_department
+E101	Data Engineering	Automation
+Business can compare:
+current department
+immediate previous department
+But older history lost.
+---
+Key Limitation ⭐
+Type 3 stores only limited history.
+Usually:
+one previous value OR
+few historical columns
+Not full timeline.
+---
+
+Advantages
+1. Simple Queries
+No multiple rows.
+---
+
+2. Easy Comparison
+Current vs previous state visible directly.
+---
+3. Less Storage Than Type 2
+---
+
+Disadvantages
+1. Limited Historical Tracking
+Cannot maintain long-term history.
+---
+2. Schema Changes Needed
+Every new tracked version may require new columns.
+---
+
+3. Not Scalable for Frequent Changes
+---
+
+Type 1 vs Type 2 vs Type 3
+Feature	Type 1	Type 2	Type 3
+History	None	Full	Limited
+Method	Overwrite	New rows	Extra columns
+Storage	Small	High	Medium
+Complexity	Low	High	Medium
+---
+
+Real Use Cases
+1. Current vs Previous Comparison
+Example:
+current manager
+previous manager
+---
+
+2. Reporting Systems
+Need only latest transition.
+---
+3. Business Trend Tracking
+Example: current region vs previous region.
+---
+
+SQL-Style Thinking
+
+UPDATE dim_customer
+SET previous_city = current_city,
+    current_city = 'Bangalore'
+WHERE customer_id = 'C101';
+
+
+---
+
+Interview Questions
+
+Q1. What is SCD Type 3?
+
+Stores limited historical data using additional columns.
+
+
+---
+
+Q2. Difference between Type 2 and Type 3?
+
+Type 2 stores history in rows.
+Type 3 stores history in columns.
+
+
+---
+
+Q3. Main limitation?
+
+Cannot maintain complete historical timeline.
+
+
+---
+
+Real Industry Insight
+
+Type 3 is less common than:
+
+Type 1
+
+Type 2
+
+
+Most enterprise warehouses prefer:
+
+Type 2 for full history
+
+Type 1 for simple overwrite
+
+
+Type 3 is selective and niche.
+
+
+---
+
+GitHub Notes Version
+
+# SCD Type 3
+
+## Definition
+Stores limited historical data using extra columns.
+
+## Example
+current_city
+previous_city
+
+## Key Idea
+History stored in columns instead of rows.
+
+## Advantages
+- Simple queries
+- Easy comparison
+- Less storage than Type 2
+
+## Disadvantages
+- Limited history
+- Not scalable
+- Schema changes required
+
+## Difference
+Type 2 -> new rows
+Type 3 -> new columns

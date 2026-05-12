@@ -1,0 +1,493 @@
+Data Modelling – Indexing Concepts ⭐
+
+(Fast Data Retrieval in Databases & Warehouses)
+
+You already learned:
+
+Partitioning → split huge data
+
+Clustering → organize data physically
+
+
+Now:
+
+Indexing
+
+solves a different problem.
+
+It helps databases find rows quickly without scanning entire tables.
+
+
+---
+
+First — Why Indexing Exists
+
+Suppose at Amazon:
+
+customers table
+
+customer_id	name	city
+
+
+
+Contains:
+
+100 million customers
+
+
+Now query:
+
+SELECT *
+FROM customers
+WHERE customer_id = 101;
+
+Without index:
+
+database scans huge table
+
+row-by-row search
+
+very slow
+
+
+Index solves this.
+
+
+---
+
+What is an Index?
+
+Theory
+
+An Index is a special data structure that improves the speed of data retrieval operations.
+
+Works similar to:
+
+book index
+
+Instead of reading entire book:
+
+jump directly to page.
+
+
+
+---
+
+Simple Definition
+
+Index helps database locate rows faster.
+
+
+---
+
+Real-Life Analogy ⭐
+
+Without index:
+
+Searching word in book:
+
+read every page
+
+
+With index:
+
+go directly to page number
+
+
+Same concept in databases.
+
+
+---
+
+How Database Works Without Index
+
+Full Table Scan
+
+Database checks every row.
+
+Very expensive for large tables.
+
+
+---
+
+With Index
+
+Database uses lookup structure:
+
+customer_id -> row location
+
+Much faster retrieval.
+
+
+---
+
+Most Common Index Type
+
+B-Tree Index ⭐⭐⭐
+
+Default index type in many databases.
+
+Organized like balanced search tree.
+
+Provides:
+
+fast search
+
+fast range queries
+
+efficient lookups
+
+
+
+---
+
+Example
+
+Without Index
+
+WHERE customer_id = 101
+
+Scan entire table.
+
+
+---
+
+With Index
+
+Database directly navigates tree structure.
+
+Huge speed improvement.
+
+
+---
+
+Primary Key Automatically Indexed ⭐
+
+Very important interview point.
+
+Example:
+
+PRIMARY KEY(customer_id)
+
+Usually creates index automatically.
+
+
+---
+
+Common Columns to Index ⭐
+
+Column	Why
+
+customer_id	frequent lookup
+order_id	transaction search
+email	login/search
+product_id	joins/filtering
+
+
+
+---
+
+Bad Columns for Indexing ⚠️
+
+Low Cardinality Columns
+
+Example:
+
+gender = M/F
+
+Index often useless.
+
+Too few distinct values.
+
+
+---
+
+Important Concept — Cardinality ⭐
+
+Cardinality = number of unique values.
+
+
+---
+
+High Cardinality
+
+Good for indexing.
+
+Example:
+
+customer_id
+
+email
+
+
+
+---
+
+Low Cardinality
+
+Poor indexing candidates.
+
+Example:
+
+boolean flags
+
+gender
+
+
+
+---
+
+Clustered Index vs Non-Clustered Index ⭐
+
+Very common interview topic.
+
+
+---
+
+Clustered Index
+
+Physically organizes table rows.
+
+Table stored in index order.
+
+Usually:
+
+one clustered index
+
+
+
+---
+
+Example
+
+Rows physically sorted by:
+
+customer_id
+
+
+---
+
+Non-Clustered Index
+
+Separate lookup structure pointing to rows.
+
+Table order unchanged.
+
+Can have:
+
+multiple non-clustered indexes
+
+
+
+---
+
+Comparison
+
+Feature	Clustered	Non-Clustered
+
+Physical row order	Yes	No
+Count per table	Usually one	Multiple
+Speed	Very fast	Fast
+
+
+
+---
+
+Composite Index ⭐
+
+Index on multiple columns.
+
+Example:
+
+INDEX(customer_id, order_date)
+
+Useful when queries filter both columns.
+
+
+---
+
+Example Query
+
+WHERE customer_id = 101
+AND order_date = '2026-01-01'
+
+Composite index helps.
+
+
+---
+
+Important Interview Insight ⭐
+
+Indexes improve read performance but slow down writes.
+
+Very important statement.
+
+
+---
+
+Why Writes Become Slower
+
+Every:
+
+INSERT
+
+UPDATE
+
+DELETE
+
+
+must also update indexes.
+
+More indexes:
+
+more maintenance overhead
+
+
+
+---
+
+Tradeoff ⭐
+
+Benefit	Cost
+
+Faster reads	Slower writes
+Better filtering	Extra storage
+Faster joins	Index maintenance
+
+
+
+---
+
+Indexing vs Partitioning vs Clustering ⭐⭐⭐
+
+Very common interview comparison.
+
+Feature	Indexing	Partitioning	Clustering
+
+Purpose	Fast row lookup	Split large tables	Organize rows
+Best For	Point search	Huge scans	Filter optimization
+Example	customer_id lookup	date partitions	customer grouping
+
+
+
+---
+
+Real Warehouse Reality ⭐
+
+Traditional OLTP DBs heavily use indexes.
+
+But warehouses like:
+
+Snowflake
+
+Google Cloud BigQuery
+
+
+often rely more on:
+
+partitioning
+
+clustering
+
+columnar storage
+
+
+instead of traditional indexing.
+
+Important modern insight.
+
+
+---
+
+Common Interview Questions
+
+Q1. What is indexing?
+
+Data structure improving retrieval speed.
+
+
+---
+
+Q2. Why indexes improve performance?
+
+Avoid full table scans.
+
+
+---
+
+Q3. Why indexes slow writes?
+
+Indexes must also be updated.
+
+
+---
+
+Q4. Difference between clustered and non-clustered index?
+
+Clustered changes physical row order; non-clustered does not.
+
+
+---
+
+Q5. Good indexing columns?
+
+High-cardinality frequently searched columns.
+
+
+---
+
+
+
+GitHub Notes Version
+
+# Indexing
+
+## Definition
+Data structure that improves data retrieval speed.
+
+## Purpose
+Avoid full table scans.
+
+## Common Index Type
+B-Tree Index
+
+## Good Index Columns
+- customer_id
+- order_id
+- email
+
+## Poor Index Columns
+- gender
+- boolean flags
+
+## Types
+- Clustered Index
+- Non-Clustered Index
+- Composite Index
+
+## Tradeoff
+Faster reads but slower writes.
+
+## Difference
+Indexing -> lookup speed
+Partitioning -> split large tables
+Clustering -> organize rows
+
+
+---
+
+Important Milestone
+
+You have now completed almost the full:
+
+Warehouse Performance Foundation ✅
+
+Covered:
+
+Partitioning
+
+Clustering
+
+Indexing
+
+

@@ -1,0 +1,125 @@
+array reversal
+nums = [1, 2, 3, 4]
+
+reversed_list = nums[::-1]
+
+print(reversed_list)
+
+2.largest number 
+nums = [10, 20, 4, 99, 45]
+
+largest = nums[0]
+
+for num in nums:
+
+    if num > largest:
+        largest = num
+
+print(largest)
+
+
+3. remove duplicates 
+nums = [1, 1, 2, 3, 3, 4]
+
+unique = list(set(nums))
+
+print(unique)
+
+
+4. second largest element 
+
+nums = [10, 20, 4, 45, 99]
+
+largest = second = float('-inf')
+
+for num in nums:
+
+    if num > largest:
+        second = largest
+        largest = num
+
+    elif num > second and num != largest:
+        second = num
+
+print(second)
+
+
+count even odd
+nums = [1, 2, 3, 4, 5, 6]
+
+even = 0
+odd = 0
+
+for num in nums:
+
+    if num % 2 == 0:
+        even += 1
+
+    else:
+        odd += 1
+
+print("Even:", even)
+print("Odd:", odd)
+
+≈=================
+contains duplicates 
+
+class Solution:
+
+    def containsDuplicate(self, nums):
+
+        return len(nums) != len(set(nums))
+
+
+obj = Solution()
+
+print(obj.containsDuplicate([1,2,3,1]))
+
+
+2. best time to buy and sell stock
+
+class Solution:
+
+    def maxProfit(self, prices):
+
+        min_price = float('inf')
+        max_profit = 0
+
+        for price in prices:
+
+            if price < min_price:
+                min_price = price
+
+            profit = price - min_price
+
+            if profit > max_profit:
+                max_profit = profit
+
+        return max_profit
+
+
+obj = Solution()
+
+print(obj.maxProfit([7,1,5,3,6,4]))
+
+3. move zeros
+class Solution:
+
+    def moveZeroes(self, nums):
+
+        left = 0
+
+        for right in range(len(nums)):
+
+            if nums[right] != 0:
+
+                nums[left], nums[right] = nums[right], nums[left]
+
+                left += 1
+
+        return nums
+
+
+obj = Solution()
+
+print(obj.moveZeroes([0,1,0,3,12]))

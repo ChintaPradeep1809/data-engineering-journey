@@ -1,0 +1,252 @@
+Data Modelling – SCD (Slowly Changing Dimensions)
+
+
+First — What Problem Does SCD Solve?
+
+In real businesses, dimension data changes over time.
+
+Examples:
+
+Entity	What Changes?
+
+Customer	city, address
+Employee	department
+Product	category
+User	subscription plan
+
+
+Now warehouse must decide:
+
+> “Should we keep old history or overwrite it?”
+
+That is the purpose of SCD.
+---
+
+What is a Slowly Changing Dimension?
+Theory
+
+A Slowly Changing Dimension (SCD) is a technique used in data warehouses to manage changes in dimension data over time.
+
+Dimension attributes do not remain static forever.
+
+They evolve slowly.
+
+---
+
+Real Example
+
+At Amazon
+Customer Ravi:
+customer_id	name	city
+
+C101	Ravi	Mumbai
+
+
+Later Ravi moves to Bangalore.
+
+Now warehouse must decide:
+
+Option 1
+
+Overwrite Mumbai
+OR
+
+Option 2
+
+Keep both Mumbai and Bangalore history
+
+Different businesses need different behavior.
+---
+
+Types of SCD
+Main ones:
+Type	Behavior
+Type 1	Overwrite old data
+Type 2	Keep full history
+Type 3	Keep limited previous value
+
+---
+
+SCD Type 1 ⭐
+
+Theory
+
+In SCD Type 1:
+
+> Old value is overwritten with new value.
+No history preserved.
+
+---
+
+Example
+
+Before Update
+
+customer_id	name	city
+
+C101	Ravi	Mumbai
+
+---
+
+After Update
+Ravi moves to Bangalore.
+customer_id	name	city
+C101	Ravi	Bangalore
+Mumbai history gone.
+
+---
+
+Important Point
+Only latest/current value exists.
+Warehouse does NOT remember old value.
+---
+Why Use SCD Type 1?
+Used when:
+historical tracking not important
+incorrect data needs correction
+only latest state matters
+---
+
+Real Use Cases
+Example 1 — Spelling Correction
+Wrong:
+“Bangalre”
+Correct:
+“Bangalore”
+No need history.
+---
+
+Example 2 — Customer Phone Number
+Business only needs latest phone number.
+---
+
+Example 3 — Typo Fixes
+Name correction.
+---
+SQL Style Update Logic
+UPDATE dim_customer
+SET city = 'Bangalore'
+WHERE customer_id = 'C101';
+Simple overwrite.
+---
+
+Advantages of SCD Type 1 ⭐
+1. Simple Design
+
+Easy ETL logic.
+---
+
+2. Less Storage
+
+Only current row maintained.
+---
+
+3. Fast Queries
+
+No multiple historical records.
+---
+
+Disadvantages ⚠️
+
+1. History Lost
+Cannot answer:
+> “Where did customer live last year?”
+Impossible.
+---
+
+2. Historical Reports Become Incorrect
+
+Past reports may change unexpectedly.
+---
+
+Important Interview Insight ⭐
+
+SCD Type 1 is NOT suitable when business needs historical analysis.
+
+This is critical.
+---
+
+Example Problem
+
+Suppose:
+2024: Ravi in Mumbai
+2025: Ravi in Bangalore
+
+If overwritten:
+Old sales reports now incorrectly show Bangalore for past orders too.
+History corrupted.
+---
+
+Where SCD Type 1 Commonly Used
+
+Used for:
+typo corrections
+non-historical attributes
+low-value attributes
+latest-state systems
+---
+
+Comparison So Far
+Feature	SCD Type 1
+
+History Preserved	No
+Overwrite Data	Yes
+Storage	Small
+Complexity	Low
+---
+
+Common Interview Questions
+
+Q1. What is SCD Type 1?
+Overwrites old dimension data with new value without preserving history.
+---
+
+Q2. When should Type 1 be used?
+When historical tracking is unnecessary.
+---
+Q3. Main disadvantage?
+Loss of historical information.
+---
+
+
+Real Industry Insight ⭐
+
+Many warehouses use:
+
+Type 1 for low-value attributes
+
+Type 2 for business-critical historical attributes
+
+
+Combination approach.
+
+
+---
+
+# SCD Type 1
+
+## Definition
+Overwrites old dimension data with new value.
+
+## History
+Not preserved.
+
+## Example
+Mumbai -> Bangalore
+Old value replaced.
+
+## Advantages
+- Simple
+- Less storage
+- Fast queries
+
+## Disadvantages
+- History lost
+- Past reports may become incorrect
+
+## Use Cases
+- Typo correction
+- Latest state only
+- Non-historical attributes
+
+---

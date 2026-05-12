@@ -1,0 +1,241 @@
+Day 8 — Lambda Functions, map(), filter(), reduce()
+
+Topics Covered
+
+✅ lambda functions
+✅ map()
+✅ filter()
+✅ reduce()
+✅ anonymous functions
+✅ transformation logic
+
+
+---
+
+Q1 Lambda Function Basics
+
+lambda_basics.py
+
+square = lambda x: x * x
+
+print(square(5))
+
+Output:
+
+25
+
+
+---
+
+Q2 Add Two Numbers Using Lambda
+
+lambda_add.py
+
+add = lambda a, b: a + b
+
+print(add(10, 20))
+
+Output:
+
+30
+
+
+---
+
+Q3 map() Example
+
+map_example.py
+
+nums = [1, 2, 3, 4]
+
+squares = list(map(lambda x: x * x, nums))
+
+print(squares)
+
+Output:
+
+[1, 4, 9, 16]
+
+
+---
+
+Q4 filter() Example
+
+filter_example.py
+
+nums = [1,2,3,4,5,6]
+
+evens = list(filter(lambda x: x % 2 == 0, nums))
+
+print(evens)
+
+Output:
+
+[2, 4, 6]
+
+
+---
+
+Q5 reduce() Example
+
+reduce_example.py
+
+from functools import reduce
+
+nums = [1,2,3,4]
+
+result = reduce(lambda a, b: a + b, nums)
+
+print(result)
+
+Output:
+
+10
+
+
+---
+
+Q6 Convert Strings to Uppercase
+
+uppercase_map.py
+
+names = ["data", "engineering", "python"]
+
+upper = list(map(lambda x: x.upper(), names))
+
+print(upper)
+
+Output:
+
+['DATA', 'ENGINEERING', 'PYTHON']
+
+
+---
+
+Q7 Filter Positive Numbers
+
+positive_filter.py
+
+nums = [-2, 5, -1, 10, 0]
+
+positive = list(filter(lambda x: x > 0, nums))
+
+print(positive)
+
+Output:
+
+[5, 10]
+
+
+---
+
+LeetCode 1 — Sort Array By Parity
+
+sort_array_parity.py
+
+class Solution:
+
+    def sortArrayByParity(self, nums):
+
+        even = list(filter(lambda x: x % 2 == 0, nums))
+        odd = list(filter(lambda x: x % 2 != 0, nums))
+
+        return even + odd
+
+
+obj = Solution()
+
+print(obj.sortArrayByParity([3,1,2,4]))
+
+Output:
+
+[2, 4, 3, 1]
+
+
+---
+
+LeetCode 2 — Squares of a Sorted Array
+
+squares_sorted_array.py
+
+class Solution:
+
+    def sortedSquares(self, nums):
+
+        result = list(map(lambda x: x * x, nums))
+
+        result.sort()
+
+        return result
+
+
+obj = Solution()
+
+print(obj.sortedSquares([-4,-1,0,3,10]))
+
+Output:
+
+[0,1,9,16,100]
+
+
+---
+
+LeetCode 3 — Find Maximum Number
+
+maximum_number.py
+
+from functools import reduce
+
+nums = [10, 45, 2, 99, 23]
+
+maximum = reduce(lambda a, b: a if a > b else b, nums)
+
+print(maximum)
+
+Output:
+
+99
+
+
+---
+
+notes.md
+
+# Day 8 - Lambda, map, filter, reduce
+
+## Topics Learned
+- lambda functions
+- map()
+- filter()
+- reduce()
+
+## Important Learnings
+
+### lambda
+Anonymous one-line function.
+
+### map()
+Transforms every element.
+
+### filter()
+Filters elements based on condition.
+
+### reduce()
+Reduces collection into single value.
+
+## Why Important
+Used heavily in:
+- data transformations
+- ETL pipelines
+- Pandas/PySpark logic
+
+
+---
+
+
+O(n)
+
+
+---
+
+

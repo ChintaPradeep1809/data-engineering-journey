@@ -1,0 +1,260 @@
+Day 7 — Functions (VERY IMPORTANT)
+
+
+
+Q1 Simple Function
+
+simple_function.py
+
+def greet():
+
+    print("Welcome to Data Engineering")
+
+
+greet()
+
+Output:
+
+Welcome to Data Engineering
+
+
+---
+
+Q2 Function with Parameters
+
+function_parameters.py
+
+def add(a, b):
+
+    return a + b
+
+
+result = add(10, 20)
+
+print(result)
+
+Output:
+
+30
+
+
+---
+
+Q3 Even or Odd Function
+
+even_odd.py
+
+def check_even_odd(num):
+
+    if num % 2 == 0:
+        return "Even"
+
+    return "Odd"
+
+
+print(check_even_odd(10))
+print(check_even_odd(7))
+
+Output:
+
+Even
+Odd
+
+
+---
+
+Q4 Find Maximum Using Function
+
+maximum_number.py
+
+def find_max(nums):
+
+    largest = nums[0]
+
+    for num in nums:
+
+        if num > largest:
+            largest = num
+
+    return largest
+
+
+print(find_max([10, 45, 2, 99, 23]))
+
+Output:
+
+99
+
+
+---
+
+Q5 Count Vowels Using Function
+
+count_vowels.py
+
+def count_vowels(s):
+
+    count = 0
+
+    for char in s.lower():
+
+        if char in "aeiou":
+            count += 1
+
+    return count
+
+
+print(count_vowels("DataEngineering"))
+
+Output:
+
+7
+
+
+---
+
+Q6 Default Arguments
+
+default_arguments.py
+
+def greet(name="Guest"):
+
+    return f"Hello {name}"
+
+
+print(greet())
+print(greet("Pradeep"))
+
+Output:
+
+Hello Guest
+Hello Pradeep
+
+
+---
+
+Q7 Keyword Arguments
+
+keyword_arguments.py
+
+def student(name, course):
+
+    print(name)
+    print(course)
+
+
+student(course="Data Engineering", name="Pradeep")
+
+Output:
+
+Pradeep
+Data Engineering
+
+
+---
+
+Q8 Recursion Basics — Factorial
+
+factorial_recursion.py
+
+def factorial(n):
+
+    if n == 1:
+        return 1
+
+    return n * factorial(n - 1)
+
+
+print(factorial(5))
+
+Output:
+
+120
+
+
+---
+
+LeetCode 1 — Palindrome Number
+
+palindrome_number.py
+
+class Solution:
+
+    def isPalindrome(self, x):
+
+        original = str(x)
+
+        reversed_num = original[::-1]
+
+        return original == reversed_num
+
+
+obj = Solution()
+
+print(obj.isPalindrome(121))
+
+Output:
+
+True
+
+
+---
+
+LeetCode 2 — Missing Number
+
+missing_number.py
+
+class Solution:
+
+    def missingNumber(self, nums):
+
+        n = len(nums)
+
+        expected = n * (n + 1) // 2
+
+        actual = sum(nums)
+
+        return expected - actual
+
+
+obj = Solution()
+
+print(obj.missingNumber([3,0,1]))
+
+Output:
+
+2
+
+
+---
+
+LeetCode 3 — Single Number
+
+single_number.py
+
+class Solution:
+
+    def singleNumber(self, nums):
+
+        freq = {}
+
+        for num in nums:
+            freq[num] = freq.get(num, 0) + 1
+
+        for key, value in freq.items():
+
+            if value == 1:
+                return key
+
+
+obj = Solution()
+
+print(obj.singleNumber([4,1,2,1,2]))
+
+Output:
+
+4
+
+
+---
+

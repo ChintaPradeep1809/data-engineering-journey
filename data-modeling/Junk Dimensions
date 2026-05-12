@@ -1,0 +1,190 @@
+# Junk Dimensions
+# (Handling Low-Cardinality Flags Efficiently)
+This is a warehouse optimization topic.
+Without junk dimensions, warehouses become messy with too many tiny attributes inside fact tables.
+---
+
+# First — What Problem Does Junk Dimension Solve?
+In real systems, fact tables often contain many small flags like:
+| is_paid | is_refunded | is_active | delivery_status |
+| ------- | ----------- | --------- | --------------- |
+
+These are:
+* small text fields
+* boolean flags
+* low-cardinality attributes
+If stored directly in fact table:
+* fact table becomes bloated
+* repetitive values increase
+* warehouse design becomes messy
+
+Junk dimensions solve this.
+---
+# What is a Junk Dimension?
+## Theory
+
+A **Junk Dimension** combines multiple low-cardinality attributes and flags into a single dimension table.
+---
+
+# What is Low Cardinality?
+Means:
+Few possible distinct values.
+Example:
+| Column  | Possible Values |
+| ------- | --------------- |
+| is_paid | Y/N             |
+| gender  | M/F             |
+| status  | Pending/Shipped |
+
+Very small value combinations.
+---
+# Real Example — E-commerce
+
+At Amazon
+
+Suppose sales fact has:
+
+| order_id | is_returned | is_gift_wrapped | payment_mode |
+| -------- | ----------- | --------------- | ------------ |
+
+These tiny attributes repeat millions of times.
+
+---
+
+# Bad Design ❌
+
+## fact_sales
+
+| order_id | revenue | is_returned | is_gift_wrapped | payment_mode |
+| -------- | ------- | ----------- | --------------- | ------------ |
+
+Fact table becomes cluttered.
+
+---
+
+# Better Design — Junk Dimension ⭐
+
+## dim_order_flags
+
+| junk_key | is_returned | is_gift_wrapped | payment_mode |
+| -------- | ----------- | --------------- | ------------ |
+| 1        | N           | Y               | CARD         |
+| 2        | Y           | N               | UPI          |
+
+---
+
+## fact_sales
+
+| order_id | junk_key | revenue |
+| -------- | -------- | ------- |
+| 1001     | 1        | 5000    |
+
+Cleaner fact table.
+
+---
+
+# Why Called “Junk” Dimension?
+
+Because it groups miscellaneous small attributes that don’t deserve separate dimensions.
+
+Not “junk” as bad data.
+
+---
+
+# Why Not Separate Dimension for Every Flag?
+
+Imagine separate dimensions:
+
+* dim_payment_flag
+* dim_return_flag
+* dim_wrap_flag
+
+Too many unnecessary joins.
+
+Junk dimension groups them together.
+
+---
+
+# Important Insight ⭐
+
+Junk dimensions are used ONLY for:
+
+* low-cardinality attributes
+* small repeating flags
+* status indicators
+
+Not large business entities.
+
+---
+
+# Advantages ⭐
+
+## 1. Cleaner Fact Tables
+
+Less clutter.
+---
+## 2. Better Storage Efficiency
+Repeated combinations stored once.
+---
+## 3. Simpler Warehouse Design
+Avoids many tiny dimensions.
+---
+## 4. Better Query Organization
+Grouped business flags together.
+
+---
+# Disadvantages ⚠️
+## 1. Combination Explosion
+Too many attributes can create massive combinations.
+Example:
+10 binary flags:
+2^10 = 1024 combinations
+```
+Can grow quickly.
+---
+## 2. Harder Maintenance
+If unrelated attributes grouped badly.
+---
+# Real Example — Airline System
+Flags:
+* meal_requested
+* wheelchair_required
+* priority_boarding
+
+Perfect junk dimension candidates.
+---
+
+# Not Good Candidates for Junk Dimension
+❌ customer_name
+❌ city
+❌ product_category
+
+Because:
+
+* high cardinality
+* business entities
+* deserve proper dimensions
+
+---
+# Common Interview Questions
+
+## Q1. What is junk dimension?
+Dimension combining low-cardinality flags and indicators.
+---
+## Q2. Why needed?
+
+To avoid cluttering fact tables with small repetitive attributes.
+---
+
+## Q3. What kind of attributes go into junk dimension?
+* boolean flags
+* statuses
+* indicators
+* small code values
+---
+
+## Q4. Main risk?
+
+Too many combinations causing dimension explosion.
+---
+

@@ -1,0 +1,353 @@
+Day 10 — File Handling (VERY IMPORTANT FOR DATA ENGINEERING)
+
+This is where Python starts becoming useful for actual DE work.
+---
+
+Topics Covered
+
+✅ open()
+✅ read()
+✅ readline()
+✅ readlines()
+✅ write()
+✅ append mode
+✅ with statement
+✅ file modes
+✅ CSV basics
+
+
+---
+
+Q1 Read Entire File
+
+read_file.py
+
+file = open("sample.txt", "r")
+
+content = file.read()
+
+print(content)
+
+file.close()
+
+
+---
+
+Q2 Read Line By Line
+
+read_line.py
+
+file = open("sample.txt", "r")
+
+for line in file:
+
+    print(line.strip())
+
+file.close()
+
+
+---
+
+Q3 Write to File
+
+write_file.py
+
+file = open("output.txt", "w")
+
+file.write("Welcome to Data Engineering")
+
+file.close()
+
+
+---
+
+Q4 Append to File
+
+append_file.py
+
+file = open("output.txt", "a")
+
+file.write("\nLearning Python")
+
+file.close()
+
+
+---
+
+Q5 Using with Statement
+
+with_statement.py
+
+with open("sample.txt", "r") as file:
+
+    content = file.read()
+
+    print(content)
+
+
+---
+
+Q6 Count Words in File
+
+count_words.py
+
+with open("sample.txt", "r") as file:
+
+    content = file.read()
+
+    words = content.split()
+
+    print(len(words))
+
+
+---
+
+Q7 Count Lines in File
+
+count_lines.py
+
+with open("sample.txt", "r") as file:
+
+    lines = file.readlines()
+
+    print(len(lines))
+
+
+---
+
+Q8 Copy File Content
+
+copy_file.py
+
+with open("sample.txt", "r") as source:
+
+    content = source.read()
+
+with open("copy.txt", "w") as target:
+
+    target.write(content)
+
+
+---
+
+Q9 CSV Reading Basics
+
+csv_read.py
+
+import csv
+
+with open("employees.csv", "r") as file:
+
+    reader = csv.reader(file)
+
+    for row in reader:
+
+        print(row)
+
+
+---
+
+Q10 CSV Dictionary Reader
+
+csv_dict_reader.py
+
+import csv
+
+with open("employees.csv", "r") as file:
+
+    reader = csv.DictReader(file)
+
+    for row in reader:
+
+        print(row["name"], row["salary"])
+
+
+---
+
+LeetCode 1 — Valid Sudoku
+
+valid_sudoku.py
+
+class Solution:
+
+    def isValidSudoku(self, board):
+
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        boxes = [set() for _ in range(9)]
+
+        for r in range(9):
+
+            for c in range(9):
+
+                num = board[r][c]
+
+                if num == ".":
+                    continue
+
+                box_index = (r // 3) * 3 + (c // 3)
+
+                if num in rows[r] or num in cols[c] or num in boxes[box_index]:
+                    return False
+
+                rows[r].add(num)
+                cols[c].add(num)
+                boxes[box_index].add(num)
+
+        return True
+
+
+---
+
+LeetCode 2 — Majority Element
+
+majority_element.py
+
+class Solution:
+
+    def majorityElement(self, nums):
+
+        freq = {}
+
+        for num in nums:
+
+            freq[num] = freq.get(num, 0) + 1
+
+        for key, value in freq.items():
+
+            if value > len(nums) // 2:
+                return key
+
+
+obj = Solution()
+
+print(obj.majorityElement([2,2,1,1,1,2,2]))
+
+Output:
+
+2
+
+
+---
+
+LeetCode 3 — Roman to Integer
+
+roman_to_integer.py
+
+class Solution:
+
+    def romanToInt(self, s):
+
+        roman = {
+            "I": 1,
+            "V": 5,
+            "X": 10,
+            "L": 50,
+            "C": 100,
+            "D": 500,
+            "M": 1000
+        }
+
+        total = 0
+
+        for i in range(len(s)):
+
+            if i < len(s) - 1 and roman[s[i]] < roman[s[i + 1]]:
+
+                total -= roman[s[i]]
+
+            else:
+                total += roman[s[i]]
+
+        return total
+
+
+obj = Solution()
+
+print(obj.romanToInt("MCMXCIV"))
+
+Output:
+
+1994
+
+
+---
+
+notes.md
+
+# Day 10 - File Handling
+
+## Topics Learned
+- file opening
+- read/write operations
+- append mode
+- with statement
+- CSV handling
+- file traversal
+
+## Important Learnings
+
+### File Modes
+
+r  -> read
+w  -> write
+a  -> append
+
+### Why with is Better
+
+Automatically closes file.
+
+### CSV Handling
+
+csv.reader()
+csv.DictReader()
+
+## Importance
+Critical for ETL pipelines and data ingestion.
+
+
+---
+
+leetcode.md
+
+# Day 10 LeetCode Questions
+
+## 1. Valid Sudoku
+Concepts:
+- sets
+- matrix traversal
+
+Time Complexity:
+O(1)
+
+---
+
+## 2. Majority Element
+Concepts:
+- hashmap
+- frequency counting
+
+Time Complexity:
+O(n)
+
+---
+
+## 3. Roman to Integer
+Concepts:
+- hashmap
+- traversal
+- condition logic
+
+Time Complexity:
+O(n)
+
+
+---
+
+Today’s Goal
+
+✅ Understand file operations properly
+✅ Learn CSV reading basics
+✅ Complete all coding questions
+✅ Solve 3 LeetCode
+✅ Push code to GitHub

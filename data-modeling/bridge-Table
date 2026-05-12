@@ -1,0 +1,189 @@
+# Data Modelling – Bridge Tables
+
+# First — What Problem Do Bridge Tables Solve?
+
+A normal star schema assumes:
+
+One dimension row -> Many fact rows
+```
+Simple one-to-many relationship.
+But real business systems sometimes have:
+# Many-to-Many Relationships
+And warehouses struggle with this.
+Bridge tables solve that problem.
+---
+
+# Real Example
+
+At Netflix
+One movie can belong to multiple genres:
+* Action
+* Thriller
+* Sci-Fi
+And one genre can belong to many movies.
+This becomes:
+Movie <-> Genre
+```
+Many-to-many relationship.
+---
+# Why This Is a Problem
+Suppose:
+## dim_movie
+| movie_key | movie_name |
+| --------- | ---------- |
+| 101       | Inception  |
+---
+## dim_genre
+| genre_key | genre_name |
+| --------- | ---------- |
+| 1         | Sci-Fi     |
+| 2         | Thriller   |
+
+Now:
+How do we connect one movie to multiple genres
+Cannot store:
+genre = 'Sci-Fi, Thriller'
+```
+That breaks normalization and analytics.
+---
+
+# What is a Bridge Table?
+
+A **Bridge Table** is an intermediate table used to resolve many-to-many relationships between dimensions and facts.
+---
+# Structure
+## dim_movie
+| movie_key | movie_name |
+---
+## bridge_movie_genre ⭐
+| movie_key | genre_key |
+| --------- | --------- |
+| 101       | 1         |
+| 101       | 2         |
+---
+## dim_genre
+
+| genre_key | genre_name |
+Now relationship handled properly.
+---
+
+# Visual Structure
+dim_movie
+    |
+bridge_movie_genre
+    |
+dim_genre
+```
+
+Bridge table acts like connector.
+
+---
+
+# Important Warehouse Use Cases ⭐
+
+## 1. Multi-Valued Dimensions
+Movie → multiple genres
+---
+## 2. Healthcare
+Patient → multiple diagnoses
+---
+## 3. Banking
+Customer → multiple accounts
+---
+
+## 4. Sales Teams
+One sale shared by multiple salespersons
+---
+
+# Bridge Table with Weighting (Advanced)
+Suppose sale commission shared:
+| sales_id | employee_key | allocation_percent |
+| -------- | ------------ | ------------------ |
+| S101     | E1           | 70                 |
+| S101     | E2           | 30                 |
+
+Bridge table can distribute measures correctly.
+Very common advanced interview topic.
+
+---
+
+# Why Not Store Multiple Values in One Column?
+Bad design:
+
+| movie     | genres           |
+| --------- | ---------------- |
+| Inception | Sci-Fi, Thriller |
+Problems:
+
+* filtering difficult
+* aggregation broken
+* joins impossible
+* violates 1NF
+---
+
+# Advantages of Bridge Tables ⭐
+## 1. Proper Many-to-Many Modelling
+Main purpose.
+---
+## 2. Flexible Analytics
+Supports multi-category analysis.
+---
+## 3. Better Data Integrity
+Clean relationships.
+
+---
+# Disadvantages ⚠️
+## 1. More Complex Queries
+Extra joins required.
+
+---
+
+## 2. Risk of Double Counting
+Very important.
+Bad joins can duplicate measures.
+--
+
+# Important Interview Insight ⭐
+
+Bridge tables are one of the biggest sources of aggregation errors if joins are not handled carefully.
+Very strong statement.
+---
+# Example of Double Counting Problem
+Suppose:
+Movie revenue = 100
+Movie linked to:
+* Sci-Fi
+* Thriller
+
+Naive join may produce:
+100 + 100 = 200
+```
+Incorrect aggregation.
+Need careful query logic.
+
+---
+
+# Common Interview Questions
+## Q1. What is a bridge table?
+
+Intermediate table used to resolve many-to-many relationships.
+---
+## Q2. Why needed in warehouses?
+Star schema naturally handles one-to-many, not many-to-many.
+---
+
+## Q3. Common use cases?
+
+* multiple genres
+* multiple diagnoses
+* multiple salespersons
+
+---
+
+## Q4. Major risk?
+
+Double counting during aggregation.
+
+---
+
+

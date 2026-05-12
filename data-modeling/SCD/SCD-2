@@ -1,0 +1,277 @@
+Data Modelling – SCD Type 2 ⭐⭐⭐
+
+(
+---
+
+Why SCD Type 2 Exists
+Problem with Type 1:
+Old data gets overwritten.
+History lost.
+But businesses often need:
+historical reporting
+audit tracking
+customer journey analysis
+compliance
+So instead of overwriting:
+
+> SCD Type 2 creates a NEW row for every change.
+
+---
+
+Core Theory
+
+Definition
+SCD Type 2 preserves full historical data by inserting a new row whenever a dimension attribute changes.
+Old row remains stored.
+---
+
+Real Example
+At Amazon
+Customer Ravi initially lives in Mumbai.
+---
+
+Before Change
+customer_key	customer_id	name	city
+1	C101	Ravi	Mumbai
+---
+
+Later Ravi Moves to Bangalore
+Instead of updating row:
+NEW row inserted.
+---
+
+After Change
+customer_key	customer_id	name	city
+
+1	C101	Ravi	Mumbai
+2	C101	Ravi	Bangalore
+
+History preserved.
+
+
+---
+
+Important Insight ⭐
+
+Notice:
+customer_id same
+BUT:
+customer_key changed
+
+This is why surrogate keys are critical in warehouses.
+---
+
+Why Surrogate Key Needed
+
+If customer_id itself was primary key:
+
+Cannot store multiple history rows.
+
+Surrogate key solves this.
+
+
+---
+
+Standard SCD Type 2 Columns ⭐
+
+Usually warehouses add:
+Column	Purpose
+effective_date	when row became active
+end_date	when row expired
+is_current	active/inactive flag
+
+---
+Real Warehouse Version
+
+customer_key	customer_id	city	effective_date	end_date	is_current
+
+1	C101	Mumbai	2024-01-01	2025-01-10	N
+2	C101	Bangalore	2025-01-11	NULL	Y
+---
+
+Meaning
+Row 1
+
+Mumbai was valid until Jan 10.
+
+Row 2
+
+Bangalore is current active value.
+---
+
+Major Advantage ⭐
+Now warehouse can answer:
+> “Where did Ravi live during 2024 sales?”
+Correct historical reporting possible.
+---
+
+Example — Historical Analytics
+Suppose order placed in 2024.
+Fact table linked to:
+customer_key = 1
+
+So report still correctly shows Mumbai.
+This is why Type 2 is powerful.
+
+
+---
+
+How ETL Works in Type 2
+When change detected:
+Step 1
+Old row updated:
+is_current = 'N'
+end_date = yesterday
+---
+
+Step 2
+New row inserted:
+
+new surrogate key
+new values
+is_current = 'Y'
+---
+
+SQL-Style Thinking
+Expire Old Row
+
+UPDATE dim_customer
+SET end_date = CURRENT_DATE,
+    is_current = 'N'
+WHERE customer_id = 'C101'
+AND is_current = 'Y';
+---
+
+Insert New Row
+INSERT INTO dim_customer
+VALUES (
+   2,
+   'C101',
+   'Ravi',
+   'Bangalore',
+   CURRENT_DATE,
+   NULL,
+   'Y'
+);
+
+
+---
+
+Advantages of SCD Type 2 ⭐⭐⭐
+
+1. Full Historical Tracking
+
+Most important advantage.
+---
+
+2. Accurate Historical Reporting
+Past reports remain correct.
+---
+3. Audit Compliance
+
+Critical for finance/banking.
+---
+
+4. Customer Journey Analysis
+Track behavior evolution.
+---
+
+Disadvantages ⚠️
+
+1. Increased Storage
+Rows continuously grow.
+---
+2. More Complex ETL
+Need change detection logic.
+---
+
+3. Query Complexity
+Need current-record filtering.
+---
+
+Important Interview Insight ⭐
+Type 2 is preferred when business history matters.
+This line is extremely important.
+---
+
+Real Business Examples
+Banking
+Customer address history.
+---
+Insurance
+Policy status history.
+---
+
+E-commerce
+Customer loyalty tier changes.
+---
+
+Streaming Platforms
+Subscription plan changes.
+Used at Netflix style analytics.
+---
+
+Type 1 vs Type 2
+
+Feature	Type 1	Type 2
+
+History	Lost	Preserved
+Update	Overwrite	Insert new row
+Storage	Small	Larger
+Complexity	Simple	Higher
+Historical Reporting	Incorrect	Correct
+---
+
+Common Interview Questions
+
+Q1. What is SCD Type 2?
+
+Preserves historical dimension changes by creating new rows.
+---
+
+Q2. Why surrogate key important in Type 2?
+Allows multiple historical records for same business key.
+---
+Q3. Why not overwrite?
+Would lose historical accuracy.
+---
+
+Q4. Which columns commonly used?
+effective_date
+end_date
+is_current
+---
+
+
+---
+---
+
+Notes Version
+
+# SCD Type 2
+
+## Definition
+Preserves historical changes by inserting new rows.
+
+## Key Idea
+Do not overwrite old data.
+
+## Common Columns
+- effective_date
+- end_date
+- is_current
+
+## Why Surrogate Key?
+Allows multiple records for same business key.
+
+## Advantages
+- Full history
+- Accurate reporting
+- Audit support
+
+## Disadvantages
+- More storage
+- Complex ETL
+- Complex queries
+---
+

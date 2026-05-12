@@ -1,0 +1,279 @@
+Data Modelling – Clustering / Sorting ⭐
+
+(
+
+First — Why Partitioning Alone Is Not Enough
+
+Suppose table partitioned by:
+
+sale_year = 2026
+
+Good.
+
+But January partition may still contain:
+hundreds of millions rows
+Now query:
+
+SELECT *
+FROM fact_sales
+WHERE customer_id = 101;
+Partitioning alone cannot help much.
+Need better organization INSIDE partition.
+That is clustering.
+--
+What is Clustering?
+
+Theory
+Clustering organizes data physically inside partitions (or tables) based on selected columns to improve query performance.
+---
+
+Simple Definition
+Partitioning decides:
+> “Which chunk?”
+Clustering decides:
+
+ “How data is arranged inside chunk?”
+---
+Example
+Partitioning by Date
+2026_January partition
+Inside January partition:
+Data clustered by:
+customer_id⁹
+Now rows of same customer stored closer together.
+
+Queries become faster.
+
+---
+
+Important Insight ⭐
+
+Partitioning reduces:
+
+amount of data scanned
+Clustering reduces:
+work inside scanned data
+Both work together.
+---
+
+Real Example — E-commerce
+At Amazon
+fact_sales
+Partitioned by:
+order_date
+Clustered by:
+
+customer_id
+
+product_category
+Why?
+Most queries filter:
+recent dates
+customer activity
+category sales
+---
+
+How Clustering Improves Performance
+Without clustering:
+customer rows scattered everywhere
+Database scans many blocks.
+---
+
+With clustering:
+similar customer rows stored together
+Less scanning needed.
+---
+Common Clustering Columns ⭐
+Column	Why
+customer_id	frequent filtering
+product_id	analytical queries
+region	regional reporting
+category	grouped aggregations
+---
+
+Difference Between Partitioning and Clustering ⭐⭐⭐
+
+Feature	Partitioning	Clustering
+
+Purpose	Split large table	Organize inside partitions
+Granularity	Large chunks	Fine-grained ordering
+Best For	Date filtering	Frequent query columns
+Example	year/month	customer_id
+
+
+
+---
+
+Visual Thinking
+
+Partitioning:
+[2025] [2026] [2027]
+
+Clustering inside 2026:
+[customer 1 rows]
+[customer 2 rows]
+[customer 3 rows]
+
+
+---
+
+Real Warehouse Examples
+
+Google Cloud BigQuery
+
+Supports:
+
+partitioning
+
+clustering together
+
+
+Very common.
+
+
+---
+
+Snowflake
+
+Uses clustering keys and micro-partitions.
+
+
+---
+
+Databricks
+
+Uses Z-order clustering concepts.
+
+
+---
+
+Sorting vs Clustering
+
+Sometimes terms overlap.
+
+
+---
+
+Sorting
+
+Rows ordered physically.
+
+
+---
+
+Clustering
+
+Broader optimization concept using ordering/grouping.
+
+
+---
+
+Example
+
+ORDER BY customer_id
+
+creates sorted organization.
+
+Warehouse engines use this internally for clustering optimization.
+
+
+---
+
+Benefits of Clustering ⭐
+
+1. Faster Filtering
+
+Less block scanning.
+---
+2. Better Compression
+Similar values grouped together.
+---
+
+3. Faster Aggregations
+Grouped rows easier to process.
+---
+
+4. Reduced Query Cost
+
+Especially in cloud warehouses.
+---
+
+Disadvantages ⚠️
+1. Maintenance Cost
+New data may disrupt clustering.
+---
+2. Re-Clustering Overhead
+
+Warehouse may need reorganizing.
+---
+
+3. Wrong Clustering Columns Hurt Performance
+
+Poor choices reduce benefit.
+---
+
+Important Interview Insight ⭐
+
+Choose clustering columns based on frequent query filtering patterns.
+
+Very important statement.
+
+
+---
+
+Bad Clustering Example ⚠️
+
+Real Example Query
+
+SELECT SUM(revenue)
+FROM fact_sales
+WHERE order_date BETWEEN '2026-01-01' AND '2026-01-31'
+AND customer_id = 101;
+
+Partitioning:
+
+reduces scanned partitions
+
+
+Clustering:
+
+reduces scanned blocks inside partition
+
+
+Together = powerful optimization.
+
+
+---
+
+Common Interview Questions
+
+Q1. What is clustering?
+
+Organizing data physically to improve query performance.
+
+
+---
+
+Q2. Difference from partitioning?
+
+Partitioning splits data; clustering organizes data inside partitions.
+
+
+---
+
+Q3. Good clustering columns?
+
+Frequently filtered/grouped columns.
+
+
+---
+
+Q4. Why clustering improves performance?
+
+Related rows stored together reduce scanning.
+
+
+---
+
+
+

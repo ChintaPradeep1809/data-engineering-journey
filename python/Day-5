@@ -1,0 +1,300 @@
+Day 5 — Dictionaries (Most Important Python Topic for Interviews)
+
+If I had to pick ONE Python topic most important for interviews:
+
+It’s dictionaries.
+
+Why?
+
+Because dictionaries power:
+
+hashmaps
+
+frequency counting
+
+caching
+
+grouping
+
+fast lookup
+
+JSON handling
+
+APIs
+
+ETL transformations
+
+
+This topic alone appears everywhere in DE + coding interviews.
+
+
+---
+
+Folder Structure
+
+Day05_Dictionaries/
+
+Files:
+
+notes.md
+dictionary_basics.py
+frequency_count.py
+word_count.py
+merge_dictionaries.py
+student_marks.py
+two_sum.py
+valid_anagram.py
+top_k_frequent.py
+leetcode.md
+
+
+---
+
+File 1 — notes.md
+
+# Day 5 - Dictionaries
+
+## Topics Learned
+
+- dictionary creation
+- key-value pairs
+- access/update values
+- get()
+- keys()
+- values()
+- items()
+- frequency counting
+- hashmap optimization
+
+## Important Concepts
+
+### Why Dictionaries Are Powerful
+
+Dictionary lookup is fast.
+
+Average Time Complexity:
+O(1)
+
+### Difference Between List and Dictionary
+
+List:
+- index based
+
+Dictionary:
+- key based
+
+### get() Method
+
+Avoids KeyError.
+
+Example:
+data.get("name", "Not Found")
+
+
+---
+
+Q1 Dictionary Basics
+
+File — dictionary_basics.py
+
+student = {
+    "name": "Pradeep",
+    "age": 25,
+    "course": "Data Engineering"
+}
+
+print(student["name"])
+
+student["age"] = 26
+
+student["city"] = "Hyderabad"
+
+print(student)
+
+Output:
+
+Pradeep
+{'name': 'Pradeep', 'age': 26, 'course': 'Data Engineering', 'city': 'Hyderabad'}
+
+
+---
+
+Q2 Frequency Count
+
+File — frequency_count.py
+
+nums = [1,2,2,3,3,3,4]
+
+freq = {}
+
+for num in nums:
+
+    freq[num] = freq.get(num, 0) + 1
+
+print(freq)
+
+Output:
+
+{1: 1, 2: 2, 3: 3, 4: 1}
+
+
+---
+
+Q3 Word Count
+
+File — word_count.py
+
+sentence = "data engineering is data driven"
+
+words = sentence.split()
+
+count = {}
+
+for word in words:
+
+    count[word] = count.get(word, 0) + 1
+
+print(count)
+
+Output:
+
+{'data': 2, 'engineering': 1, 'is': 1, 'driven': 1}
+
+
+---
+
+Q4 Merge Dictionaries
+
+File — merge_dictionaries.py
+
+d1 = {"a": 1, "b": 2}
+d2 = {"c": 3, "d": 4}
+
+merged = {**d1, **d2}
+
+print(merged)
+
+Output:
+
+{'a': 1, 'b': 2, 'c': 3, 'd': 4}
+
+
+---
+
+Q5 Student Marks
+
+File — student_marks.py
+
+marks = {
+    "math": 90,
+    "science": 85,
+    "english": 88
+}
+
+total = 0
+
+for subject in marks:
+
+    total += marks[subject]
+
+average = total / len(marks)
+
+print("Average:", average)
+
+Output:
+
+Average: 87.66666666666667
+
+
+---
+
+LeetCode 1 — Two Sum
+
+File — two_sum.py
+
+class Solution:
+
+    def twoSum(self, nums, target):
+
+        hashmap = {}
+
+        for i, num in enumerate(nums):
+
+            remaining = target - num
+
+            if remaining in hashmap:
+                return [hashmap[remaining], i]
+
+            hashmap[num] = i
+
+
+obj = Solution()
+
+print(obj.twoSum([2,7,11,15], 9))
+
+Output:
+
+[0, 1]
+
+
+---
+
+Why Dictionary in Two Sum?
+
+Because lookup becomes:
+
+O(1)
+
+Without dictionary:
+
+Nested loops → O(n²)
+
+This is a core interview optimization pattern.
+
+
+---
+
+LeetCode 2 — Valid Anagram
+
+File — valid_anagram.py
+
+class Solution:
+
+    def isAnagram(self, s, t):
+
+        if len(s) != len(t):
+            return False
+
+        freq = {}
+
+        for char in s:
+            freq[char] = freq.get(char, 0) + 1
+
+        for char in t:
+
+            if char not in freq:
+                return False
+
+            freq[char] -= 1
+
+            if freq[char] < 0:
+                return False
+
+        return True
+
+
+obj = Solution()
+
+print(obj.isAnagram("anagram", "nagaram"))
+
+Output:
+
+True
+
+
+---
+
+LeetCode 3 — Top K Frequent Elements
+
+
+---

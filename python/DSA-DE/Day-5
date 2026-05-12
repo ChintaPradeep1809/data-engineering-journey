@@ -1,61 +1,12 @@
 Day 5 — Dictionaries (Most Important Python Topic for Interviews)
 
-If I had to pick ONE Python topic most important for interviews:
 
 It’s dictionaries.
 
-Why?
-
-Because dictionaries power:
-
-hashmaps
-
-frequency counting
-
-caching
-
-grouping
-
-fast lookup
-
-JSON handling
-
-APIs
-
-ETL transformations
-
-
-This topic alone appears everywhere in DE + coding interviews.
-
-
----
-
-Folder Structure
-
-Day05_Dictionaries/
-
-Files:
-
-notes.md
-dictionary_basics.py
-frequency_count.py
-word_count.py
-merge_dictionaries.py
-student_marks.py
-two_sum.py
-valid_anagram.py
-top_k_frequent.py
-leetcode.md
-
-
----
-
-File 1 — notes.md
 
 # Day 5 - Dictionaries
 
 ## Topics Learned
-
 - dictionary creation
 - key-value pairs
 - access/update values
@@ -248,52 +199,31 @@ O(1)
 Without dictionary:
 
 Nested loops → O(n²)
-
 This is a core interview optimization pattern.
-
-
 ---
-
 LeetCode 2 — Valid Anagram
 
 File — valid_anagram.py
 
 class Solution:
-
     def isAnagram(self, s, t):
-
         if len(s) != len(t):
             return False
-
         freq = {}
-
         for char in s:
             freq[char] = freq.get(char, 0) + 1
-
         for char in t:
-
             if char not in freq:
                 return False
-
             freq[char] -= 1
-
             if freq[char] < 0:
                 return False
-
         return True
-
-
 obj = Solution()
-
 print(obj.isAnagram("anagram", "nagaram"))
-
 Output:
-
 True
-
-
 ---
-
 LeetCode 3 — Top K Frequent Elements
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:

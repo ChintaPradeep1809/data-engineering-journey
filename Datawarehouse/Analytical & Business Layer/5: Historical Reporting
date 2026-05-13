@@ -1,0 +1,94 @@
+# PHASE 8 — Topic 5: Historical Reporting
+
+## 1. Explanation
+
+**Historical Reporting** means analyzing and reporting past business data over long periods of time.
+
+Purpose:
+Understand:
+
+* trends
+* growth patterns
+* business changes
+* long-term performance
+
+Historical reports use warehouse data stored across:
+
+* months
+* years
+* quarters
+
+Unlike operational reporting, historical reporting focuses on analytical insights rather than current transactions.
+
+Common examples:
+
+* yearly revenue trends
+* customer growth history
+* sales comparison across years
+
+Historical reporting heavily depends on:
+
+* EDW
+* fact tables
+* time dimensions
+
+Flow:
+
+Historical Warehouse Data → Reporting Layer → Trend Analysis
+
+Main idea:
+Use past data for strategic business decisions.
+
+---
+
+## 2. Example
+
+A retail company analyzes:
+
+* yearly sales trends
+* seasonal demand
+* customer purchase growth
+
+from the last 5 years to plan inventory and marketing strategies.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Business Trend Analysis
+
+Companies study long-term revenue and profit growth.
+
+---
+
+### Use Case 2 — Forecasting and Planning
+
+Organizations use historical data for budgeting and future predictions.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Strategic Decision-Making
+
+Long-term data helps businesses identify patterns and trends.
+
+---
+
+### Advantage 2 — Supports Forecasting
+
+Historical insights improve prediction accuracy.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Large Storage Requirements
+
+Maintaining years of historical data consumes significant storage.
+
+---
+
+### Disadvantage 2 — Slower Query Performance
+
+Historical analytical queries on massive datasets may become heavy.

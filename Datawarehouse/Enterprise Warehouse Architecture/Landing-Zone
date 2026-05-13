@@ -1,0 +1,90 @@
+# PHASE 6 — Topic 2: Landing Zone
+
+## 1. Explanation
+
+A **Landing Zone** is the first storage location where incoming raw data is stored exactly as received from source systems.
+
+No processing happens here.
+
+It is mainly used to:
+
+* collect incoming data
+* preserve original source data
+* support recovery and reprocessing
+
+The landing zone is usually part of:
+
+* data lakes
+* cloud storage
+* big data platforms
+
+Data remains:
+
+* raw
+* original
+* unchanged
+
+Flow:
+
+Source Systems → Landing Zone → Staging Layer → Warehouse
+
+---
+
+## 2. Example
+
+A company receives:
+
+* JSON files from APIs
+* CSV sales files
+* IoT sensor logs
+
+These files are directly stored in cloud storage like:
+
+* Amazon S3
+* Azure Data Lake
+
+before any validation or transformation.
+
+That storage area is the landing zone.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Backup of Raw Source Data
+
+If transformation fails later, engineers can reload original files from the landing zone.
+
+---
+
+### Use Case 2 — Large-Scale Data Ingestion
+
+Streaming or batch data from multiple systems can safely land first before processing.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Preserves Original Data
+
+Raw source data is always available for auditing or reprocessing.
+
+---
+
+### Advantage 2 — Supports Scalability
+
+Large volumes of incoming data can be collected quickly before processing.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Storage Cost Increases
+
+Raw historical files consume large storage space over time.
+
+---
+
+### Disadvantage 2 — Data Is Unusable Directly
+
+Business users cannot use landing-zone data without processing and cleaning.

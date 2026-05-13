@@ -1,0 +1,82 @@
+# PHASE 7 — Topic 9: Error Handling Strategy
+
+## 1. Explanation
+
+An **Error Handling Strategy** defines how a data pipeline detects, manages, logs, and responds to failures during processing.
+
+Purpose:
+Prevent complete pipeline failure and ensure reliable data processing.
+
+Errors may occur because of:
+
+* invalid data
+* missing files
+* schema mismatch
+* network issues
+* database failures
+
+Common error handling methods:
+
+* logging errors
+* retrying failed tasks
+* skipping bad records
+* sending alerts
+* moving bad data to quarantine tables
+
+A good strategy helps pipelines continue safely even when some failures occur.
+
+---
+
+## 2. Example
+
+A CSV file contains invalid date formats.
+
+Instead of failing the entire ETL job:
+
+* invalid rows are moved to an error table
+* valid rows continue processing
+* engineers receive an alert
+
+This prevents full pipeline interruption.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise ETL Pipelines
+
+Large warehouses handle bad records without stopping full batch execution.
+
+---
+
+### Use Case 2 — Streaming Systems
+
+Real-time pipelines isolate corrupted events while continuing stream processing.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Pipeline Stability
+
+Pipelines can continue operating even when partial failures occur.
+
+---
+
+### Advantage 2 — Easier Troubleshooting
+
+Detailed logging and alerts help engineers identify issues quickly.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Additional Development Complexity
+
+Error management logic increases pipeline design effort.
+
+---
+
+### Disadvantage 2 — Monitoring Overhead
+
+Error tracking and alert systems require operational maintenance.

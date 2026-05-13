@@ -1,0 +1,92 @@
+# PHASE 6 — Topic 3: Operational Data Store (ODS)
+
+## 1. Explanation
+
+An **Operational Data Store (ODS)** is a centralized storage system that combines current data from multiple operational systems for quick reporting and operational analysis.
+
+It stores:
+
+* recent data
+* near real-time data
+* integrated operational data
+
+ODS is used before data reaches the Enterprise Data Warehouse (EDW).
+
+Difference:
+
+* ODS = current operational view
+* EDW = historical analytical view
+
+Flow:
+
+Source Systems → Staging → ODS → EDW
+
+ODS usually contains:
+
+* cleaned data
+* integrated data
+* current snapshots
+
+but not deep historical records.
+
+---
+
+## 2. Example
+
+A bank has:
+
+* customer account system
+* loan system
+* credit card system
+
+ODS combines latest customer information from all systems into one place.
+
+Managers can quickly check:
+
+* current balances
+* active loans
+* recent transactions
+
+without querying multiple systems.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Near Real-Time Reporting
+
+Customer support teams use ODS to view latest customer activity instantly.
+
+---
+
+### Use Case 2 — Operational Dashboards
+
+Retail companies monitor current sales and inventory levels using ODS dashboards.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Operational Reporting
+
+Business teams can access integrated current data quickly.
+
+---
+
+### Advantage 2 — Reduces Load on Source Systems
+
+Reports run on ODS instead of directly hitting operational databases.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Limited Historical Data
+
+ODS mainly focuses on current data, not long-term analytics.
+
+---
+
+### Disadvantage 2 — Extra Maintenance Layer
+
+Requires additional synchronization and update management between systems.

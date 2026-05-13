@@ -1,0 +1,87 @@
+# PHASE 6 — Topic 9: Kappa Architecture Basics
+
+## 1. Explanation
+
+**Kappa Architecture** is a data processing architecture that handles data using only stream processing.
+
+Unlike Lambda Architecture:
+
+* Kappa removes the separate batch layer
+* everything is processed as a continuous stream
+
+Main idea:
+One streaming pipeline handles:
+
+* real-time data
+* historical reprocessing
+
+If old data needs reprocessing, the system simply replays past events through the same stream pipeline.
+
+Flow:
+
+Data Sources → Stream Processing Engine → Analytics/Storage
+
+Common technologies:
+
+* Apache Kafka
+* Apache Flink
+* Spark Streaming
+
+Purpose:
+Simplify architecture by using one processing system instead of separate batch and streaming systems.
+
+---
+
+## 2. Example
+
+A stock trading platform processes:
+
+* live stock prices
+* trade events
+* market updates
+
+All events continuously flow through streaming systems.
+
+If analytics logic changes, old events are replayed from Kafka topics instead of running separate batch jobs.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Real-Time Event Streaming
+
+Applications like IoT monitoring continuously process sensor events.
+
+---
+
+### Use Case 2 — Live User Activity Analytics
+
+Streaming platforms track clicks and watch activity in real time.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Simpler Architecture
+
+Only one processing pipeline needs to be maintained.
+
+---
+
+### Advantage 2 — Better Real-Time Processing
+
+Designed mainly for low-latency streaming workloads.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Historical Reprocessing Can Be Expensive
+
+Replaying massive historical streams may consume significant resources.
+
+---
+
+### Disadvantage 2 — Not Ideal for Heavy Batch Analytics
+
+Complex large-scale historical computations are harder compared to batch systems.

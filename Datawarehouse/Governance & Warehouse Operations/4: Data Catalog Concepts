@@ -1,0 +1,91 @@
+# PHASE 9 — Topic 4: Data Catalog Concepts
+
+## 1. Explanation
+
+A **Data Catalog** is a centralized system that stores and organizes metadata about organizational data assets.
+
+It acts like a searchable inventory for data.
+
+Purpose:
+Help users quickly discover, understand, and use available datasets.
+
+A data catalog usually contains:
+
+* table names
+* column descriptions
+* business definitions
+* data lineage
+* owners
+* tags
+* usage information
+
+Features commonly include:
+
+* search functionality
+* dataset documentation
+* data classification
+* governance integration
+
+Main idea:
+Make enterprise data easy to discover and understand.
+
+---
+
+## 2. Example
+
+A company has thousands of warehouse tables.
+
+An analyst searches the data catalog for:
+“customer revenue”
+
+The catalog shows:
+
+* related datasets
+* table descriptions
+* KPI definitions
+* data owners
+* refresh frequency
+
+This saves time and avoids confusion.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Self-Service Analytics
+
+Business users discover datasets without depending heavily on engineering teams.
+
+---
+
+### Use Case 2 — Enterprise Data Governance
+
+Organizations track ownership and classification of sensitive datasets.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Data Discovery
+
+Users can quickly find relevant datasets and reports.
+
+---
+
+### Advantage 2 — Better Data Understanding
+
+Business definitions and metadata improve data usability.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Requires Continuous Maintenance
+
+Catalog information becomes unreliable if not regularly updated.
+
+---
+
+### Disadvantage 2 — Large-Scale Complexity
+
+Managing catalogs across many systems and teams can become difficult.

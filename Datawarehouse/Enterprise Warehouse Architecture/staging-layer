@@ -1,0 +1,89 @@
+## 1. Explanation
+A **Staging Layer** is a temporary storage area in a data warehouse system where raw data from source systems is first collected before processing.
+It acts like a **buffer zone** between:
+* source systems (ERP, CRM, APIs, files)
+  AND
+* the warehouse system.
+Data in staging is usually:
+* raw
+* uncleaned
+* unvalidated
+* temporary
+The main purpose is:
+* safely ingest data
+* perform transformations
+* avoid directly loading dirty data into the warehouse.
+
+Flow:
+
+Source Systems → Staging Layer → Transformations → EDW/Data Warehouse
+
+---
+
+## 2. Example
+
+An e-commerce company receives:
+
+* customer data from CRM
+* orders from website DB
+* payment data from payment gateway
+
+All these datasets first land in the staging layer.
+
+Then:
+
+* duplicates removed
+* null values fixed
+* formats standardized
+* invalid records rejected
+
+After cleaning, data moves into the Enterprise Data Warehouse (EDW).
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Daily Batch File Processing
+
+Bank receives CSV transaction files every night.
+
+Files first stored in staging before:
+
+* validation
+* fraud checks
+* warehouse loading
+
+---
+
+### Use Case 2 — Multi-Source Data Integration
+
+Retail company collects:
+
+* sales data
+* inventory data
+* customer app data
+
+All systems send raw data to staging first for centralized processing.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Protects Warehouse Quality
+Dirty or incomplete data does not directly enter the warehouse.
+
+---
+
+### Advantage 2 — Easier Data Transformation
+Developers can clean and validate data before final loading.
+
+---
+## 5. Disadvantages
+### Disadvantage 1 — Extra Storage Needed
+
+Requires additional storage space for temporary data.
+
+---
+### Disadvantage 2 — Extra Processing Time
+
+Data passes through one more layer before reaching the warehouse.

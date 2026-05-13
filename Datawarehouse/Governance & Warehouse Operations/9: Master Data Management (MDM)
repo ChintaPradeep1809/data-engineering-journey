@@ -1,0 +1,89 @@
+# PHASE 9 — Topic 9: Master Data Management (MDM) Basics
+
+## 1. Explanation
+
+**Master Data Management (MDM)** is the process of creating and maintaining a single, consistent, and accurate version of important business data across the organization.
+
+This important shared data is called **Master Data**.
+
+Examples:
+
+* customer data
+* product data
+* employee data
+* supplier data
+
+Purpose:
+Ensure all systems use the same trusted business information.
+
+Without MDM:
+
+* duplicate customers may exist
+* product names may differ across systems
+* inconsistent records may appear
+
+MDM involves:
+
+* data standardization
+* deduplication
+* validation
+* centralized management
+
+Main idea:
+Create a single source of truth for core business entities.
+
+---
+
+## 2. Example
+
+A customer exists in:
+
+* CRM system
+* billing system
+* support system
+
+Each system stores slightly different customer information.
+
+MDM combines and standardizes these records into one trusted master customer profile.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Customer Data Unification
+
+Organizations create a single consistent customer view across departments.
+
+---
+
+### Use Case 2 — Product Information Management
+
+Retail companies standardize product details across inventory and sales systems.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Data Consistency
+
+Core business entities remain standardized across systems.
+
+---
+
+### Advantage 2 — Better Business Decision-Making
+
+Accurate master data improves analytics and reporting quality.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Implementation
+
+Merging data from many systems requires significant effort.
+
+---
+
+### Disadvantage 2 — High Governance Dependency
+
+MDM requires strong data ownership and governance processes.

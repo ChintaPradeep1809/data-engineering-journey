@@ -1,0 +1,86 @@
+# PHASE 9 — Topic 7: Audit Logging
+
+## 1. Explanation
+
+**Audit Logging** is the process of recording system activities and data operations for tracking and monitoring purposes.
+
+Purpose:
+Maintain a history of:
+
+* who accessed data
+* what changes were made
+* when actions occurred
+* which systems performed operations
+
+Audit logs help organizations:
+
+* investigate issues
+* detect security violations
+* meet compliance requirements
+* monitor system activity
+
+Common logged activities:
+
+* login attempts
+* data modifications
+* pipeline executions
+* permission changes
+* failed access attempts
+
+Main idea:
+Create traceable records of system and data activity.
+
+---
+
+## 2. Example
+
+A data warehouse logs:
+
+* user login time
+* executed SQL queries
+* deleted records
+* schema changes
+
+If suspicious activity occurs, administrators can trace exactly what happened.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Security Monitoring
+
+Organizations detect unauthorized access or suspicious behavior.
+
+---
+
+### Use Case 2 — Compliance and Auditing
+
+Banks and healthcare systems maintain logs for regulatory audits.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Traceability
+
+System actions and data changes can be tracked clearly.
+
+---
+
+### Advantage 2 — Improved Security Investigation
+
+Audit logs help identify security incidents and operational failures.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Large Storage Consumption
+
+Continuous logging generates massive volumes of data.
+
+---
+
+### Disadvantage 2 — Monitoring Complexity
+
+Analyzing large audit logs can become difficult at enterprise scale.

@@ -1,0 +1,102 @@
+# PHASE 9 — Topic 6: Data Security Basics
+
+## 1. Explanation
+
+**Data Security** refers to protecting organizational data from:
+
+* unauthorized access
+* theft
+* corruption
+* leaks
+* misuse
+
+Purpose:
+Ensure:
+
+* confidentiality
+* integrity
+* availability of data
+
+Data security applies to:
+
+* databases
+* warehouses
+* pipelines
+* cloud storage
+* reports
+
+Common security methods:
+
+* encryption
+* RBAC
+* authentication
+* masking sensitive data
+* network security
+* audit logging
+
+Sensitive data examples:
+
+* customer details
+* banking information
+* healthcare records
+* passwords
+
+Main idea:
+Protect business and customer data throughout the data lifecycle.
+
+---
+
+## 2. Example
+
+A healthcare company stores patient data in a warehouse.
+
+Security controls include:
+
+* encrypted storage
+* restricted doctor access
+* masked patient IDs
+* audit tracking
+
+to comply with healthcare regulations.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Protecting Customer Data
+
+Companies secure customer personal and financial information.
+
+---
+
+### Use Case 2 — Regulatory Compliance
+
+Organizations enforce security controls to meet legal requirements.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Prevents Unauthorized Access
+
+Sensitive business data remains protected.
+
+---
+
+### Advantage 2 — Builds Customer Trust
+
+Strong security improves business credibility and compliance.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Increased System Complexity
+
+Security implementation adds operational and architectural complexity.
+
+---
+
+### Disadvantage 2 — Higher Infrastructure Cost
+
+Advanced security tools and monitoring require additional investment.

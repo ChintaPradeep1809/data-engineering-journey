@@ -1,0 +1,99 @@
+# PHASE 6 — Topic 7: Lakehouse Architecture Basics
+
+## 1. Explanation
+
+A **Lakehouse Architecture** combines features of:
+
+* Data Lakes
+  AND
+* Data Warehouses
+
+It allows organizations to store large raw data like a data lake while also supporting structured analytics like a warehouse.
+
+Traditional difference:
+
+* Data Lake → flexible, cheap storage for raw data
+* Data Warehouse → structured, optimized analytics storage
+
+Lakehouse combines both in one architecture.
+
+It supports:
+
+* structured data
+* semi-structured data
+* unstructured data
+* analytics
+* machine learning
+* BI reporting
+
+Common technologies:
+
+* Databricks
+* Delta Lake
+* Apache Iceberg
+
+Main idea:
+One platform for both storage and analytics.
+
+---
+
+## 2. Example
+
+A streaming company stores:
+
+* video logs
+* user clicks
+* subscriptions
+* watch history
+
+in cloud object storage.
+
+Using lakehouse architecture:
+
+* raw logs stored cheaply
+* SQL analytics performed directly
+* ML models trained on same data
+
+without moving data into separate systems.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Unified Analytics Platform
+
+Companies use one system for BI reporting and machine learning workloads.
+
+---
+
+### Use Case 2 — Big Data Processing
+
+Organizations process large-scale structured and unstructured data together.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Lower Data Duplication
+
+Data does not need to move between separate lake and warehouse systems.
+
+---
+
+### Advantage 2 — Supports Multiple Workloads
+
+Same platform supports analytics, reporting, and AI/ML.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Architecture Complexity
+
+Managing governance and performance can become difficult at scale.
+
+---
+
+### Disadvantage 2 — Performance Optimization Needed
+
+Without proper optimization, query speed may be slower than traditional warehouses.

@@ -1,0 +1,118 @@
+# PHASE 6 — Topic 8: Lambda Architecture Basics
+
+## 1. Explanation
+
+**Lambda Architecture** is a data processing architecture designed to handle:
+
+* batch processing
+  AND
+* real-time processing together.
+
+It is used when systems need:
+
+* historical analytics
+* live streaming analytics
+
+at the same time.
+
+Lambda Architecture has 3 layers:
+
+### Batch Layer
+
+Processes large historical datasets.
+
+Characteristics:
+
+* high accuracy
+* slower processing
+
+---
+
+### Speed Layer
+
+Processes real-time streaming data.
+
+Characteristics:
+
+* low latency
+* quick updates
+
+---
+
+### Serving Layer
+
+Combines outputs from both layers and provides data for dashboards or applications.
+
+Flow:
+
+Data Sources
+→ Batch Layer
+→ Speed Layer
+→ Serving Layer
+
+Purpose:
+Provide both accurate historical data and real-time insights.
+
+---
+
+## 2. Example
+
+A food delivery app tracks:
+
+* live orders
+* driver locations
+* historical sales
+
+### Batch Layer
+
+Calculates monthly sales trends.
+
+### Speed Layer
+
+Shows live order tracking instantly.
+
+### Serving Layer
+
+Displays both historical and live metrics on dashboards.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Real-Time Fraud Detection
+
+Banks analyze live transactions while also using historical fraud patterns.
+
+---
+
+### Use Case 2 — Live Business Dashboards
+
+E-commerce companies monitor real-time sales alongside yearly revenue analytics.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Supports Real-Time and Historical Analytics
+
+Both streaming and batch workloads are handled together.
+
+---
+
+### Advantage 2 — High Fault Tolerance
+
+Batch layer can recompute data if real-time processing fails.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Architecture
+
+Maintaining separate batch and streaming pipelines increases engineering effort.
+
+---
+
+### Disadvantage 2 — Higher Maintenance Cost
+
+Duplicate logic often exists in both batch and speed layers.

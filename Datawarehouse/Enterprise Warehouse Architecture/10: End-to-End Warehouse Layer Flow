@@ -1,0 +1,154 @@
+# PHASE 6 — Topic 10: End-to-End Warehouse Layer Flow
+
+## 1. Explanation
+
+**End-to-End Warehouse Layer Flow** describes how data moves through different layers of a data warehouse system from source systems to business reporting.
+
+Each layer has a specific responsibility.
+
+Typical flow:
+
+### 1. Source Systems
+
+Data originates from:
+
+* applications
+* databases
+* APIs
+* files
+* IoT devices
+
+---
+
+### 2. Landing Zone
+
+Raw data is stored exactly as received.
+
+---
+
+### 3. Staging Layer
+
+Temporary area where:
+
+* cleaning
+* validation
+* transformation
+
+begins.
+
+---
+
+### 4. ODS (Operational Data Store)
+
+Current integrated operational data is stored for quick reporting.
+
+---
+
+### 5. EDW (Enterprise Data Warehouse)
+
+Centralized historical analytical storage.
+
+---
+
+### 6. Data Marts
+
+Department-specific subsets created for teams like:
+
+* sales
+* finance
+* marketing
+
+---
+
+### 7. Analytics & Reporting Layer
+
+Dashboards, BI reports, KPIs, ML models, and business analytics are built here.
+
+Flow Summary:
+
+Sources
+→ Landing
+→ Staging
+→ ODS
+→ EDW
+→ Data Mart
+→ Reports/Dashboards
+
+Purpose:
+Create a reliable and structured data pipeline for analytics.
+
+---
+
+## 2. Example
+
+An e-commerce company processes:
+
+* customer orders
+* payment records
+* shipment details
+
+### Landing
+
+Raw JSON and CSV files stored.
+
+### Staging
+
+Duplicates removed and formats standardized.
+
+### ODS
+
+Current order status integrated.
+
+### EDW
+
+Historical order analytics stored.
+
+### Data Mart
+
+Sales team accesses sales-specific datasets.
+
+### Reporting
+
+Executives view revenue dashboards.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise Analytics Systems
+
+Large companies use layered architecture for centralized reporting.
+
+---
+
+### Use Case 2 — Multi-Department Business Intelligence
+
+Different teams consume specialized analytics from the same warehouse ecosystem.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Data Organization
+
+Each layer has a clear responsibility.
+
+---
+
+### Advantage 2 — Improved Data Quality and Governance
+
+Validation and transformation happen before analytics usage.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Architecture Complexity
+
+Many layers increase system design and maintenance effort.
+
+---
+
+### Disadvantage 2 — Higher Infrastructure Cost
+
+Multiple storage and processing layers require more resources.

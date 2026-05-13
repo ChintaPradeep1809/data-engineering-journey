@@ -1,0 +1,98 @@
+# PHASE 8 — Topic 7: Time-Series Analytics
+
+## 1. Explanation
+
+**Time-Series Analytics** is the analysis of data collected over time to identify:
+
+* trends
+* patterns
+* seasonality
+* growth
+* anomalies
+
+The data is organized using a time component such as:
+
+* seconds
+* minutes
+* hours
+* days
+* months
+* years
+
+Purpose:
+Understand how business metrics change over time.
+
+Common time-series metrics:
+
+* daily sales
+* stock prices
+* website traffic
+* sensor readings
+* customer activity
+
+Time-series analytics is heavily used in:
+
+* forecasting
+* monitoring
+* trend analysis
+
+Flow:
+
+Time-Based Data → Time-Series Analysis → Insights/Predictions
+
+Main idea:
+Analyze the behavior of data across time periods.
+
+---
+
+## 2. Example
+
+An OTT platform analyzes:
+
+* daily active users
+* hourly streaming traffic
+* monthly subscription growth
+
+to identify peak usage periods and customer engagement trends.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Sales Trend Analysis
+
+Businesses track revenue growth over months and years.
+
+---
+
+### Use Case 2 — System Monitoring
+
+IT systems monitor server CPU and memory usage continuously over time.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Detects Trends and Patterns
+
+Businesses can identify growth, decline, and seasonal behavior.
+
+---
+
+### Advantage 2 — Supports Forecasting
+
+Historical time-based data improves future prediction models.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Large Data Volume
+
+Continuous time-based data grows very quickly.
+
+---
+
+### Disadvantage 2 — Complex Analysis
+
+Time-series modeling and anomaly detection can become mathematically complex.

@@ -1,0 +1,99 @@
+# PHASE 7 — Topic 15: Pipeline Dependency Management
+
+## 1. Explanation
+
+**Pipeline Dependency Management** is the process of controlling the execution order between different data pipeline tasks and workflows.
+
+Purpose:
+Ensure pipelines run in the correct sequence.
+
+Many ETL/ELT jobs depend on other jobs completing first.
+
+Example dependencies:
+
+* dimension tables must load before fact tables
+* raw ingestion must complete before transformation
+* staging must finish before warehouse loading
+
+Dependency management handles:
+
+* task sequencing
+* workflow orchestration
+* failure handling
+* scheduling
+
+Common orchestration tools:
+
+* Apache Airflow
+* AWS Step Functions
+* Azure Data Factory
+
+Flow Example:
+
+Job A → Job B → Job C
+
+If Job A fails:
+
+* B and C should not execute.
+
+---
+
+## 2. Example
+
+An e-commerce warehouse pipeline:
+
+### Step 1
+
+Load customer dimension table.
+
+### Step 2
+
+Load product dimension table.
+
+### Step 3
+
+Load sales fact table.
+
+Sales fact loading depends on dimensions finishing successfully first.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise ETL Workflows
+
+Large organizations coordinate hundreds of dependent daily ETL jobs.
+
+---
+
+### Use Case 2 — Scheduled Data Warehousing
+
+Nightly warehouse refresh pipelines execute in predefined dependency order.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Workflow Reliability
+
+Jobs execute in correct order with controlled execution flow.
+
+---
+
+### Advantage 2 — Easier Failure Management
+
+Failed dependencies prevent incorrect downstream processing.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Workflow Management
+
+Large dependency chains become difficult to maintain.
+
+---
+
+### Disadvantage 2 — Failure Propagation
+
+One failed upstream job can delay multiple downstream pipelines.

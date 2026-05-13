@@ -1,0 +1,86 @@
+# PHASE 8 — Topic 11: Revenue Analytics
+
+## 1. Explanation
+
+**Revenue Analytics** is the process of analyzing revenue-related data to understand business performance and profitability.
+
+Purpose:
+Track:
+
+* revenue growth
+* profit trends
+* product performance
+* customer spending behavior
+
+Revenue analytics uses warehouse data from:
+
+* sales
+* payments
+* subscriptions
+* invoices
+* transactions
+
+Common metrics:
+
+* total revenue
+* monthly recurring revenue (MRR)
+* average order value
+* revenue by region
+* revenue by product
+
+Main idea:
+Convert sales and financial data into business insights.
+
+---
+
+## 2. Example
+
+An OTT platform analyzes:
+
+* monthly subscription revenue
+* premium plan revenue
+* regional revenue growth
+
+to identify which subscription plans generate the highest profit.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Financial Performance Monitoring
+
+Executives monitor company revenue trends and growth.
+
+---
+
+### Use Case 2 — Product Profitability Analysis
+
+Businesses identify top-performing and low-performing products.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Business Decision-Making
+
+Revenue insights help optimize pricing and business strategy.
+
+---
+
+### Advantage 2 — Identifies Growth Opportunities
+
+Companies can discover profitable products, regions, or customer groups.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Data Integration Complexity
+
+Revenue data often comes from multiple systems and formats.
+
+---
+
+### Disadvantage 2 — Incorrect Metrics Can Mislead
+
+Poor calculations may produce inaccurate financial insights.

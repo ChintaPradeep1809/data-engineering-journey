@@ -1,0 +1,84 @@
+# PHASE 7 — Topic 1: Full Load Strategy
+
+## 1. Explanation
+
+A **Full Load Strategy** means loading the entire dataset from the source system into the target system every time the pipeline runs.
+
+Old data in the target is usually:
+
+* deleted
+  OR
+* overwritten
+
+before loading the fresh complete dataset.
+
+Process:
+
+Source Table → Extract All Data → Replace Target Data
+
+This strategy is simple because:
+
+* no change tracking is needed
+* no timestamp comparison is needed
+
+It is mainly used when:
+
+* data volume is small
+* initial warehouse loading happens
+* complete refresh is acceptable
+
+---
+
+## 2. Example
+
+A company has a product table with 10,000 records.
+
+Every night:
+
+* all 10,000 records are extracted
+* target warehouse table is cleared
+* fresh full dataset is loaded again
+
+even if only 20 records changed.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Initial Data Warehouse Load
+
+When building a warehouse for the first time, all historical data is loaded fully.
+
+---
+
+### Use Case 2 — Small Reference Tables
+
+Small tables like country codes or product categories are refreshed completely.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Simple Implementation
+
+No complex logic for tracking changed records is required.
+
+---
+
+### Advantage 2 — Data Consistency
+
+Target system always contains a complete fresh copy of source data.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — High Processing Cost
+
+Large datasets consume more time, compute, and network resources.
+
+---
+
+### Disadvantage 2 — Poor Scalability
+
+Not efficient for very large enterprise datasets.

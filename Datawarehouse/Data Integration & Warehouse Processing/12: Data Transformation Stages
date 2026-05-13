@@ -1,0 +1,135 @@
+# PHASE 7 — Topic 12: Data Transformation Stages
+
+## 1. Explanation
+
+**Data Transformation Stages** are the steps where raw data is converted into clean, structured, and business-ready data during ETL/ELT processing.
+
+Purpose:
+Prepare data for analytics, reporting, and business usage.
+
+Common transformation stages include:
+
+---
+
+### 1. Data Cleaning
+
+Fix:
+
+* null values
+* duplicates
+* invalid records
+* inconsistent formats
+
+---
+
+### 2. Data Standardization
+
+Convert data into common formats.
+
+Examples:
+
+* date formats
+* currency formats
+* naming standards
+
+---
+
+### 3. Data Validation
+
+Check whether data follows business rules.
+
+Example:
+
+* negative sales amounts rejected
+* invalid customer IDs flagged
+
+---
+
+### 4. Data Enrichment
+
+Add additional useful information.
+
+Example:
+
+* customer segmentation
+* region mapping
+* calculated fields
+
+---
+
+### 5. Data Aggregation
+
+Summarize detailed records.
+
+Example:
+
+* daily sales totals
+* monthly revenue
+
+---
+
+### 6. Data Loading Preparation
+
+Prepare transformed datasets for warehouse loading.
+
+Flow:
+
+Raw Data → Cleaning → Standardization → Validation → Enrichment → Aggregation → Warehouse
+
+---
+
+## 2. Example
+
+An e-commerce pipeline processes order data.
+
+Transformation stages:
+
+* remove duplicate orders
+* convert currencies to INR
+* validate customer IDs
+* calculate total revenue
+* create daily sales summaries
+
+before loading into warehouse tables.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Business Intelligence Reporting
+
+Companies transform raw operational data into dashboard-ready datasets.
+
+---
+
+### Use Case 2 — Customer Analytics
+
+Organizations enrich customer data for segmentation and behavior analysis.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Data Quality
+
+Business users receive cleaner and more reliable datasets.
+
+---
+
+### Advantage 2 — Enables Better Analytics
+
+Structured transformed data improves reporting and decision-making.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Processing Complexity
+
+Large transformation pipelines become difficult to maintain.
+
+---
+
+### Disadvantage 2 — Higher Compute Consumption
+
+Complex transformations increase processing cost and runtime.

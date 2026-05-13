@@ -1,0 +1,121 @@
+# PHASE 6 — Topic 6: Medallion Architecture (Bronze / Silver / Gold)
+
+## 1. Explanation
+
+**Medallion Architecture** is a modern data architecture pattern used mainly in data lakes and lakehouses to organize data into multiple quality layers.
+
+The architecture has 3 layers:
+
+### Bronze Layer
+
+Stores raw incoming data exactly as received.
+
+Characteristics:
+
+* uncleaned
+* duplicate records possible
+* original source format preserved
+
+---
+
+### Silver Layer
+
+Stores cleaned and transformed data.
+
+Operations performed:
+
+* remove duplicates
+* standardize formats
+* validate records
+* join datasets
+
+This layer becomes analytics-ready.
+
+---
+
+### Gold Layer
+
+Stores highly refined business-level data.
+
+Used for:
+
+* dashboards
+* KPIs
+* reporting
+* machine learning
+* executive analytics
+
+Flow:
+
+Source → Bronze → Silver → Gold
+
+Purpose:
+Improve data quality step-by-step while maintaining scalability and traceability.
+
+---
+
+## 2. Example
+
+An e-commerce company receives:
+
+* customer clicks
+* orders
+* payments
+
+### Bronze
+
+Raw JSON logs stored from website.
+
+### Silver
+
+Invalid records removed, customer IDs standardized.
+
+### Gold
+
+Business tables created like:
+
+* daily revenue
+* top-selling products
+* customer retention metrics
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Big Data Analytics
+
+Companies process massive raw datasets in stages before business reporting.
+
+---
+
+### Use Case 2 — Machine Learning Pipelines
+
+ML teams use silver/gold layers for high-quality training datasets.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Data Quality Management
+
+Data improves gradually across layers.
+
+---
+
+### Advantage 2 — Easier Debugging and Recovery
+
+Teams can trace problems back to raw bronze data.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — More Storage Consumption
+
+Same data exists across multiple layers.
+
+---
+
+### Disadvantage 2 — Pipeline Complexity Increases
+
+Managing multiple transformation layers requires more engineering effort.

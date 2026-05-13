@@ -1,0 +1,112 @@
+# PHASE 8 — Topic 8: Drill-Down & Roll-Up Analytics
+
+## 1. Explanation
+
+**Drill-Down** and **Roll-Up** are analytical operations used to view data at different levels of detail.
+
+They are commonly used in:
+
+* OLAP systems
+* dashboards
+* BI reporting
+
+---
+
+# Drill-Down
+
+Drill-down means moving from summarized data to more detailed data.
+
+Example flow:
+
+Year → Quarter → Month → Day
+
+Purpose:
+Analyze detailed reasons behind business metrics.
+
+---
+
+# Roll-Up
+
+Roll-up means moving from detailed data to summarized data.
+
+Example flow:
+
+Day → Month → Quarter → Year
+
+Purpose:
+View high-level business summaries.
+
+---
+
+These operations are usually performed on dimensions such as:
+
+* time
+* geography
+* product hierarchy
+
+Main idea:
+Allow flexible navigation between detailed and summarized analytics.
+
+---
+
+## 2. Example
+
+A company dashboard shows yearly sales revenue.
+
+### Drill-Down
+
+User clicks:
+
+* year → quarter → month → city-level sales
+
+to identify which city caused revenue decline.
+
+### Roll-Up
+
+User summarizes:
+
+* city sales → state sales → country sales
+
+for executive reporting.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Executive Business Analysis
+
+Executives roll up detailed data into high-level KPI summaries.
+
+---
+
+### Use Case 2 — Root Cause Investigation
+
+Analysts drill down into detailed transactions to identify problems.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Flexible Data Exploration
+
+Users can analyze both summary and detailed views.
+
+---
+
+### Advantage 2 — Better Business Insights
+
+Helps identify trends and root causes efficiently.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Query Processing
+
+Drill-down operations on huge datasets may become slow.
+
+---
+
+### Disadvantage 2 — Requires Well-Designed Dimensions
+
+Hierarchies must be properly modeled for effective navigation.

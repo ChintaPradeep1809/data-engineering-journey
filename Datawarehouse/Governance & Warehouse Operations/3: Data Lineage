@@ -1,0 +1,86 @@
+# PHASE 9 — Topic 3: Data Lineage
+
+## 1. Explanation
+
+**Data Lineage** is the process of tracking the complete lifecycle and movement of data across systems.
+
+It shows:
+
+* where data originated
+* how it was transformed
+* where it moved
+* where it is currently used
+
+Purpose:
+Provide transparency and traceability in data pipelines.
+
+Data lineage tracks:
+
+* source systems
+* ETL transformations
+* warehouse tables
+* reports and dashboards
+
+Flow Example:
+
+Source → Staging → Transformation → EDW → Dashboard
+
+Main idea:
+Understand the full journey of data from source to final report.
+
+---
+
+## 2. Example
+
+A revenue dashboard shows monthly sales revenue.
+
+Data lineage reveals:
+
+* revenue came from order tables
+* currency conversion transformation applied
+* aggregated into monthly sales tables
+* then displayed in Power BI dashboard
+
+This helps teams trace data issues quickly.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Troubleshooting Data Issues
+
+Engineers trace incorrect dashboard metrics back to source transformations.
+
+---
+
+### Use Case 2 — Regulatory Compliance
+
+Organizations prove how sensitive data moves through systems.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Data Transparency
+
+Teams clearly understand how data flows across systems.
+
+---
+
+### Advantage 2 — Easier Impact Analysis
+
+Changes in source systems can be tracked through downstream dependencies.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Implementation
+
+Capturing lineage across many tools and systems is difficult.
+
+---
+
+### Disadvantage 2 — Maintenance Overhead
+
+Lineage information must stay updated as pipelines evolve.

@@ -1,0 +1,84 @@
+# PHASE 7 — Topic 8: Reprocessing Strategy
+
+## 1. Explanation
+
+A **Reprocessing Strategy** defines how failed or incorrect data pipelines can safely process data again.
+
+Reprocessing is needed when:
+
+* ETL jobs fail
+* corrupted data is detected
+* business logic changes
+* missing records appear
+
+Purpose:
+Recover data pipelines without creating:
+
+* duplicates
+* inconsistent data
+* data loss
+
+Common reprocessing methods:
+
+* rerun full batch
+* rerun failed partition
+* replay event streams
+* reload from landing/staging layer
+
+A strong reprocessing strategy is critical for reliable enterprise pipelines.
+
+---
+
+## 2. Example
+
+A daily sales ETL job fails because of server downtime.
+
+The pipeline:
+
+* reloads raw files from landing zone
+* reprocesses only failed sales data
+* updates warehouse correctly
+
+without affecting successful records.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Failed Batch Recovery
+
+Companies rerun failed ETL jobs after infrastructure issues.
+
+---
+
+### Use Case 2 — Logic Change Recalculation
+
+Businesses reprocess historical data after changing transformation rules.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Pipeline Reliability
+
+Failed data loads can be recovered safely.
+
+---
+
+### Advantage 2 — Prevents Data Loss
+
+Original raw data can be processed again when needed.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Complex Pipeline Design
+
+Reprocessing logic increases engineering complexity.
+
+---
+
+### Disadvantage 2 — High Resource Consumption
+
+Large historical reprocessing jobs may consume heavy compute and storage resources.

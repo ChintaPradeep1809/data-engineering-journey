@@ -1,0 +1,98 @@
+# PHASE 7 — Topic 14: Data Cleansing Concepts
+
+## 1. Explanation
+
+**Data Cleansing** is the process of identifying and correcting bad-quality data before it is used for analytics or reporting.
+
+Purpose:
+Improve:
+
+* accuracy
+* consistency
+* reliability
+* usability of data
+
+Common data issues:
+
+* duplicate records
+* null values
+* incorrect formats
+* invalid values
+* inconsistent naming
+* corrupted data
+
+Common cleansing operations:
+
+* removing duplicates
+* filling missing values
+* correcting formats
+* validating records
+* standardizing values
+
+Flow:
+
+Raw Data → Cleansing → Clean Data → Warehouse/Analytics
+
+Data cleansing is one of the most critical steps in ETL and warehousing.
+
+---
+
+## 2. Example
+
+Customer dataset contains:
+
+| Name | Phone      |
+| ---- | ---------- |
+| Ravi | 9876543210 |
+| Ravi | 9876543210 |
+| NULL | 9999999999 |
+
+Cleansing steps:
+
+* remove duplicate Ravi record
+* handle missing customer name
+* validate phone number format
+
+before warehouse loading.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Customer Analytics
+
+Companies clean customer profiles before segmentation and marketing analysis.
+
+---
+
+### Use Case 2 — Financial Reporting
+
+Banks validate transaction records before generating compliance reports.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Data Quality
+
+Analytics and reports become more reliable.
+
+---
+
+### Advantage 2 — Reduces Business Errors
+
+Incorrect or inconsistent records are minimized before reporting.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Time-Consuming Process
+
+Large-scale cleansing requires significant effort and processing.
+
+---
+
+### Disadvantage 2 — Risk of Incorrect Cleansing
+
+Bad cleansing rules may accidentally remove valid data.

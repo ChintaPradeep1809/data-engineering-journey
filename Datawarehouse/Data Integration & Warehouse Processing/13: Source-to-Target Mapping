@@ -1,0 +1,91 @@
+# PHASE 7 — Topic 13: Source-to-Target Mapping
+
+## 1. Explanation
+
+**Source-to-Target Mapping (STM)** defines how data fields from source systems are mapped and transformed into target warehouse tables.
+
+It acts like a blueprint for ETL/ELT pipelines.
+
+Purpose:
+Ensure correct movement and transformation of data between systems.
+
+Mapping defines:
+
+* source column
+* target column
+* transformation logic
+* data type conversion
+* validation rules
+
+Typical mapping details:
+
+* where data comes from
+* where it should go
+* how it should be transformed
+
+It is an important document for:
+
+* data engineers
+* ETL developers
+* testers
+* business analysts
+
+---
+
+## 2. Example
+
+Source table:
+
+| Source Column | Target Column |
+| ------------- | ------------- |
+| cust_name     | customer_name |
+| dob           | birth_date    |
+| amt_usd       | amount_inr    |
+
+Transformation:
+
+* USD converted to INR before loading.
+
+This mapping guides ETL pipeline implementation.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Data Warehouse Development
+
+ETL developers use STM documents to build pipelines correctly.
+
+---
+
+### Use Case 2 — Data Migration Projects
+
+Organizations map old system data into new platforms during migrations.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Data Accuracy
+
+Clearly defined mappings reduce transformation mistakes.
+
+---
+
+### Advantage 2 — Better Team Coordination
+
+Business analysts, testers, and engineers follow the same data rules.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Time-Consuming Documentation
+
+Large enterprise mappings can become extensive and difficult to maintain.
+
+---
+
+### Disadvantage 2 — Frequent Update Effort
+
+Source schema changes require mapping updates regularly.

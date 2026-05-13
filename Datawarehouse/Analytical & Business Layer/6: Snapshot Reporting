@@ -1,0 +1,87 @@
+# PHASE 8 — Topic 6: Snapshot Reporting
+
+## 1. Explanation
+
+**Snapshot Reporting** captures and stores the state of business data at a specific point in time.
+
+Purpose:
+Track how business metrics looked on a particular date or time.
+
+Instead of only storing current values, snapshots preserve historical states.
+
+Common snapshot intervals:
+
+* daily
+* weekly
+* monthly
+
+Snapshot reporting is useful when data changes frequently and historical states must be preserved.
+
+Examples:
+
+* daily account balance
+* monthly inventory level
+* employee headcount at month-end
+
+Flow:
+
+Operational Data → Snapshot Capture → Historical Snapshot Reports
+
+Main idea:
+Store time-based copies of business data for historical comparison.
+
+---
+
+## 2. Example
+
+A bank records customer account balances every day at midnight.
+
+This allows analysts to:
+
+* compare balances over time
+* analyze trends
+* generate monthly financial reports
+
+even if current balances have changed.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Financial Reporting
+
+Banks and finance systems store daily balance snapshots for compliance and audits.
+
+---
+
+### Use Case 2 — Inventory Monitoring
+
+Retail companies track stock levels at regular intervals.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Preserves Historical States
+
+Businesses can analyze past business conditions accurately.
+
+---
+
+### Advantage 2 — Supports Trend Comparison
+
+Easy comparison across different time periods.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — High Storage Consumption
+
+Frequent snapshots create large amounts of historical data.
+
+---
+
+### Disadvantage 2 — Data Redundancy
+
+Many snapshot records may contain repeated unchanged data.

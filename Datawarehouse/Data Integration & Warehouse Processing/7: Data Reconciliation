@@ -1,0 +1,89 @@
+# PHASE 7 — Topic 7: Data Reconciliation
+
+## 1. Explanation
+
+**Data Reconciliation** is the process of verifying that data in the target system matches the source system correctly after data movement or transformation.
+
+Purpose:
+Ensure:
+
+* no missing records
+* no duplicate records
+* no incorrect transformations
+* no data corruption
+
+Reconciliation checks may compare:
+
+* row counts
+* totals/sums
+* hashes
+* timestamps
+* business metrics
+
+Flow:
+
+Source Data ↔ Validation Checks ↔ Target Data
+
+It is a critical part of:
+
+* ETL pipelines
+* financial systems
+* enterprise warehouses
+
+because incorrect data can cause major business problems.
+
+---
+
+## 2. Example
+
+A banking ETL pipeline moves transaction data from operational DB to warehouse.
+
+Validation checks:
+
+* source transaction count = target transaction count
+* total transaction amount matches
+* no records missing
+
+If mismatch occurs, reconciliation fails and alerts are generated.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Financial Data Validation
+
+Banks verify transaction totals after warehouse loading.
+
+---
+
+### Use Case 2 — Enterprise ETL Monitoring
+
+Companies validate that daily pipeline loads completed correctly.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves Data Accuracy
+
+Detects missing, duplicated, or corrupted data.
+
+---
+
+### Advantage 2 — Builds Business Trust
+
+Business teams gain confidence in reporting quality.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Additional Processing Overhead
+
+Validation checks increase pipeline execution time.
+
+---
+
+### Disadvantage 2 — Complex Large-Scale Validation
+
+Reconciliation becomes difficult for huge distributed datasets.

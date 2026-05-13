@@ -1,0 +1,101 @@
+# PHASE 9 — Topic 5: Role-Based Access Control (RBAC)
+
+## 1. Explanation
+
+**Role-Based Access Control (RBAC)** is a security model where system access is granted based on user roles instead of assigning permissions individually to each user.
+
+Purpose:
+Control who can:
+
+* view data
+* modify data
+* run reports
+* manage systems
+
+In RBAC:
+
+* users are assigned roles
+* roles contain permissions
+
+Example roles:
+
+* Data Analyst
+* Data Engineer
+* Admin
+* Finance Manager
+
+Each role gets specific access rights.
+
+Main idea:
+Manage security through roles instead of user-by-user permissions.
+
+---
+
+## 2. Example
+
+A company defines:
+
+### Data Analyst Role
+
+Can:
+
+* view dashboards
+* query reporting tables
+
+Cannot:
+
+* delete warehouse tables
+
+---
+
+### Admin Role
+
+Can:
+
+* manage users
+* modify schemas
+* control pipelines
+
+Permissions are assigned automatically when users receive roles.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise Data Security
+
+Organizations restrict sensitive warehouse data to authorized departments.
+
+---
+
+### Use Case 2 — Compliance Management
+
+Banks and healthcare systems control access to regulated data.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Easier Permission Management
+
+Roles simplify security administration for large organizations.
+
+---
+
+### Advantage 2 — Improved Security
+
+Users only access data required for their responsibilities.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Role Design Complexity
+
+Poorly designed roles may create excessive or insufficient access.
+
+---
+
+### Disadvantage 2 — Maintenance Challenges
+
+Large enterprises may require continuous role updates and audits.

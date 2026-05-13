@@ -1,0 +1,80 @@
+# PHASE 8 — Topic 9: Ad-Hoc Analytics
+
+## 1. Explanation
+
+**Ad-Hoc Analytics** means performing custom, on-demand analysis to answer specific business questions that were not predefined earlier.
+
+Unlike fixed dashboards or scheduled reports, ad-hoc analytics is flexible and user-driven.
+
+Purpose:
+Allow analysts and business users to explore data freely.
+
+Users can:
+
+* create custom queries
+* filter data dynamically
+* investigate trends
+* answer unexpected business questions
+
+Ad-hoc analytics is commonly done using:
+
+* SQL
+* BI tools
+* interactive dashboards
+
+Main idea:
+Business users analyze data whenever new questions arise.
+
+---
+
+## 2. Example
+
+A marketing team suddenly wants to know:
+
+“Which product category had the highest sales increase among customers aged 18–25 during festival season?”
+
+This report was not prebuilt earlier.
+
+Analysts create a custom ad-hoc query to answer it.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Business Investigation
+
+Analysts explore sudden revenue drops or unusual customer behavior.
+
+---
+
+### Use Case 2 — Management Decision Support
+
+Executives request custom reports during meetings or planning discussions.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — High Flexibility
+
+Users can explore data without waiting for predefined reports.
+
+---
+
+### Advantage 2 — Faster Business Insights
+
+Unexpected business questions can be answered quickly.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Performance Impact
+
+Complex ad-hoc queries may overload warehouse systems.
+
+---
+
+### Disadvantage 2 — Risk of Inconsistent Analysis
+
+Different users may interpret or calculate metrics differently.

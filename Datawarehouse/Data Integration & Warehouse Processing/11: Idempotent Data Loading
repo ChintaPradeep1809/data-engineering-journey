@@ -1,0 +1,85 @@
+# PHASE 7 — Topic 11: Idempotent Data Loading
+
+## 1. Explanation
+
+**Idempotent Data Loading** means a pipeline can run multiple times with the same input and still produce the same final result without creating duplicates or inconsistencies.
+
+Purpose:
+Ensure safe reruns and reliable recovery.
+
+In idempotent systems:
+
+* repeated execution does not corrupt data
+* duplicate inserts are avoided
+* updates remain consistent
+
+This is very important for:
+
+* retry mechanisms
+* reprocessing strategies
+* distributed systems
+
+Common techniques:
+
+* primary keys
+* merge/upsert operations
+* deduplication logic
+* checkpoints
+
+Main idea:
+Running the same job again should not change correct existing results.
+
+---
+
+## 2. Example
+
+A sales pipeline loads order data into a warehouse.
+
+If the same ETL job accidentally runs twice:
+
+* duplicate orders are not inserted
+* existing records are updated safely
+
+because the pipeline checks unique order IDs before loading.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — ETL Job Recovery
+
+Failed pipelines can rerun safely without duplicating historical data.
+
+---
+
+### Use Case 2 — Streaming Event Processing
+
+Real-time systems avoid duplicate event processing during retries.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Prevents Duplicate Data
+
+Repeated executions do not create inconsistent records.
+
+---
+
+### Advantage 2 — Safer Pipeline Recovery
+
+Pipelines can be rerun confidently after failures.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — More Complex Design
+
+Requires strong deduplication and merge logic.
+
+---
+
+### Disadvantage 2 — Additional Processing Overhead
+
+Uniqueness checks and validations increase compute cost.

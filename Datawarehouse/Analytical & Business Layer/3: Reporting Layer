@@ -1,0 +1,96 @@
+# PHASE 8 — Topic 3: Reporting Layer
+
+## 1. Explanation
+
+The **Reporting Layer** is the top layer of a data warehouse system where business users access reports, dashboards, and analytics.
+
+It converts warehouse data into business-readable information.
+
+Purpose:
+Provide insights for:
+
+* decision-making
+* monitoring
+* business analysis
+
+The reporting layer usually connects to:
+
+* data marts
+* EDW
+* metrics layer
+
+Common reporting tools:
+
+* Power BI
+* Tableau
+* Looker
+* QlikView
+
+Types of reports:
+
+* sales reports
+* financial reports
+* KPI dashboards
+* operational reports
+
+Flow:
+
+Warehouse/Data Mart → Reporting Layer → Business Users
+
+Main idea:
+Present analytical data in a visual and understandable format.
+
+---
+
+## 2. Example
+
+A retail company creates dashboards showing:
+
+* daily sales
+* top products
+* regional revenue
+* customer growth
+
+Executives access these reports through Power BI dashboards.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Executive Business Monitoring
+
+Leadership teams use dashboards to monitor company performance.
+
+---
+
+### Use Case 2 — Operational Reporting
+
+Departments track daily operations such as inventory and sales activity.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Easy Business Insights
+
+Complex warehouse data becomes understandable through visual reports.
+
+---
+
+### Advantage 2 — Faster Decision-Making
+
+Business teams quickly analyze trends and KPIs.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Performance Issues on Large Queries
+
+Complex dashboards may become slow with huge datasets.
+
+---
+
+### Disadvantage 2 — Risk of Misinterpretation
+
+Poorly designed reports can lead to incorrect business conclusions.

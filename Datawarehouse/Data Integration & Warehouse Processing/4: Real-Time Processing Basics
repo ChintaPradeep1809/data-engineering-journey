@@ -1,0 +1,91 @@
+# PHASE 7 — Topic 4: Real-Time Processing Basics
+
+## 1. Explanation
+
+**Real-Time Processing** means processing data immediately as soon as it is generated or received.
+
+Instead of waiting for scheduled batches, data flows continuously through the pipeline.
+
+Purpose:
+Provide instant insights and low-latency analytics.
+
+Real-time systems process:
+
+* events
+* streams
+* transactions
+* logs
+
+continuously.
+
+Typical flow:
+
+Source Event → Stream Processing → Immediate Output
+
+Common technologies:
+
+* Apache Kafka
+* Apache Flink
+* Spark Streaming
+
+Real-time processing is important when businesses need:
+
+* live monitoring
+* instant alerts
+* immediate decision-making
+
+---
+
+## 2. Example
+
+A payment company processes credit card transactions instantly.
+
+As soon as a transaction occurs:
+
+* fraud rules execute
+* alerts generated
+* dashboards updated
+
+within seconds.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Fraud Detection
+
+Banks identify suspicious transactions immediately.
+
+---
+
+### Use Case 2 — Live Tracking Systems
+
+Food delivery apps track drivers and orders in real time.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Immediate Insights
+
+Businesses can react quickly to live events.
+
+---
+
+### Advantage 2 — Better Customer Experience
+
+Real-time updates improve user interactions and monitoring.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Higher Infrastructure Complexity
+
+Streaming systems are harder to design and maintain.
+
+---
+
+### Disadvantage 2 — Higher Processing Cost
+
+Continuous processing requires more compute resources.

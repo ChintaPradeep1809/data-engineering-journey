@@ -1,0 +1,83 @@
+# PHASE 7 — Topic 3: Batch Processing
+
+## 1. Explanation
+
+**Batch Processing** means processing data in large groups (batches) at scheduled intervals instead of processing each record immediately.
+
+Data is collected over a period of time and then processed together.
+
+Processing may happen:
+
+* hourly
+* daily
+* weekly
+* monthly
+
+Typical flow:
+
+Collect Data → Store Temporarily → Process Batch → Load Target
+
+Batch processing is commonly used in:
+
+* ETL pipelines
+* reporting systems
+* enterprise warehouses
+
+Purpose:
+Efficiently process large volumes of data.
+
+---
+
+## 2. Example
+
+A retail company collects all daily sales transactions.
+
+Every night at 1 AM:
+
+* all sales records are processed together
+* transformations applied
+* warehouse updated
+
+instead of updating after every single transaction.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Daily Financial Reporting
+
+Banks process daily transaction summaries overnight.
+
+---
+
+### Use Case 2 — Payroll Processing
+
+Companies process employee salary calculations monthly in batches.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Efficient for Large Volumes
+
+Large datasets can be processed efficiently together.
+
+---
+
+### Advantage 2 — Lower System Load
+
+Source systems are not continuously stressed by constant processing.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Delayed Data Availability
+
+Reports are updated only after batch execution completes.
+
+---
+
+### Disadvantage 2 — Failure Impact Is Larger
+
+If a batch job fails, large amounts of data may be delayed.

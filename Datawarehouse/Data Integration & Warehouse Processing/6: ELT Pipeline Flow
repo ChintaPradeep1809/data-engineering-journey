@@ -1,0 +1,94 @@
+# PHASE 7 — Topic 6: ELT Pipeline Flow
+
+## 1. Explanation
+
+**ELT** stands for:
+
+* Extract
+* Load
+* Transform
+
+In ELT, raw data is first loaded directly into the target system, and transformations happen afterward inside the warehouse or lakehouse.
+
+Flow:
+
+Sources → Extract → Load → Transform
+
+Difference from ETL:
+
+* ETL transforms data before loading
+* ELT transforms data after loading
+
+ELT is commonly used in:
+
+* cloud data warehouses
+* lakehouses
+* big data systems
+
+because modern platforms have strong processing power.
+
+Common platforms:
+
+* Snowflake
+* BigQuery
+* Databricks
+* Redshift
+
+Purpose:
+Leverage warehouse compute power for scalable transformations.
+
+---
+
+## 2. Example
+
+A streaming company loads raw watch-history logs directly into Snowflake.
+
+After loading:
+
+* SQL transformations run
+* business metrics calculated
+* reporting tables created
+
+inside the warehouse itself.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Cloud Data Warehousing
+
+Organizations use ELT for scalable analytics on modern cloud platforms.
+
+---
+
+### Use Case 2 — Big Data Processing
+
+Large raw datasets are loaded quickly before transformation.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Data Ingestion
+
+Raw data can be loaded quickly without waiting for transformations.
+
+---
+
+### Advantage 2 — Better Scalability
+
+Modern cloud warehouses efficiently handle large transformation workloads.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Raw Dirty Data Enters Warehouse
+
+Uncleaned data may temporarily exist in analytical systems.
+
+---
+
+### Disadvantage 2 — Higher Warehouse Compute Usage
+
+Transformations inside warehouse increase compute cost.

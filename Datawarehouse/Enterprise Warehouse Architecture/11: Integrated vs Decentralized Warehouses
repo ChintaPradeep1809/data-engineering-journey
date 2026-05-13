@@ -1,0 +1,117 @@
+# PHASE 6 — Topic 11: Integrated vs Decentralized Warehouses
+
+## 1. Explanation
+
+This topic compares two approaches for organizing enterprise data warehouses.
+
+---
+
+# Integrated Warehouse
+
+An **Integrated Warehouse** is a centralized warehouse where all business data is stored in one unified system.
+
+All departments use:
+
+* same data standards
+* same definitions
+* same centralized architecture
+
+Purpose:
+Create a single source of truth across the organization.
+
+Characteristics:
+
+* centralized governance
+* enterprise-wide analytics
+* consistent reporting
+
+---
+
+# Decentralized Warehouse
+
+A **Decentralized Warehouse** means different departments maintain separate warehouse systems independently.
+
+Each team may have its own:
+
+* storage
+* pipelines
+* reporting models
+* business rules
+
+Purpose:
+Allow teams to move faster independently.
+
+Characteristics:
+
+* distributed ownership
+* domain-level control
+* flexible architecture
+
+---
+
+## 2. Example
+
+### Integrated Warehouse Example
+
+A bank stores:
+
+* customer data
+* loans
+* transactions
+* credit card data
+
+in one centralized EDW used by all departments.
+
+---
+
+### Decentralized Warehouse Example
+
+A large tech company allows:
+
+* marketing team
+* finance team
+* product team
+
+to maintain separate analytical warehouse environments independently.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Integrated Warehouse
+
+Large enterprises needing strict governance and standardized reporting.
+
+---
+
+### Use Case 2 — Decentralized Warehouse
+
+Fast-moving organizations where teams require independent analytics flexibility.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Integrated Warehouse
+
+Provides consistent enterprise-wide reporting and governance.
+
+---
+
+### Advantage 2 — Decentralized Warehouse
+
+Teams can develop and deploy analytics solutions faster independently.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Integrated Warehouse
+
+Centralized systems can become slower and harder to scale organizationally.
+
+---
+
+### Disadvantage 2 — Decentralized Warehouse
+
+Data inconsistency and duplication can increase across teams.

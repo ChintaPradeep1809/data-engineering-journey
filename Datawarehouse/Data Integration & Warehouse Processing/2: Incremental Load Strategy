@@ -1,0 +1,80 @@
+# PHASE 7 — Topic 2: Incremental Load Strategy
+
+## 1. Explanation
+
+An **Incremental Load Strategy** loads only the new or changed records from the source system into the target system.
+
+Instead of reloading the full dataset, the pipeline identifies:
+
+* inserted records
+* updated records
+* sometimes deleted records
+
+This is usually done using:
+
+* timestamps
+* CDC (Change Data Capture)
+* version columns
+* audit columns
+
+Process:
+
+Source Table → Detect Changed Data → Load Only Changes
+
+Purpose:
+Reduce processing time and improve scalability.
+
+---
+
+## 2. Example
+
+A customer table contains 10 million records.
+
+Today:
+
+* 5,000 new customers added
+* 2,000 customer records updated
+
+Incremental loading processes only those 7,000 changed records instead of all 10 million rows.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Daily Enterprise ETL Pipelines
+
+Large warehouses load only changed transactional data every day.
+
+---
+
+### Use Case 2 — Real-Time Data Synchronization
+
+Streaming systems continuously load newly arriving events incrementally.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Processing
+
+Only changed records are processed, reducing execution time.
+
+---
+
+### Advantage 2 — Better Scalability
+
+Efficient for very large datasets and enterprise systems.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — More Complex Logic
+
+Requires change tracking mechanisms and proper synchronization handling.
+
+---
+
+### Disadvantage 2 — Risk of Missing Changes
+
+Incorrect timestamps or tracking failures may skip records.

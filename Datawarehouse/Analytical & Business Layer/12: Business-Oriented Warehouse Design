@@ -1,0 +1,91 @@
+# PHASE 8 — Topic 12: Business-Oriented Warehouse Design
+
+## 1. Explanation
+
+**Business-Oriented Warehouse Design** means designing a data warehouse based on business goals, business processes, and analytical needs instead of only technical structure.
+
+Purpose:
+Ensure the warehouse supports real business decision-making.
+
+The design focuses on:
+
+* business KPIs
+* reporting requirements
+* departmental analytics
+* customer behavior
+* operational insights
+
+Key principle:
+Understand the business first, then design the warehouse.
+
+Business-oriented design usually includes:
+
+* fact tables for business events
+* dimensions for analysis
+* KPI-driven modeling
+* subject-oriented architecture
+
+Main idea:
+Warehouse design should solve business problems, not just store data.
+
+---
+
+## 2. Example
+
+An e-commerce company designs warehouse modules around:
+
+* sales
+* customers
+* products
+* inventory
+* payments
+
+instead of designing around application databases.
+
+This helps business teams directly analyze:
+
+* revenue trends
+* customer behavior
+* product performance
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise Reporting Systems
+
+Organizations build warehouses aligned with executive and operational reporting needs.
+
+---
+
+### Use Case 2 — Customer Analytics Platforms
+
+Businesses design customer-focused analytical models for marketing and retention analysis.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Business Alignment
+
+Warehouse structure directly supports business goals and analytics.
+
+---
+
+### Advantage 2 — Easier Reporting and KPI Tracking
+
+Business teams can analyze data more naturally and efficiently.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Requires Strong Business Understanding
+
+Engineers must deeply understand business processes before modeling.
+
+---
+
+### Disadvantage 2 — Frequent Business Changes Impact Design
+
+Changing business requirements may require warehouse redesigns.

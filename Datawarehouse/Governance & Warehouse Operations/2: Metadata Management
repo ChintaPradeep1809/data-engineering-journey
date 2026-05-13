@@ -1,0 +1,111 @@
+# PHASE 9 — Topic 2: Metadata Management
+
+## 1. Explanation
+
+**Metadata Management** is the process of managing information that describes data.
+
+Metadata means:
+“data about data.”
+
+It helps organizations understand:
+
+* what data exists
+* where data comes from
+* what data means
+* how data is structured
+* how data moves
+
+Common metadata types:
+
+### Technical Metadata
+
+Includes:
+
+* table names
+* column names
+* data types
+* schemas
+
+---
+
+### Business Metadata
+
+Includes:
+
+* KPI definitions
+* business meanings
+* report descriptions
+
+---
+
+### Operational Metadata
+
+Includes:
+
+* pipeline run logs
+* load times
+* job status
+
+Purpose:
+Improve data understanding, governance, and usability.
+
+Main idea:
+Metadata makes warehouse systems understandable and manageable.
+
+---
+
+## 2. Example
+
+A warehouse table contains a column:
+
+`cust_status`
+
+Metadata explains:
+
+* meaning = customer account status
+* datatype = string
+* valid values = Active, Inactive, Suspended
+
+This helps analysts correctly use the data.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Data Discovery
+
+Analysts use metadata catalogs to find required datasets quickly.
+
+---
+
+### Use Case 2 — Governance and Auditing
+
+Organizations track data ownership and data usage through metadata.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Data Understanding
+
+Business and technical teams can interpret data correctly.
+
+---
+
+### Advantage 2 — Easier Data Management
+
+Metadata improves governance, tracking, and documentation.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Maintenance Effort
+
+Metadata must be continuously updated as systems change.
+
+---
+
+### Disadvantage 2 — Complexity in Large Enterprises
+
+Managing metadata across many systems becomes difficult at scale.

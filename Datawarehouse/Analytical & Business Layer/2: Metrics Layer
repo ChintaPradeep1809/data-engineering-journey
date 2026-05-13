@@ -1,0 +1,98 @@
+# PHASE 8 — Topic 2: Metrics Layer
+
+## 1. Explanation
+
+A **Metrics Layer** is a centralized layer that defines and manages business metrics consistently across analytics systems.
+
+It acts as a single source for KPI calculations and business logic.
+
+Purpose:
+Ensure all teams use the same metric definitions.
+
+Without a metrics layer:
+
+* different dashboards may calculate metrics differently
+* reports may show inconsistent values
+
+The metrics layer stores:
+
+* metric formulas
+* aggregation rules
+* calculation logic
+* business definitions
+
+Examples of metrics:
+
+* total revenue
+* active users
+* churn rate
+* profit margin
+
+Flow:
+
+Warehouse Data → Metrics Layer → Dashboards/Reports
+
+Main idea:
+Define business metrics once and reuse everywhere.
+
+---
+
+## 2. Example
+
+A company defines:
+
+### Revenue Metric
+
+Revenue = Sum(Order Amount)
+
+This definition is stored in the metrics layer.
+
+Now:
+
+* finance dashboard
+* executive dashboard
+* analytics reports
+
+all use the same revenue calculation logic.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise BI Platforms
+
+Organizations standardize KPI calculations across departments.
+
+---
+
+### Use Case 2 — Self-Service Analytics
+
+Business users access consistent metrics without writing complex SQL logic.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Consistent Reporting
+
+All teams use identical business metric definitions.
+
+---
+
+### Advantage 2 — Easier Maintenance
+
+Metric logic is managed centrally instead of multiple dashboards.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Initial Setup Complexity
+
+Designing centralized metric definitions requires careful planning.
+
+---
+
+### Disadvantage 2 — Governance Dependency
+
+Poor metric governance may create confusion across teams.

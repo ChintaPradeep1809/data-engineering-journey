@@ -1,0 +1,705 @@
+Phase 5 – Real Data Engineering
+
+Topic 20: Data Quality Rules ⭐⭐⭐
+
++ Late Arriving Facts ⭐⭐⭐
+
+These are real production engineering topics.
+
+At this level, companies care less about:
+
+textbook definitions
+
+
+and more about:
+
+pipeline reliability
+
+analytics correctness
+
+business trust
+
+
+Bad data destroys warehouses.
+
+These topics solve that.
+
+
+---
+
+PART 1 — Data Quality Rules ⭐⭐⭐
+
+First — Why Data Quality Matters
+
+Suppose at Amazon:
+
+Orders table contains:
+
+order_id	revenue
+
+101	-5000
+
+
+Negative revenue.
+
+OR:
+
+customer_id
+
+NULL
+
+
+OR duplicate orders.
+
+Bad data enters warehouse.
+
+Then:
+
+dashboards wrong
+
+KPIs wrong
+
+executives lose trust
+
+ML models fail
+
+
+This is why Data Quality Rules exist.
+
+
+---
+
+What is Data Quality?
+
+Theory
+
+Data Quality ensures data is:
+
+accurate
+
+complete
+
+consistent
+
+valid
+
+reliable
+
+
+before entering analytical systems.
+
+
+---
+
+Simple Definition
+
+Data Quality Rules validate and protect warehouse correctness.
+
+
+---
+
+Common Data Quality Dimensions ⭐
+
+Dimension	Meaning
+
+Accuracy	Correct values
+Completeness	No missing critical data
+Consistency	Same definitions everywhere
+Validity	Follows rules
+Uniqueness	No duplicates
+Timeliness	Fresh/current data
+
+
+
+---
+
+Most Common Data Quality Rules ⭐⭐⭐
+
+1. Null Checks
+
+Critical fields cannot be null.
+
+
+---
+
+Example
+
+WHERE customer_id IS NULL
+
+Bad data.
+
+
+---
+
+Real Example
+
+Order without customer:
+
+breaks analytics
+
+breaks joins
+
+
+
+---
+
+2. Duplicate Checks ⭐
+
+Duplicate rows create:
+
+double revenue
+
+incorrect metrics
+
+
+
+---
+
+Example
+
+GROUP BY order_id
+HAVING COUNT(*) > 1
+
+Find duplicates.
+
+
+---
+
+3. Referential Integrity Checks ⭐
+
+Fact foreign keys must exist in dimensions.
+
+
+---
+
+Example
+
+Fact row:
+
+customer_key = 101
+
+Must exist in:
+
+dim_customer
+
+Otherwise:
+
+broken joins
+
+orphan facts
+
+
+
+---
+
+4. Range Validation
+
+Values must stay within expected range.
+
+
+---
+
+Example
+
+age < 0
+salary < 0
+discount > 100%
+
+Clearly invalid.
+
+
+---
+
+5. Format Validation
+
+Example:
+
+email format
+
+phone format
+
+date format
+
+
+
+---
+
+6. Business Rule Validation ⭐
+
+Most important real-world category.
+
+
+---
+
+Example
+
+delivery_date >= order_date
+
+Business logic validation.
+
+
+---
+
+7. Freshness Checks
+
+Data must arrive on time.
+
+Example:
+
+daily sales pipeline delayed
+
+
+Warehouse freshness monitoring required.
+
+
+---
+
+Data Quality in ETL Pipelines ⭐⭐⭐
+
+Typical flow:
+
+Source Data
+    |
+Validation Rules
+    |
+Reject / Fix Bad Records
+    |
+Warehouse Load
+
+This is production ETL design.
+
+
+---
+
+What Happens to Bad Records?
+
+Common strategies:
+
+Strategy	Meaning
+
+Reject	discard bad rows
+Quarantine	store separately
+Correct	auto-fix if possible
+Default Values	fallback handling
+
+
+
+---
+
+Quarantine Tables ⭐
+
+Very common industry pattern.
+
+Bad rows stored separately for investigation.
+
+Example:
+
+bad_records_table
+
+
+---
+
+Data Quality Tools ⭐
+
+Examples:
+
+Great Expectations
+
+Databricks expectations
+
+AWS Glue validations
+
+
+
+---
+
+Important Interview Insight ⭐⭐⭐
+
+Bad data is more dangerous than missing data because wrong analytics create wrong business decisions.
+
+Strong statement.
+
+
+---
+
+Common Interview Questions
+
+Q1. What is data quality?
+
+Ensuring correctness, completeness, consistency, and reliability of data.
+
+
+---
+
+Q2. Common data quality checks?
+
+null checks
+
+duplicates
+
+referential integrity
+
+range validation
+
+
+
+---
+
+Q3. What is referential integrity?
+
+Fact foreign keys must match dimension keys.
+
+
+---
+
+Q4. What are quarantine tables?
+
+Tables storing invalid records for later investigation.
+
+
+---
+
+Common Mistakes
+
+Mistake 1
+
+Loading raw data directly without validation.
+
+
+---
+
+Mistake 2
+
+Ignoring duplicate handling.
+
+
+---
+
+Mistake 3
+
+No referential integrity checks.
+
+
+---
+
+Mistake 4
+
+No monitoring for delayed pipelines.
+
+
+---
+
+PART 2 — Late Arriving Facts ⭐⭐⭐
+
+Now another important warehouse issue.
+
+
+---
+
+First — Understand the Problem
+
+Suppose warehouse processes:
+
+daily sales data
+
+
+January sales already loaded.
+
+Then in March:
+
+A delayed January transaction arrives.
+
+This is:
+
+Late Arriving Fact
+
+
+---
+
+What is a Late Arriving Fact?
+
+Theory
+
+A Late Arriving Fact is a fact record that arrives after the expected reporting or processing period.
+
+
+---
+
+Real Example
+
+At Netflix:
+
+Watch event from:
+
+January 5
+
+arrives on:
+
+March 1
+
+Late event.
+
+
+---
+
+Why This Happens
+
+Common reasons:
+
+network delay
+
+offline systems
+
+batch processing lag
+
+distributed systems
+
+retry pipelines
+
+
+Very common in real engineering.
+
+
+---
+
+Main Problem ⭐
+
+Historical reports may already be finalized.
+
+Late fact changes:
+
+revenue totals
+
+KPIs
+
+dashboards
+
+
+Potentially dangerous.
+
+
+---
+
+Late Arriving Fact vs Late Dimension ⭐
+
+Problem	Meaning
+
+Late Dimension	Fact arrives first
+Late Fact	Historical fact arrives late
+
+
+Very important distinction.
+
+
+---
+
+Common Solutions ⭐⭐⭐
+
+1. Backdated Loading
+
+Load fact using original event date.
+
+Most common approach.
+
+
+---
+
+Example
+
+Even if received in March:
+
+sale_date = January 5
+
+stored correctly.
+
+
+---
+
+2. Reprocessing Historical Aggregates
+
+Warehouse recalculates affected summaries.
+
+
+---
+
+Example
+
+January monthly sales recalculated.
+
+
+---
+
+3. Watermark Delay Strategy
+
+Pipeline intentionally delays processing window.
+
+Example:
+
+wait 24 hours before finalizing
+
+
+Helps absorb late events.
+
+
+---
+
+4. Streaming/Event Architectures
+
+Modern systems reduce latency using:
+
+Kafka
+
+streaming pipelines
+
+event ingestion
+
+
+
+---
+
+Important Insight ⭐⭐⭐
+
+Late arriving facts are extremely common in distributed systems.
+
+Very important interview statement.
+
+
+---
+
+Real ETL Flow
+
+Late event arrives
+      |
+Identify original event date
+      |
+Load into historical partition
+      |
+Recalculate affected aggregates
+
+Real warehouse logic.
+
+
+---
+
+Partitioning Connection ⭐
+
+Late facts often require:
+
+reopening old partitions
+
+updating historical summaries
+
+
+This connects directly with partitioning concepts.
+
+
+---
+
+Common Interview Questions
+
+Q1. What is late arriving fact?
+
+Fact data arriving after expected processing/reporting period.
+
+
+---
+
+Q2. Difference from late arriving dimension?
+
+Late fact = delayed transaction
+Late dimension = missing dimension first
+
+
+---
+
+Q3. Main challenge?
+
+Historical reports may change.
+
+
+---
+
+Q4. Common handling strategy?
+
+Load using original event timestamp and recalculate aggregates.
+
+
+---
+
+Common Mistakes
+
+Mistake 1
+
+Using arrival date instead of event date.
+
+
+---
+
+Mistake 2
+
+Ignoring historical aggregate updates.
+
+
+---
+
+Mistake 3
+
+Confusing late facts with CDC events.
+
+
+---
+
+Real Industry Insight ⭐⭐⭐
+
+Late arriving facts happen constantly in:
+
+mobile apps
+
+IoT systems
+
+streaming systems
+
+offline-first applications
+
+
+Handling them correctly is critical for trustworthy analytics.
+
+
+---
+
+GitHub Notes Version
+
+# Data Quality Rules
+
+## Purpose
+Ensure warehouse correctness and reliability.
+
+## Common Checks
+- Null checks
+- Duplicate checks
+- Referential integrity
+- Range validation
+- Business rules
+
+## Important Concept
+Bad data causes incorrect analytics.
+
+## Quarantine Tables
+Store invalid records separately.
+
+# Late Arriving Facts
+
+## Definition
+Fact records arriving after expected processing period.
+
+## Difference
+Late Fact -> delayed transaction
+Late Dimension -> missing dimension first
+
+## Common Solutions
+- Backdated loading
+- Recalculate aggregates
+- Watermark delay
+
+## Important
+Use original event timestamp.

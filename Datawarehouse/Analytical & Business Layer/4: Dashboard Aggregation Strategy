@@ -1,0 +1,95 @@
+# PHASE 8 — Topic 4: Dashboard Aggregation Strategy
+
+## 1. Explanation
+
+A **Dashboard Aggregation Strategy** defines how detailed data is summarized before being shown in dashboards and reports.
+
+Aggregation means combining detailed records into summarized metrics.
+
+Purpose:
+Improve:
+
+* dashboard performance
+* query speed
+* readability
+
+Common aggregation types:
+
+* SUM
+* COUNT
+* AVG
+* MAX
+* MIN
+
+Aggregations are usually created by:
+
+* day
+* week
+* month
+* region
+* product
+* customer segment
+
+Instead of querying billions of raw records directly, dashboards use pre-aggregated datasets.
+
+Flow:
+
+Raw Data → Aggregation → Dashboard Metrics
+
+Main idea:
+Reduce heavy calculations during dashboard runtime.
+
+---
+
+## 2. Example
+
+An e-commerce company has 500 million order records.
+
+Instead of calculating revenue from raw orders every time:
+
+* daily revenue summaries are precomputed
+* dashboard reads summarized tables directly
+
+This makes dashboards much faster.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Executive KPI Dashboards
+
+Companies pre-aggregate monthly business metrics for leadership reporting.
+
+---
+
+### Use Case 2 — Real-Time Monitoring Dashboards
+
+Operational systems aggregate live event counts for quick visualization.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Dashboard Performance
+
+Precomputed summaries reduce heavy query execution time.
+
+---
+
+### Advantage 2 — Better Scalability
+
+Dashboards handle large enterprise datasets more efficiently.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Increased Storage Usage
+
+Aggregated tables create additional storage requirements.
+
+---
+
+### Disadvantage 2 — Reduced Detail Flexibility
+
+Highly summarized data may limit deep drill-down analysis.

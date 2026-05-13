@@ -1,0 +1,87 @@
+# PHASE 6 — Topic 5: Data Marts
+
+## 1. Explanation
+
+A **Data Mart** is a smaller, department-focused version of a data warehouse designed for specific business teams.
+
+Instead of storing all enterprise data like an EDW, a data mart stores only relevant data for a particular domain such as:
+
+* sales
+* finance
+* marketing
+* HR
+
+Data marts are usually created from the EDW.
+
+Purpose:
+
+* faster reporting
+* simpler access
+* department-level analytics
+
+Flow:
+
+EDW → Data Mart → Team Dashboards/Reports
+
+---
+
+## 2. Example
+
+A retail company has one central EDW.
+
+From that EDW:
+
+* Sales team gets Sales Data Mart
+* Finance team gets Finance Data Mart
+* Marketing team gets Marketing Data Mart
+
+Sales mart may contain:
+
+* product sales
+* region performance
+* daily revenue
+* customer purchases
+
+but not HR or payroll data.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Department-Specific Reporting
+
+Finance teams use finance marts for profit and expense analysis.
+
+---
+
+### Use Case 2 — Faster Dashboard Queries
+
+Sales dashboards query smaller sales marts instead of scanning the full EDW.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Faster Query Performance
+
+Smaller datasets improve reporting and dashboard speed.
+
+---
+
+### Advantage 2 — Easier for Business Teams
+
+Departments access only relevant business data.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Data Duplication
+
+Same data may exist in multiple marts.
+
+---
+
+### Disadvantage 2 — Maintenance Complexity
+
+Managing many separate data marts increases operational effort.

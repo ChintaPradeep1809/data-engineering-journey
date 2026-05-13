@@ -1,0 +1,87 @@
+# PHASE 7 — Topic 10: Retry Mechanisms
+
+## 1. Explanation
+
+A **Retry Mechanism** is a strategy where failed operations are automatically attempted again after a temporary failure.
+
+Purpose:
+Handle short-term issues without manual intervention.
+
+Retries are commonly used for:
+
+* API failures
+* network issues
+* temporary database downtime
+* cloud service interruptions
+
+Instead of failing immediately, the system retries the operation after a delay.
+
+Common retry strategies:
+
+* fixed retry
+* exponential backoff
+* limited retry attempts
+
+Example flow:
+
+Task Fails → Wait → Retry → Success/Final Failure
+
+Retry mechanisms improve pipeline reliability in distributed systems.
+
+---
+
+## 2. Example
+
+An ETL job tries to connect to a database.
+
+Connection fails because of temporary network interruption.
+
+Pipeline:
+
+* waits 30 seconds
+* retries connection
+* succeeds on second attempt
+
+without failing the full workflow.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — API Data Pipelines
+
+Pipelines retry failed API requests caused by temporary server overload.
+
+---
+
+### Use Case 2 — Cloud Data Processing
+
+Distributed systems retry failed storage or compute operations automatically.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Improves System Reliability
+
+Temporary failures can recover automatically.
+
+---
+
+### Advantage 2 — Reduces Manual Intervention
+
+Engineers do not need to restart pipelines for small transient issues.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Increased Processing Time
+
+Multiple retries may delay pipeline completion.
+
+---
+
+### Disadvantage 2 — Risk of Resource Waste
+
+Excessive retries can overload systems during major outages.

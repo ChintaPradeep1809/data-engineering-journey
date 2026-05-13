@@ -1,0 +1,121 @@
+# PHASE 7 — Topic 5: ETL Pipeline Flow
+
+## 1. Explanation
+
+**ETL** stands for:
+
+* Extract
+* Transform
+* Load
+
+It is a data integration process used to move data from source systems into a data warehouse.
+
+---
+
+### Extract
+
+Data is collected from source systems such as:
+
+* databases
+* APIs
+* files
+* applications
+
+Raw data is copied into the pipeline.
+
+---
+
+### Transform
+
+Data is cleaned and processed.
+
+Common transformations:
+
+* remove duplicates
+* handle null values
+* standardize formats
+* apply business rules
+* join tables
+
+Purpose:
+Convert raw data into business-ready data.
+
+---
+
+### Load
+
+Transformed data is loaded into:
+
+* EDW
+* data marts
+* analytical systems
+
+Flow:
+
+Sources → Extract → Transform → Load → Warehouse
+
+ETL transformation usually happens before loading into the warehouse.
+
+---
+
+## 2. Example
+
+An e-commerce company collects:
+
+* orders
+* customer details
+* payment records
+
+### Extract
+
+Data pulled from operational databases.
+
+### Transform
+
+Invalid records removed and currency formats standardized.
+
+### Load
+
+Cleaned data loaded into the warehouse for analytics.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Enterprise Data Warehousing
+
+Organizations build centralized reporting systems using ETL pipelines.
+
+---
+
+### Use Case 2 — Business Intelligence Reporting
+
+ETL prepares cleaned data for dashboards and KPI reporting.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — High Data Quality
+
+Data is cleaned before entering the warehouse.
+
+---
+
+### Advantage 2 — Better Governance
+
+Business rules and validations are centrally controlled.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Slower Processing
+
+Large transformations before loading may increase pipeline runtime.
+
+---
+
+### Disadvantage 2 — Less Flexible Scaling
+
+Traditional ETL systems may struggle with massive modern data volumes.

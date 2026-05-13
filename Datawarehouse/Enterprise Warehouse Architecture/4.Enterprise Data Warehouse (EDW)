@@ -1,0 +1,97 @@
+# PHASE 6 — Topic 4: Enterprise Data Warehouse (EDW)
+
+## 1. Explanation
+
+An **Enterprise Data Warehouse (EDW)** is a centralized system that stores integrated, cleaned, and historical data from the entire organization for analytics and decision-making.
+
+It is the core analytical storage layer of a company.
+
+EDW collects data from:
+
+* sales systems
+* finance systems
+* HR systems
+* applications
+* APIs
+* external sources
+
+The data is:
+
+* standardized
+* transformed
+* historical
+* business-ready
+
+Purpose of EDW:
+
+* business intelligence
+* reporting
+* analytics
+* strategic decision-making
+
+Flow:
+
+Sources → Staging → ODS → EDW → Dashboards/Analytics
+
+---
+
+## 2. Example
+
+An e-commerce company loads:
+
+* customer data
+* product data
+* order history
+* payment history
+* shipment records
+
+into a centralized EDW.
+
+Executives use this warehouse to analyze:
+
+* yearly revenue
+* customer behavior
+* sales trends
+* product performance
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Company-Wide Analytics
+
+Management teams use EDW for centralized reporting across departments.
+
+---
+
+### Use Case 2 — Historical Trend Analysis
+
+Businesses analyze multiple years of data to identify growth trends and forecasting patterns.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Single Source of Truth
+
+All departments use consistent and standardized business data.
+
+---
+
+### Advantage 2 — Supports Advanced Analytics
+
+Historical and integrated data enables deep business insights and BI reporting.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — High Implementation Cost
+
+Building and maintaining EDW requires significant infrastructure and engineering effort.
+
+---
+
+### Disadvantage 2 — Slower for Real-Time Needs
+
+EDW is mainly optimized for analytics, not instant transactional updates.

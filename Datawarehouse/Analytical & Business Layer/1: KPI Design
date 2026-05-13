@@ -1,0 +1,92 @@
+# PHASE 8 — Topic 1: KPI Design
+
+## 1. Explanation
+
+**KPI (Key Performance Indicator) Design** is the process of defining measurable business metrics used to evaluate business performance.
+
+A KPI helps organizations track whether business goals are being achieved.
+
+Good KPIs should be:
+
+* measurable
+* business-focused
+* clear
+* actionable
+
+KPIs are usually built from warehouse data and displayed in dashboards and reports.
+
+Examples:
+
+* revenue growth
+* customer retention rate
+* conversion rate
+* average order value
+
+KPI design includes:
+
+* choosing business objective
+* defining metric formula
+* selecting data source
+* defining calculation frequency
+
+Purpose:
+Convert raw business data into meaningful performance indicators.
+
+---
+
+## 2. Example
+
+An e-commerce company wants to measure sales performance.
+
+KPI:
+Monthly Revenue Growth %
+
+Formula:
+
+[
+\frac{CurrentMonthRevenue - PreviousMonthRevenue}{PreviousMonthRevenue} \times 100
+]
+
+This KPI helps management track business growth trends.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Executive Dashboards
+
+Leadership teams monitor company performance using KPIs.
+
+---
+
+### Use Case 2 — Operational Monitoring
+
+Business teams track daily sales, delivery time, or customer satisfaction metrics.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Business Decision-Making
+
+KPIs provide measurable business insights.
+
+---
+
+### Advantage 2 — Performance Tracking
+
+Organizations can monitor progress toward business goals.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Poor KPI Design Can Mislead
+
+Incorrect metrics may drive wrong business decisions.
+
+---
+
+### Disadvantage 2 — Requires Consistent Data Quality
+
+Inaccurate warehouse data produces unreliable KPIs.

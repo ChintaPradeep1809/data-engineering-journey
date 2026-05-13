@@ -1,0 +1,88 @@
+# PHASE 8 — Topic 10: Customer Segmentation Analytics
+
+## 1. Explanation
+
+**Customer Segmentation Analytics** is the process of dividing customers into groups based on shared characteristics or behaviors.
+
+Purpose:
+Understand different customer types and improve business decisions.
+
+Customers may be segmented using:
+
+* age
+* location
+* spending behavior
+* purchase frequency
+* interests
+* loyalty level
+
+Segmentation helps businesses:
+
+* personalize marketing
+* improve customer retention
+* target promotions effectively
+
+Common segmentation types:
+
+* demographic segmentation
+* behavioral segmentation
+* geographic segmentation
+* value-based segmentation
+
+Main idea:
+Group similar customers for better analysis and strategy.
+
+---
+
+## 2. Example
+
+An e-commerce company segments customers into:
+
+* high spenders
+* frequent buyers
+* inactive customers
+* new customers
+
+Marketing teams then create targeted campaigns for each group.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Personalized Marketing
+
+Businesses send customized offers to specific customer groups.
+
+---
+
+### Use Case 2 — Customer Retention Programs
+
+Companies identify high-risk inactive customers for retention campaigns.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Better Customer Understanding
+
+Businesses gain deeper insights into customer behavior.
+
+---
+
+### Advantage 2 — Improved Marketing Efficiency
+
+Targeted campaigns increase conversion and reduce marketing waste.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Requires High-Quality Data
+
+Poor customer data reduces segmentation accuracy.
+
+---
+
+### Disadvantage 2 — Segments Change Frequently
+
+Customer behavior evolves, requiring continuous updates.

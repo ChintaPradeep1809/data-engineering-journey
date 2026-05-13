@@ -1,0 +1,178 @@
+# PHASE 9 — Topic 11: Archival Strategy
+
+## 1. Explanation
+
+An **Archival Strategy** is the process of moving old or less frequently used data from active warehouse storage to cheaper long-term storage systems.
+
+Purpose:
+
+* reduce storage cost
+* improve warehouse performance
+* retain historical data for compliance or future analysis
+
+Archived data is usually:
+
+* rarely accessed
+* read-only
+* stored for long periods
+
+Common archival locations:
+
+* cloud cold storage
+* object storage
+* tape storage
+
+Main idea:
+Keep active warehouse fast by moving inactive historical data elsewhere.
+
+---
+
+## 2. Example
+
+A telecom company keeps:
+
+* last 2 years of customer usage data in active warehouse
+* older 8 years of data in archive storage
+
+If historical audit analysis is needed, archived data can be restored.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Regulatory Data Retention
+
+Banks archive old transaction records for compliance requirements.
+
+---
+
+### Use Case 2 — Storage Optimization
+
+Large enterprises move inactive historical data to low-cost storage.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Reduces Storage Cost
+
+Cold storage is cheaper than active warehouse storage.
+
+---
+
+### Advantage 2 — Improves Warehouse Performance
+
+Removing old inactive data reduces query and storage load.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Slower Data Retrieval
+
+Archived data may take longer to access and restore.
+
+---
+
+### Disadvantage 2 — Archive Management Complexity
+
+Retention rules and restoration processes require careful management.
+
+---
+
+# PHASE 9 — Topic 14: Backup & Recovery Concepts
+
+## 1. Explanation
+
+**Backup & Recovery** refers to creating copies of data and restoring them when failures or disasters occur.
+
+Purpose:
+Protect data from:
+
+* accidental deletion
+* hardware failure
+* cyberattacks
+* corruption
+* system crashes
+
+---
+
+# Backup
+
+Backup means creating duplicate copies of:
+
+* databases
+* warehouse tables
+* configurations
+* metadata
+
+Backup types:
+
+* full backup
+* incremental backup
+* differential backup
+
+---
+
+# Recovery
+
+Recovery means restoring systems and data from backups after failure.
+
+Main idea:
+Ensure business continuity and prevent permanent data loss.
+
+---
+
+## 2. Example
+
+A warehouse database crashes because of server failure.
+
+The company:
+
+* restores latest backup
+* recovers warehouse tables
+* resumes reporting operations
+
+without rebuilding the entire system from scratch.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Disaster Recovery
+
+Organizations restore systems after infrastructure failures or cyberattacks.
+
+---
+
+### Use Case 2 — Accidental Data Deletion
+
+Deleted warehouse tables can be recovered from backups.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Prevents Permanent Data Loss
+
+Critical business data remains recoverable.
+
+---
+
+### Advantage 2 — Supports Business Continuity
+
+Systems can recover faster after failures.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — Additional Storage Cost
+
+Maintaining backups requires significant storage resources.
+
+---
+
+### Disadvantage 2 — Recovery Time May Be High
+
+Large systems may take considerable time to restore completely.

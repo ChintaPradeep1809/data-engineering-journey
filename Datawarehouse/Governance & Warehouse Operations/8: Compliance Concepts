@@ -1,0 +1,90 @@
+# PHASE 9 — Topic 8: Compliance Concepts
+
+## 1. Explanation
+
+**Compliance** means following legal, regulatory, and organizational rules related to data management and security.
+
+Purpose:
+Ensure organizations handle data responsibly and legally.
+
+Compliance rules define:
+
+* how data is stored
+* who can access data
+* how long data is retained
+* how sensitive data is protected
+
+Common compliance areas:
+
+* data privacy
+* security
+* auditing
+* retention policies
+
+Examples of compliance regulations:
+
+* GDPR
+* HIPAA
+* PCI-DSS
+
+Organizations must prove that their systems follow these standards.
+
+Main idea:
+Data systems must satisfy legal and business regulations.
+
+---
+
+## 2. Example
+
+A payment company processes customer card information.
+
+To meet PCI-DSS compliance:
+
+* card data is encrypted
+* access is restricted
+* audit logs are maintained
+* security monitoring is enabled
+
+This protects customer financial information.
+
+---
+
+## 3. Use Cases
+
+### Use Case 1 — Financial Industry Regulations
+
+Banks follow strict compliance standards for customer financial data.
+
+---
+
+### Use Case 2 — Healthcare Data Protection
+
+Hospitals secure patient records to meet healthcare regulations.
+
+---
+
+## 4. Advantages
+
+### Advantage 1 — Reduces Legal and Security Risks
+
+Compliance lowers chances of fines and data misuse.
+
+---
+
+### Advantage 2 — Improves Customer Trust
+
+Customers trust organizations that protect sensitive information properly.
+
+---
+
+## 5. Disadvantages
+
+### Disadvantage 1 — High Implementation Cost
+
+Compliance systems require security tools, audits, and governance processes.
+
+---
+
+### Disadvantage 2 — Operational Restrictions
+
+Strict compliance rules may reduce development flexibility and speed.

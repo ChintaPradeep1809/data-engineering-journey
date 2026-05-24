@@ -1,0 +1,447 @@
+Perfect. And honestly, this pace is correct.
+
+Right now you are not just “covering topics.”
+You are:
+
+* building engineering thinking
+* building portfolio assets
+* building interview explanations
+* building recruiter visibility
+
+That compounds over time.
+
+Rushing now would actually reduce long-term value.
+
+---
+
+# Phase 6 — E-Commerce Warehouse Design
+
+# Part 3 — Interview Thinking + Design Decisions ⭐⭐⭐
+
+This is one of the MOST important stages.
+
+Most candidates can:
+
+* draw schema
+
+Very few can explain:
+
+# WHY the schema was designed this way.
+
+Interviewers care about:
+
+* reasoning
+* tradeoffs
+* scalability thinking
+
+That’s what we’ll build now.
+
+---
+
+# Decision 1 — Why Did We Choose Star Schema? ⭐⭐⭐
+
+Interviewer may ask:
+
+> “Why not normalized schema?”
+
+---
+
+# Your Answer
+
+We chose:
+
+# Star Schema
+
+because warehouse workloads are:
+
+* analytical
+* aggregation-heavy
+* read-intensive
+
+Star schema:
+
+* reduces joins
+* simplifies queries
+* improves BI performance
+
+---
+
+# Important Insight ⭐
+
+OLTP systems optimize:
+
+```text id="m4v8qx"
+writes + integrity
+```
+
+Warehouses optimize:
+
+```text id="x7k2pn"
+reads + analytics
+```
+
+That distinction is critical.
+
+---
+
+# Interview-Level Statement ⭐⭐⭐
+
+```text id="r5n9yt"
+Star schema improves analytical query performance by reducing join complexity and simplifying aggregation workloads.
+```
+
+Very strong answer.
+
+---
+
+# Decision 2 — Why FACT_SALES At Center? ⭐⭐⭐
+
+Because:
+
+# sales transaction
+
+is core measurable business event.
+
+Warehouse revolves around:
+
+* business processes
+* measurable metrics
+
+---
+
+# Important Principle ⭐
+
+Fact tables store:
+
+* measurable events
+
+Dimensions store:
+
+* descriptive context
+
+---
+
+# Interview Question
+
+> “Why is revenue stored in fact table?”
+
+---
+
+# Correct Answer
+
+Because:
+
+```text id="u2m7vz"
+revenue is additive business measure
+```
+
+Fact tables store:
+
+* measures
+* metrics
+* numerical aggregations
+
+---
+
+# Decision 3 — Why Did We Choose This Grain? ⭐⭐⭐
+
+Very important.
+
+Our grain:
+
+```text id="w8p1qr"
+One row per product per order
+```
+
+---
+
+# Why This Grain Is Powerful
+
+Supports:
+
+* product analytics
+* basket analysis
+* category trends
+* flexible aggregations
+
+---
+
+# Example
+
+If order has:
+
+* 2 phones
+* 1 charger
+
+We can analyze products independently.
+
+---
+
+# Interview Insight ⭐⭐⭐
+
+Bad grain selection destroys warehouse flexibility.
+
+Extremely important statement.
+
+---
+
+# Common Interview Follow-Up
+
+> “What happens if grain is too high?”
+
+---
+
+# Answer
+
+High-level grain:
+
+* loses analytical detail
+* reduces flexibility
+* limits drill-down analysis
+
+---
+
+# Decision 4 — Why SCD Type 2 For Customer? ⭐⭐⭐
+
+Customer attributes change:
+
+* city
+* segment
+* membership level
+
+Business may want:
+
+* historical tracking
+
+Example:
+
+```text id="k3x6mn"
+customer moved from Mumbai -> Bangalore
+```
+
+Type 2 preserves history.
+
+---
+
+# Important Interview Insight ⭐⭐⭐
+
+SCD Type 2 is preferred when historical business analysis matters.
+
+Very strong statement.
+
+---
+
+# Common Interview Question
+
+> “Why not Type 1?”
+
+---
+
+# Answer
+
+Type 1 overwrites history.
+
+Business loses historical reporting capability.
+
+---
+
+# Decision 5 — Why Partition FACT_SALES By Date? ⭐⭐⭐
+
+Because:
+
+* fact table grows continuously
+* most analytical queries are time-based
+
+Example:
+
+* monthly revenue
+* quarterly growth
+* yearly trends
+
+---
+
+# Important Performance Insight ⭐⭐⭐
+
+Partitioning reduces scanned data volume.
+
+---
+
+# Interview-Level Answer
+
+```text id="v6r2py"
+Partitioning FACT_SALES by order_date improves query performance through partition pruning.
+```
+
+Excellent technical answer.
+
+---
+
+# Decision 6 — Why Use CDC + Incremental Loading? ⭐⭐⭐
+
+Because:
+
+* full reloads do not scale
+
+Imagine:
+
+* billions of rows
+* only few records changed
+
+Incremental loading:
+
+* reduces compute cost
+* improves freshness
+* improves scalability
+
+---
+
+# Important Interview Statement ⭐⭐⭐
+
+```text id="p4w7zc"
+CDC captures changed records while incremental pipelines process only delta data.
+```
+
+Strong DE answer.
+
+---
+
+# Decision 7 — Why Staging Layer Exists? ⭐⭐⭐
+
+Very important architecture question.
+
+---
+
+# Correct Answer
+
+Staging layer isolates:
+
+* raw ingestion
+* malformed records
+* duplicates
+* schema inconsistencies
+
+before transformation.
+
+---
+
+# Important Insight ⭐
+
+Production warehouses rarely load source data directly into warehouse tables.
+
+Very important statement.
+
+---
+
+# Decision 8 — Why Data Quality Rules Needed? ⭐⭐⭐
+
+Because:
+bad data causes:
+
+* incorrect KPIs
+* broken dashboards
+* business mistrust
+
+---
+
+# Example
+
+Duplicate order rows:
+
+```text id="n9q3vx"
+double revenue calculation
+```
+
+Very dangerous.
+
+---
+
+# Decision 9 — Why Separate Dimensions? ⭐⭐⭐
+
+Instead of storing:
+
+* customer_name
+* city
+* category
+
+inside fact table.
+
+---
+
+# Because
+
+Dimensions:
+
+* reduce redundancy
+* improve maintainability
+* support reusable analytics
+
+---
+
+# Interview-Level Architecture Thinking ⭐⭐⭐
+
+Warehouse design is always balancing:
+
+| Goal                | Tradeoff    |
+| ------------------- | ----------- |
+| Performance         | Storage     |
+| Flexibility         | Complexity  |
+| Historical tracking | ETL cost    |
+| Simplicity          | Scalability |
+
+This is real architecture thinking.
+
+---
+
+# What You Learned Today ⭐⭐⭐
+
+You moved from:
+
+```text id="t8m4pk"
+learning concepts
+```
+
+to:
+
+```text id="f2v7qy"
+defending design decisions
+```
+
+That’s a massive transition.
+
+---
+
+# Important Reality
+
+Interviewers often care LESS about:
+
+* definitions
+
+and MORE about:
+
+* reasoning
+* tradeoffs
+* architecture decisions
+
+This phase trains exactly that.
+
+---
+
+# What We’ll Do Next
+
+Next session:
+
+# E-Commerce Warehouse Design — Part 4
+
+# (Scaling + Optimization + Real Production Problems)
+
+We’ll cover:
+
+* data skew
+* partition problems
+* small file problems
+* slowly growing dimensions
+* reprocessing strategies
+* query optimization
+* warehouse scaling
+
+That’s where your thinking becomes senior-level gradually.

@@ -1,0 +1,571 @@
+# Phase 6 — E-Commerce Warehouse Design
+
+# Part 4 — Scaling + Optimization + Real Production Problems ⭐⭐⭐
+
+Now we move into:
+
+# “What breaks in production?”
+
+This is where interview discussions become much more real.
+
+Because designing schema is one thing.
+
+Running it at:
+
+* billions of rows
+* real traffic
+* production scale
+
+is completely different.
+
+---
+
+# Problem 1 — Data Skew ⭐⭐⭐
+
+One of the most common big data problems.
+
+---
+
+# What is Data Skew?
+
+Data distribution becomes uneven.
+
+Some partitions contain:
+
+* huge data
+
+Others contain:
+
+* tiny data
+
+---
+
+# Real Example
+
+At Amazon:
+
+Suppose:
+
+```text id="m4v8qx"
+US region = 90% sales
+Other regions = 10%
+```
+
+If partitioned by region:
+
+```text id="x7k2pn"
+US partition huge
+Others tiny
+```
+
+This is:
+
+# skew
+
+---
+
+# Why Skew Is Dangerous ⭐
+
+Causes:
+
+* slow Spark jobs
+* uneven processing
+* memory pressure
+* long-running tasks
+
+---
+
+# Interview-Level Insight ⭐⭐⭐
+
+Skew creates performance bottlenecks because distributed systems process partitions unevenly.
+
+Excellent answer.
+
+---
+
+# Common Solutions ⭐⭐⭐
+
+## 1. Better Partition Strategy
+
+Avoid:
+
+* highly uneven columns
+
+---
+
+## 2. Salting Technique
+
+Artificially distribute skewed keys.
+
+Advanced Spark concept.
+
+---
+
+## 3. Repartitioning
+
+Redistribute data more evenly.
+
+---
+
+# Problem 2 — Small File Problem ⭐⭐⭐
+
+Very important in:
+
+* Spark
+* Data Lakes
+* Delta Lake
+
+---
+
+# What Happens?
+
+Incremental pipelines create:
+
+* thousands of tiny files
+
+Example:
+
+```text id="r5n9yt"
+1 KB
+2 KB
+5 KB
+```
+
+instead of:
+
+```text id="u2m7vz"
+large optimized parquet files
+```
+
+---
+
+# Why This Is Bad
+
+Because:
+
+* metadata overhead increases
+* query planning slows
+* cloud storage operations increase
+
+---
+
+# Real Industry Insight ⭐⭐⭐
+
+Small file problem is one of the biggest hidden performance killers in lakehouse systems.
+
+Very important statement.
+
+---
+
+# Common Solutions ⭐⭐⭐
+
+## 1. Compaction
+
+Merge small files into larger files.
+
+---
+
+## 2. Optimize Jobs
+
+Control partition output size.
+
+---
+
+## 3. Auto-Optimization
+
+Platforms like:
+
+* Databricks
+  support automatic optimization.
+
+---
+
+# Problem 3 — Slowly Growing Dimensions ⭐⭐⭐
+
+Dimension tables continuously grow.
+
+Especially:
+
+* SCD Type 2 dimensions
+
+---
+
+# Example
+
+DIM_CUSTOMER history grows for:
+
+* address changes
+* segment changes
+* status updates
+
+Over years:
+
+* millions of historical rows
+
+---
+
+# Why This Matters
+
+Queries become:
+
+* slower
+* joins heavier
+* storage larger
+
+---
+
+# Important Insight ⭐⭐⭐
+
+SCD Type 2 improves historical tracking but increases storage and ETL complexity.
+
+Excellent interview statement.
+
+---
+
+# Common Optimization Strategies
+
+## 1. Archive Old Records
+
+Move inactive history.
+
+---
+
+## 2. Partition Historical Dimensions
+
+Sometimes partition by effective date.
+
+---
+
+## 3. Compress Storage
+
+Columnar formats:
+
+* Parquet
+* ORC
+
+---
+
+# Problem 4 — Reprocessing Historical Data ⭐⭐⭐
+
+Very common production issue.
+
+---
+
+# Scenario
+
+Bug discovered:
+
+```text id="w8p1qr"
+profit calculation incorrect
+```
+
+for:
+
+```text id="k3x6mn"
+last 2 years
+```
+
+Now warehouse must:
+
+* reprocess historical partitions
+
+---
+
+# Why Difficult?
+
+Huge datasets:
+
+* expensive
+* time-consuming
+* operationally risky
+
+---
+
+# Important Architecture Insight ⭐⭐⭐
+
+Warehouses must support partial historical reprocessing safely.
+
+Very important real-world idea.
+
+---
+
+# Common Strategies
+
+## 1. Partition-Based Reprocessing
+
+Only affected partitions rebuilt.
+
+---
+
+## 2. Idempotent Pipelines ⭐⭐⭐
+
+Very important DE term.
+
+---
+
+# What is Idempotency?
+
+Running pipeline multiple times gives same correct result.
+
+---
+
+# Example
+
+Pipeline rerun should NOT:
+
+* duplicate rows
+* corrupt facts
+
+---
+
+# Interview Insight ⭐⭐⭐
+
+Idempotent ETL design is critical for reliable reprocessing.
+
+Strong answer.
+
+---
+
+# Problem 5 — Query Optimization ⭐⭐⭐
+
+Warehouse queries eventually become slow.
+
+---
+
+# Example
+
+```sql id="v6r2py"
+SELECT SUM(revenue)
+FROM FACT_SALES
+WHERE year = 2026;
+```
+
+On billions of rows:
+
+* expensive scan
+
+---
+
+# Optimization Strategies ⭐⭐⭐
+
+## 1. Partition Pruning
+
+Scan only required partitions.
+
+---
+
+## 2. Clustering
+
+Organize rows efficiently.
+
+---
+
+## 3. Materialized Aggregates
+
+Precompute heavy summaries.
+
+---
+
+# Example
+
+Store:
+
+```text id="p4w7zc"
+monthly_sales_summary
+```
+
+instead of recalculating always.
+
+---
+
+# Problem 6 — Warehouse Cost Explosion ⭐⭐⭐
+
+Modern cloud warehouses charge by:
+
+* compute
+* storage
+* scanned data
+
+Bad architecture:
+= expensive bills.
+
+---
+
+# Example Problems
+
+❌ full table scans
+❌ poor partitioning
+❌ duplicate pipelines
+❌ unnecessary recomputation
+
+---
+
+# Important Industry Insight ⭐⭐⭐
+
+Good Data Engineering is often more about cost optimization than coding.
+
+Very true in real companies.
+
+---
+
+# Problem 7 — Schema Evolution ⭐⭐⭐
+
+Source systems change over time.
+
+---
+
+# Example
+
+Orders DB adds:
+
+```text id="n9q3vx"
+coupon_code
+```
+
+Warehouse pipelines may break.
+
+---
+
+# Why Important?
+
+Real systems evolve constantly.
+
+Pipelines must handle:
+
+* new columns
+* datatype changes
+* deprecated fields
+
+---
+
+# Common Strategies
+
+## 1. Schema Validation
+
+Detect unexpected changes.
+
+---
+
+## 2. Backward Compatibility
+
+Avoid breaking existing pipelines.
+
+---
+
+## 3. Flexible Storage Formats
+
+Delta Lake / Parquet help here.
+
+---
+
+# Problem 8 — Late Data Reconciliation ⭐⭐⭐
+
+You already learned:
+
+* late dimensions
+* late facts
+
+Now real challenge:
+
+# correcting historical reports
+
+---
+
+# Example
+
+Late revenue changes:
+
+```text id="t8m4pk"
+January dashboard totals
+```
+
+Warehouse must:
+
+* update aggregates
+* maintain consistency
+
+---
+
+# Architecture-Level Thinking ⭐⭐⭐
+
+Now you are thinking about:
+
+| Topic             | Real Concern        |
+| ----------------- | ------------------- |
+| Partitioning      | scan cost           |
+| CDC               | freshness           |
+| SCD               | historical tracking |
+| Incremental Loads | scalability         |
+| Data Quality      | trust               |
+| Reprocessing      | reliability         |
+
+This is real DE architecture thinking.
+
+---
+
+# Common Interview Questions ⭐⭐⭐
+
+## Q1. What is data skew?
+
+Uneven data distribution causing performance imbalance.
+
+---
+
+## Q2. What is small file problem?
+
+Too many tiny files causing metadata and query overhead.
+
+---
+
+## Q3. Why idempotent pipelines important?
+
+Safe reruns without duplicate/corrupted data.
+
+---
+
+## Q4. Why SCD Type 2 costly?
+
+Historical row growth increases ETL/storage complexity.
+
+---
+
+## Q5. Why partitioning critical?
+
+Reduces scanned data volume and improves query performance.
+
+---
+
+# What You Have Achieved So Far ⭐⭐⭐
+
+You can now discuss:
+
+✅ warehouse design
+✅ dimensional modelling
+✅ CDC
+✅ incremental loading
+✅ partitioning
+✅ scaling problems
+✅ production challenges
+✅ architecture tradeoffs
+
+This is already strong interview territory.
+
+---
+
+# What Comes Next
+
+Next session:
+
+# Netflix Analytics Warehouse Design ⭐⭐⭐
+
+This will introduce:
+
+* event-driven analytics
+* streaming-style modelling
+* watch-event fact tables
+* recommendation analytics
+* engagement metrics
+
+Completely different business modelling style from e-commerce.
+
+Very valuable for architecture maturity.

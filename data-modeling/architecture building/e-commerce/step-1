@@ -1,0 +1,335 @@
+Perfect. That’s the correct move.
+
+Phase 6 is where:
+
+* isolated concepts
+  become
+* architecture thinking.
+
+This is the phase that actually prepares you for:
+
+* interviews
+* system discussions
+* real project design
+* recruiter conversations
+
+And yes — we’ll go strictly:
+
+# one topic at a time
+
+No rushing.
+
+---
+
+# Phase 6 — Architecture Thinking + Interview Mastery ⭐⭐⭐
+
+# Topic 1:
+
+# E-Commerce Warehouse Design
+
+# Part 1 — Business Understanding + Requirement Gathering
+
+Before designing any warehouse, real Data Engineers first understand:
+
+* business process
+* analytical goals
+* reporting needs
+* data flow
+
+Most candidates immediately jump into tables.
+
+That’s a mistake.
+
+---
+
+# Step 1 — Understand the Business
+
+Suppose we are designing warehouse for:
+
+Amazon style e-commerce platform.
+
+Business performs:
+
+* customer orders
+* payments
+* product sales
+* returns
+* shipments
+
+---
+
+# First Question Engineers Ask ⭐
+
+> “What business process are we modelling?”
+
+Very important.
+
+Because warehouse is always:
+
+# business-driven
+
+NOT table-driven.
+
+---
+
+# Possible Business Processes
+
+| Process   | Example            |
+| --------- | ------------------ |
+| Sales     | customer purchases |
+| Inventory | stock tracking     |
+| Shipping  | deliveries         |
+| Payments  | transactions       |
+| Returns   | refunds            |
+
+---
+
+# Our First Scope
+
+We will focus initially on:
+
+# Sales Analytics Warehouse ⭐
+
+Because this is most common interview scenario.
+
+---
+
+# Step 2 — Business Questions
+
+Warehouse exists to answer business questions.
+
+Without business questions:
+
+* warehouse design becomes meaningless.
+
+---
+
+# Example Questions
+
+Business wants to know:
+
+## Sales Questions
+
+* Top selling products?
+* Revenue by month?
+* Revenue by city?
+* Repeat customers?
+* Best product category?
+
+---
+
+## Customer Questions
+
+* Most valuable customers?
+* Customer retention?
+* Purchase frequency?
+
+---
+
+## Time Questions
+
+* Daily sales trends?
+* Monthly growth?
+* Seasonal patterns?
+
+---
+
+# Important Insight ⭐⭐⭐
+
+Business questions determine:
+
+* fact tables
+* dimensions
+* grain
+* aggregations
+
+This is one of the biggest architecture lessons.
+
+---
+
+# Step 3 — Identify the Core Fact ⭐
+
+Now ask:
+
+> “What measurable business event are we storing?”
+
+For sales warehouse:
+
+# Order transaction
+
+becomes core fact.
+
+---
+
+# Step 4 — Define Grain ⭐⭐⭐
+
+Most important design step.
+
+Question:
+
+> “What does one row represent?”
+
+For our warehouse:
+
+Recommended grain:
+
+# One row per product in an order
+
+---
+
+# Example
+
+Order:
+
+```text id="z7m2qx"
+Order 1001:
+2 iPhones
+1 Charger
+```
+
+Fact table becomes:
+
+| order_id | product | qty | revenue |
+| -------- | ------- | --- | ------- |
+| 1001     | iPhone  | 2   | 140000  |
+| 1001     | Charger | 1   | 10000   |
+
+---
+
+# Why This Grain Is Good ⭐
+
+Because it supports:
+
+* product analytics
+* category analytics
+* basket analysis
+* flexible aggregation
+
+Very important modelling decision.
+
+---
+
+# Step 5 — Identify Dimensions ⭐
+
+Now ask:
+
+> “What context do we need around sales?”
+
+---
+
+# Initial Dimensions
+
+## Customer Dimension
+
+| customer_key | customer_name | city |
+
+---
+
+## Product Dimension
+
+| product_key | product_name | category |
+
+---
+
+## Date Dimension
+
+| date_key | month | quarter | year |
+
+---
+
+## Payment Dimension
+
+| payment_key | payment_type |
+
+---
+
+# Step 6 — Identify Measures ⭐
+
+Measures = numeric business metrics.
+
+---
+
+# Initial Measures
+
+| Measure  | Meaning          |
+| -------- | ---------------- |
+| quantity | products sold    |
+| revenue  | sales amount     |
+| discount | discount applied |
+| profit   | business profit  |
+
+---
+
+# Step 7 — Identify Slowly Changing Dimensions ⭐
+
+Now ask:
+
+> “Which dimensions change over time?”
+
+---
+
+# Examples
+
+## Customer City Changes
+
+Use:
+
+# SCD Type 2
+
+---
+
+## Product Category Changes
+
+Possible Type 2.
+
+---
+
+# Important Architecture Insight ⭐⭐⭐
+
+Warehouse design is:
+
+* business understanding
+  → grain
+  → dimensions
+  → facts
+  → history strategy
+
+This sequence matters enormously.
+
+---
+
+# What We Have Completed Today
+
+## E-Commerce Warehouse Design — Part 1 ✅
+
+Covered:
+
+* business understanding
+* analytical requirements
+* business questions
+* identifying facts
+* defining grain
+* identifying dimensions
+* identifying measures
+* identifying SCD requirements
+
+This is how real architecture discussions start.
+
+---
+
+# Next Session
+
+We will continue with:
+
+# E-Commerce Warehouse Design — Part 2
+
+Where we will design:
+
+* star schema
+* fact table structure
+* dimension structures
+* surrogate keys
+* partition strategy
+* incremental loading strategy
+
+Now concepts start connecting together.

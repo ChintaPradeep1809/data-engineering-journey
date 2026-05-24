@@ -1,0 +1,262 @@
+Right now, for YOUR stage, the best workflow is:
+
+# Hybrid Approach ⭐⭐⭐
+
+| Part            | Method            |
+| --------------- | ----------------- |
+| Base structure  | Mermaid code      |
+| Final polishing | Manual in draw.io |
+
+Because:
+
+* Mermaid creates skeleton fast
+* draw.io makes it recruiter-quality
+
+Pure Mermaid becomes painful for:
+
+* large warehouse diagrams
+* table attributes
+* clean enterprise layouts
+
+So professionals often:
+
+1. auto-generate base
+2. manually polish
+
+Which is exactly what you’re doing now.
+
+---
+
+# My Recommendation For You ⭐⭐⭐
+
+## DO THIS:
+
+### Step 1
+
+Generate base using Mermaid code
+
+### Step 2
+
+Adjust manually:
+
+* spacing
+* arrows
+* grouping
+* colors
+* labels
+
+### Step 3
+
+Export:
+
+* PNG
+* SVG
+
+### Step 4
+
+Push to:
+
+* GitHub
+* LinkedIn
+
+This is the best portfolio workflow.
+
+---
+
+# NOW — Here’s Improved Mermaid Code ⭐⭐⭐
+
+This version is:
+
+* simpler
+* stable in draw.io
+* cleaner layout
+
+Paste this in:
+
+```text id="r4m8qx"
+Arrange
+→ Insert
+→ Advanced
+→ Mermaid
+```
+
+---
+
+# CLEAN VERSION
+
+```text id="x7n2pk"
+flowchart TB
+
+%% SOURCES
+
+ORDERS[Orders Service DB]
+CUSTOMERS[Customer Service DB]
+PAYMENTS[Payments Service DB]
+INVENTORY[Inventory Service DB]
+
+%% CDC
+
+CDC[CDC Layer]
+
+ORDERS --> CDC
+CUSTOMERS --> CDC
+PAYMENTS --> CDC
+INVENTORY --> CDC
+
+%% STAGING
+
+STAGING[Staging Layer]
+
+CDC --> STAGING
+
+%% TRANSFORMATION
+
+TRANSFORM[Transformation Layer
+
+Data Quality
+Deduplication
+SCD Type 2
+Surrogate Keys]
+
+STAGING --> TRANSFORM
+
+%% WAREHOUSE
+
+WAREHOUSE[E-Commerce Analytics Warehouse]
+
+TRANSFORM --> WAREHOUSE
+
+%% FACT TABLE
+
+FACT[FACT_SALES
+
+FK customer_key
+FK product_key
+FK date_key
+FK payment_key
+FK shipment_key
+
+Measures:
+revenue
+quantity
+profit
+discount]
+
+WAREHOUSE --> FACT
+
+%% DIMENSIONS
+
+DIM_CUSTOMER[DIM_CUSTOMER
+
+PK customer_key
+customer_name
+city
+segment]
+
+DIM_PRODUCT[DIM_PRODUCT
+
+PK product_key
+product_name
+category
+brand]
+
+DIM_DATE[DIM_DATE
+
+PK date_key
+month
+quarter
+year]
+
+DIM_PAYMENT[DIM_PAYMENT
+
+PK payment_key
+payment_type
+payment_status]
+
+DIM_SHIPMENT[DIM_SHIPMENT
+
+PK shipment_key
+shipment_mode
+delivery_status]
+
+FACT --> DIM_CUSTOMER
+FACT --> DIM_PRODUCT
+FACT --> DIM_DATE
+FACT --> DIM_PAYMENT
+FACT --> DIM_SHIPMENT
+
+%% BI
+
+BI[Power BI Dashboard]
+
+WAREHOUSE --> BI
+
+%% NOTES
+
+GRAIN[Grain:
+One row per product per order]
+
+PARTITION[Partitioned by order_date]
+
+SCDNOTE[SCD Type 2 Enabled]
+
+GRAIN --> FACT
+PARTITION --> FACT
+SCDNOTE --> DIM_CUSTOMER
+```
+
+---
+
+# After Importing ⭐⭐⭐
+
+Then manually:
+
+* resize boxes
+* align dimensions
+* improve spacing
+* add colors lightly
+* make arrows cleaner
+
+That final 10–15 minutes of polishing creates:
+
+# professional architecture visuals.
+
+---
+
+# Important Reality ⭐⭐⭐
+
+Recruiters won’t care whether:
+
+* Mermaid generated it
+  OR
+* manually created it.
+
+They care whether:
+
+* architecture makes sense
+* design looks clean
+* concepts are connected
+* project looks real
+
+That’s what matters.
+
+---
+
+# Your Best Strategy Going Forward
+
+For every major topic:
+
+| Topic            | Deliverable         |
+| ---------------- | ------------------- |
+| CDC              | pipeline diagram    |
+| Incremental Load | ETL flow            |
+| Star Schema      | dimensional model   |
+| Partitioning     | performance diagram |
+| SCD Type 2       | historical flow     |
+
+This becomes:
+
+# your DE portfolio system.
+
+And honestly:
+very few freshers do this systematically.

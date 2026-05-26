@@ -1,0 +1,315 @@
+Excellent. Now we move to the actual core of Airflow.
+
+Everything after this depends on understanding DAG structure properly.
+
+---
+
+# Topic 3 — DAG (Directed Acyclic Graph)
+
+# What is a DAG?
+
+A DAG is the workflow definition in Apache Airflow.
+
+It defines:
+
+* tasks
+* execution order
+* scheduling
+* dependencies
+
+---
+
+# Full Form
+
+```text id="7c7w8s"
+D → Directed
+A → Acyclic
+G → Graph
+```
+
+---
+
+# Meaning
+
+## Directed
+
+Tasks move in one direction.
+
+Example:
+
+```text id="o09ghs"
+Task A → Task B → Task C
+```
+
+Execution order is fixed.
+
+---
+
+## Acyclic
+
+Workflow cannot loop back.
+
+Invalid:
+
+```text id="ltzyfd"
+A → B → C → A
+```
+
+Airflow does not allow cycles.
+
+---
+
+## Graph
+
+Tasks are connected visually as workflow nodes.
+
+---
+
+# Why DAG is Important
+
+DAG controls:
+
+* workflow structure
+* scheduling
+* dependency handling
+* retries
+* monitoring
+
+Without DAG:
+Airflow cannot orchestrate anything.
+
+---
+
+# DAG File Location
+
+All DAG files are stored inside:
+
+```text id="xgxw7n"
+dags/
+```
+
+Airflow scheduler continuously scans this folder.
+
+---
+
+# Basic DAG Structure
+
+```python id="33qtr9"
+from airflow import DAG
+from datetime import datetime
+
+with DAG(
+    dag_id="sample_dag",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+):
+    pass
+```
+
+---
+
+# Important DAG Parameters
+
+# dag_id
+
+Unique workflow name.
+
+Example:
+
+```python id="4k90hj"
+dag_id="sales_etl_pipeline"
+```
+
+Used to identify DAG inside UI.
+
+---
+
+# start_date
+
+Defines when DAG becomes active.
+
+Example:
+
+```python id="gspmxf"
+start_date=datetime(2025, 1, 1)
+```
+
+---
+
+# schedule
+
+Defines execution frequency.
+
+Examples:
+
+```python id="y7o2ys"
+schedule="@daily"
+schedule="@hourly"
+schedule="0 9 * * *"
+```
+
+---
+
+# catchup
+
+Controls backfilling behavior.
+
+```python id="b4lwhw"
+catchup=False
+```
+
+Usually disabled for beginners.
+
+---
+
+# Common Schedules
+
+## Daily
+
+```python id="f8y8nf"
+schedule="@daily"
+```
+
+---
+
+## Hourly
+
+```python id="n75d48"
+schedule="@hourly"
+```
+
+---
+
+## Every 5 Minutes
+
+```python id="0w3iq5"
+schedule="*/5 * * * *"
+```
+
+---
+
+# DAG Execution Flow
+
+Example:
+
+```text id="n9gw7r"
+Extract Data
+     ↓
+Transform Data
+     ↓
+Load Data
+```
+
+Airflow follows dependency order.
+
+---
+
+# Real Data Engineering Example
+
+```text id="kgrxw5"
+Fetch API Data
+      ↓
+Clean Data
+      ↓
+Load PostgreSQL
+      ↓
+Generate Report
+```
+
+Entire workflow = one DAG.
+
+---
+
+# Important Rule
+
+One DAG should represent:
+
+* one business workflow
+* one pipeline objective
+
+Bad practice:
+Putting unrelated pipelines into one DAG.
+
+---
+
+# DAG Lifecycle
+
+```text id="lsm88j"
+Developer Creates DAG
+        ↓
+Saved in dags/
+        ↓
+Scheduler Detects DAG
+        ↓
+Tasks Scheduled
+        ↓
+Execution Starts
+```
+
+---
+
+# GitHub Notes Version
+
+```md id="p40v3y"
+# DAG in Apache Airflow
+
+## What is DAG?
+DAG (Directed Acyclic Graph) defines workflow structure in Airflow.
+
+## DAG Controls
+- Task execution order
+- Scheduling
+- Dependencies
+- Monitoring
+
+## DAG Properties
+
+### Directed
+Tasks move in one direction.
+
+### Acyclic
+No looping allowed.
+
+### Graph
+Tasks connected as workflow nodes.
+
+## Important Parameters
+
+### dag_id
+Unique DAG name.
+
+### start_date
+Defines DAG activation date.
+
+### schedule
+Defines execution frequency.
+
+### catchup
+Controls backfilling.
+
+## Common Schedules
+
+### Daily
+schedule="@daily"
+
+### Hourly
+schedule="@hourly"
+
+### Every 5 Minutes
+schedule="*/5 * * * *"
+
+## DAG File Location
+dags/
+
+## Best Practice
+One DAG = One workflow objective
+```
+
+---
+
+Next topic:
+
+# Tasks and Operators
+
+That is where actual execution begins.

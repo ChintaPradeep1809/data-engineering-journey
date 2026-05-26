@@ -1,0 +1,239 @@
+Perfect. That is the correct way to learn Apache Airflow.
+
+If we overload multiple topics together, you will remember syntax but not workflow thinking.
+
+So from now:
+
+* One topic only
+* Short GitHub-style notes
+* What it is
+* When used
+* Minimal theory
+* Then practical
+* Then move next
+
+That is the fastest retention strategy.
+
+---
+
+# Day 1 — Topic 1
+
+# What is Airflow?
+
+## Definition
+
+Apache Airflow is a workflow orchestration tool used to schedule, manage, and monitor data pipelines.
+
+---
+
+# Why Airflow Exists
+
+Before Airflow:
+
+```text
+Python Script → Cron Job → Manual Monitoring → Failures
+```
+
+Problems:
+
+* hard to track failures
+* dependency issues
+* retry handling difficult
+* scaling difficult
+* no visualization
+
+Airflow solves:
+
+* scheduling
+* dependency management
+* monitoring
+* retries
+* automation
+
+---
+
+# Core Idea
+
+Airflow controls workflow execution.
+
+Example:
+
+```text
+Extract Data
+    ↓
+Transform Data
+    ↓
+Load to Warehouse
+```
+
+Airflow manages:
+
+* task order
+* retries
+* scheduling
+* logs
+* failures
+
+---
+
+# When Airflow is Used
+
+Used in:
+
+* ETL pipelines
+* ELT pipelines
+* Data Engineering workflows
+* ML pipelines
+* Batch processing
+* Data warehouse orchestration
+
+---
+
+# When NOT to Use Airflow
+
+Do not use for:
+
+* real-time streaming
+* ultra-low latency systems
+* simple one-script automation
+
+For real-time:
+
+* Kafka
+* Flink
+* Spark Streaming
+
+---
+
+# Important Terms
+
+## DAG
+
+Directed Acyclic Graph.
+
+Represents workflow pipeline.
+
+Example:
+
+```text
+Task A → Task B → Task C
+```
+
+---
+
+## Task
+
+Single unit of work.
+
+Example:
+
+* run SQL
+* execute Python
+* move file
+
+---
+
+## Operator
+
+Defines what task does.
+
+Examples:
+
+* PythonOperator
+* BashOperator
+* SparkSubmitOperator
+
+---
+
+## Scheduler
+
+Component that triggers DAG execution based on time.
+
+---
+
+## Web UI
+
+Used to:
+
+* monitor DAGs
+* check failures
+* view logs
+* rerun tasks
+
+---
+
+# Airflow Architecture (Basic)
+
+```text
+Developer Writes DAG
+        ↓
+Scheduler Reads DAG
+        ↓
+Executor Runs Tasks
+        ↓
+Metadata Stored in DB
+        ↓
+UI Displays Status
+```
+
+---
+
+# GitHub Notes Version
+
+```md
+# Apache Airflow
+
+## What is Airflow?
+Apache Airflow is a workflow orchestration tool used to schedule and monitor pipelines.
+
+## Used For
+- ETL pipelines
+- Data Engineering workflows
+- Batch processing
+- ML workflows
+
+## Core Components
+
+### DAG
+Workflow definition.
+
+### Task
+Single unit of execution.
+
+### Operator
+Defines task type.
+
+### Scheduler
+Triggers DAG execution.
+
+### Web UI
+Used for monitoring and logs.
+
+## Advantages
+- Pipeline scheduling
+- Retry handling
+- Dependency management
+- Monitoring support
+
+## Not Used For
+- Real-time streaming
+- Low latency systems
+```
+
+---
+
+Next topic after this will be:
+
+# Airflow Installation + Docker Setup
+
+Do not jump ahead yet.
+
+First understand:
+
+* DAG
+* Task
+* Operator
+* Scheduler
+* Workflow orchestration
+
+These four concepts are the foundation of everything in Airflow.

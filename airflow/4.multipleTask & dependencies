@@ -1,0 +1,315 @@
+Good. Now you’ve crossed the first important milestone:
+
+```text id="0xrk9q"
+Airflow Setup
+    ↓
+DAG Creation
+    ↓
+Task Execution
+    ↓
+Log Monitoring
+```
+
+Most beginners stop at tutorials here.
+Now we move into actual orchestration logic.
+
+---
+
+# Topic 6 — Multiple Tasks and Task Dependencies
+
+# What are Task Dependencies?
+
+Dependencies define:
+
+* task execution order
+* workflow sequence
+* which task runs first
+
+Airflow uses dependencies to orchestrate pipelines.
+
+---
+
+# Why Dependencies Matter
+
+Real pipelines are sequential.
+
+Example:
+
+```text id="d3y6pn"
+Extract Data
+     ↓
+Transform Data
+     ↓
+Load Data
+```
+
+You cannot:
+
+* transform before extraction
+* load before transformation
+
+Dependencies solve this.
+
+---
+
+# Dependency Syntax
+
+## Sequential Execution
+
+```python id="3h5n8v"
+task1 >> task2
+```
+
+Meaning:
+
+```text id="gvvcz8"
+task1 runs first
+task2 runs after task1
+```
+
+---
+
+# Reverse Dependency
+
+```python id="bmt3l4"
+task2 << task1
+```
+
+Same meaning.
+
+---
+
+# Multiple Sequential Tasks
+
+```python id="s3zn86"
+task1 >> task2 >> task3
+```
+
+Execution:
+
+```text id="l9a7m6"
+task1
+   ↓
+task2
+   ↓
+task3
+```
+
+---
+
+# Parallel Tasks
+
+```python id="k7rslh"
+task1 >> [task2, task3]
+```
+
+Execution:
+
+```text id="l70upg"
+       task2
+      /
+task1
+      \
+       task3
+```
+
+After task1:
+
+* task2 and task3 run together
+
+---
+
+# Multiple Upstream Tasks
+
+```python id="2ovflq"
+[task1, task2] >> task3
+```
+
+Execution:
+
+```text id="9w1p2l"
+task1 ----\
+           → task3
+task2 ----/
+```
+
+task3 waits for:
+
+* task1
+* task2
+
+---
+
+# Real Data Engineering Example
+
+```text id="1czguh"
+Fetch API
+     ↓
+Validate Data
+     ↓
+Transform Data
+     ↓
+Load Warehouse
+```
+
+Each stage depends on previous stage success.
+
+---
+
+# Full Example DAG
+
+```python id="ec7e65"
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+
+def extract():
+    print("Extracting data")
+
+def transform():
+    print("Transforming data")
+
+def load():
+    print("Loading data")
+
+with DAG(
+    dag_id="etl_pipeline",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    extract_task = PythonOperator(
+        task_id="extract_task",
+        python_callable=extract
+    )
+
+    transform_task = PythonOperator(
+        task_id="transform_task",
+        python_callable=transform
+    )
+
+    load_task = PythonOperator(
+        task_id="load_task",
+        python_callable=load
+    )
+
+    extract_task >> transform_task >> load_task
+```
+
+---
+
+# Execution Flow
+
+```text id="3xh1fx"
+extract_task
+       ↓
+transform_task
+       ↓
+load_task
+```
+
+---
+
+# What Happens if One Task Fails?
+
+Example:
+
+```text id="z9ytr4"
+extract_task → success
+transform_task → failed
+load_task → not executed
+```
+
+Airflow stops downstream execution.
+
+This is critical in production pipelines.
+
+---
+
+# Dependency Terms
+
+| Term       | Meaning       |
+| ---------- | ------------- |
+| upstream   | previous task |
+| downstream | next task     |
+
+Example:
+
+```text id="bq9tyf"
+task1 → task2
+```
+
+* task1 = upstream
+* task2 = downstream
+
+---
+
+# Graph View Importance
+
+Graph View helps visualize:
+
+* execution flow
+* failures
+* dependency chains
+
+You will use this daily in real projects.
+
+---
+
+# GitHub Notes Version
+
+```md id="0yk1p6"
+# Task Dependencies in Airflow
+
+## What are Dependencies?
+Dependencies define task execution order.
+
+## Sequential Execution
+task1 >> task2
+
+## Reverse Dependency
+task2 << task1
+
+## Multiple Sequential Tasks
+task1 >> task2 >> task3
+
+## Parallel Tasks
+task1 >> [task2, task3]
+
+## Multiple Upstream Tasks
+[task1, task2] >> task3
+
+## Important Terms
+
+### upstream
+Previous task.
+
+### downstream
+Next task.
+
+## Failure Behavior
+If one task fails, downstream tasks do not execute.
+
+## Used For
+- ETL pipelines
+- Workflow sequencing
+- Dependency management
+```
+
+---
+
+Now your task:
+
+1. Create ETL DAG with 3 tasks
+2. Add dependencies
+3. Run DAG
+4. Observe Graph View
+5. Intentionally fail one task and observe downstream blocking
+
+That failure observation is important.
+Production Airflow engineering is mostly:
+
+* dependency debugging
+* retry handling
+* failure tracing.

@@ -1,0 +1,365 @@
+# Topic 4 — Tasks and Operators
+
+This is where Airflow becomes actual execution instead of just workflow definition.
+
+---
+
+# What is a Task?
+
+A task is a single unit of work inside a DAG.
+
+Examples:
+
+* run Python code
+* execute SQL
+* call API
+* move files
+* trigger Spark job
+
+---
+
+# Real Example
+
+```text id="4oqrzt"
+Download CSV
+     ↓
+Clean Data
+     ↓
+Load Database
+```
+
+Each step = one task.
+
+---
+
+# What is an Operator?
+
+Operator defines what the task actually does.
+
+Task = execution instance
+Operator = task type
+
+---
+
+# Flow
+
+```text id="x6x9fx"
+Operator
+   ↓
+Creates Task
+   ↓
+Task Executes Work
+```
+
+---
+
+# Common Operators
+
+| Operator             | Used For              |
+| -------------------- | --------------------- |
+| PythonOperator       | Run Python function   |
+| BashOperator         | Execute shell command |
+| EmailOperator        | Send emails           |
+| EmptyOperator        | Dummy task            |
+| BranchPythonOperator | Conditional branching |
+| SparkSubmitOperator  | Run Spark jobs        |
+
+---
+
+# PythonOperator
+
+## What is it?
+
+Runs Python functions inside Airflow.
+
+---
+
+# When Used
+
+Used for:
+
+* data cleaning
+* API calls
+* transformations
+* custom logic
+
+---
+
+# Example
+
+```python id="g2q7gq"
+from airflow.operators.python import PythonOperator
+
+def greet():
+    print("Hello Airflow")
+
+task1 = PythonOperator(
+    task_id="greeting_task",
+    python_callable=greet
+)
+```
+
+---
+
+# Important Parameters
+
+## task_id
+
+Unique task name.
+
+```python id="pb4gwf"
+task_id="extract_data"
+```
+
+---
+
+## python_callable
+
+Function to execute.
+
+```python id="7t33zx"
+python_callable=my_function
+```
+
+Do not use brackets:
+
+Wrong:
+
+```python id="px7k9u"
+python_callable=my_function()
+```
+
+Correct:
+
+```python id="y95q0f"
+python_callable=my_function
+```
+
+---
+
+# BashOperator
+
+## What is it?
+
+Executes shell commands.
+
+---
+
+# When Used
+
+Used for:
+
+* running scripts
+* file operations
+* Linux commands
+
+---
+
+# Example
+
+```python id="f3y2hu"
+from airflow.operators.bash import BashOperator
+
+task2 = BashOperator(
+    task_id="print_date",
+    bash_command="date"
+)
+```
+
+---
+
+# EmptyOperator
+
+## What is it?
+
+Placeholder/dummy task.
+
+---
+
+# When Used
+
+Used for:
+
+* workflow organization
+* start/end markers
+
+---
+
+# Example
+
+```python id="thvdrq"
+from airflow.operators.empty import EmptyOperator
+
+start = EmptyOperator(
+    task_id="start"
+)
+```
+
+---
+
+# Task Dependencies
+
+Dependencies define execution order.
+
+---
+
+# Example
+
+```python id="sxyu2g"
+task1 >> task2
+```
+
+Meaning:
+
+```text id="ec1vl9"
+task1 executes first
+task2 executes after task1
+```
+
+---
+
+# Multiple Dependencies
+
+```python id="t4d79s"
+task1 >> task2 >> task3
+```
+
+---
+
+# Parallel Execution
+
+```python id="6z34cv"
+task1 >> [task2, task3]
+```
+
+Meaning:
+
+* task2 and task3 run together after task1.
+
+---
+
+# Full Example DAG
+
+```python id="m8fx5n"
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+from datetime import datetime
+
+def greet():
+    print("Hello Airflow")
+
+with DAG(
+    dag_id="example_dag",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+):
+
+    task1 = PythonOperator(
+        task_id="python_task",
+        python_callable=greet
+    )
+
+    task2 = BashOperator(
+        task_id="bash_task",
+        bash_command="date"
+    )
+
+    task1 >> task2
+```
+
+---
+
+# Execution Flow
+
+```text id="l4ht0y"
+Python Task
+      ↓
+Bash Task
+```
+
+---
+
+# Important Rule
+
+Task should do:
+
+* one clear responsibility
+
+Bad practice:
+Huge complex task doing everything.
+
+Good practice:
+Small modular tasks.
+
+---
+
+# GitHub Notes Version
+
+```md id="efy9hu"
+# Tasks and Operators in Airflow
+
+## Task
+Single unit of work in a DAG.
+
+Examples:
+- Run Python code
+- Execute SQL
+- Move files
+
+## Operator
+Defines what the task does.
+
+## Common Operators
+
+### PythonOperator
+Runs Python functions.
+
+### BashOperator
+Executes shell commands.
+
+### EmptyOperator
+Used as placeholder task.
+
+### SparkSubmitOperator
+Runs Spark jobs.
+
+## Important Parameters
+
+### task_id
+Unique task name.
+
+### python_callable
+Function executed by PythonOperator.
+
+## Task Dependencies
+
+### Sequential Execution
+task1 >> task2
+
+### Multiple Tasks
+task1 >> task2 >> task3
+
+### Parallel Execution
+task1 >> [task2, task3]
+
+## Best Practice
+One task = one responsibility
+```
+
+---
+
+Next topic:
+
+# Creating Your First Real DAG
+
+There we will:
+
+* create DAG file
+* place inside dags/
+* run tasks
+* trigger manually
+* check logs in UI
+
+That is your first actual Airflow workflow execution.

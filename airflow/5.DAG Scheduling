@@ -1,0 +1,361 @@
+Excellent. Now you’re no longer just “running Airflow.”
+
+You now understand:
+
+* workflow structure
+* orchestration flow
+* dependency execution
+* downstream blocking
+
+That is the actual foundation.
+
+---
+
+# Topic 7 — DAG Scheduling
+
+# What is Scheduling?
+
+Scheduling defines:
+
+* when a DAG runs
+* how often it runs
+
+Airflow scheduler checks DAG schedule continuously.
+
+---
+
+# Why Scheduling Matters
+
+Without scheduling:
+
+```text id="4n3x9x"
+Manual Trigger Only
+```
+
+With scheduling:
+
+```text id="n7yyi8"
+Automatic Pipeline Execution
+```
+
+Example:
+
+* daily ETL
+* hourly reports
+* weekly backups
+
+---
+
+# Schedule Parameter
+
+Defined inside DAG:
+
+```python id="mc2fzc"
+schedule="@daily"
+```
+
+---
+
+# Common Schedules
+
+| Schedule | Meaning     |
+| -------- | ----------- |
+| @once    | run once    |
+| @daily   | every day   |
+| @hourly  | every hour  |
+| @weekly  | every week  |
+| @monthly | every month |
+
+---
+
+# Examples
+
+## Daily DAG
+
+```python id="3fw2vk"
+schedule="@daily"
+```
+
+---
+
+## Hourly DAG
+
+```python id="ycit4l"
+schedule="@hourly"
+```
+
+---
+
+## Weekly DAG
+
+```python id="wt5qiw"
+schedule="@weekly"
+```
+
+---
+
+# Cron Expressions
+
+Airflow also supports cron scheduling.
+
+Format:
+
+```text id="cz46p3"
+minute hour day month weekday
+```
+
+---
+
+# Example — Every Day at 9 AM
+
+```python id="rq7w3t"
+schedule="0 9 * * *"
+```
+
+Meaning:
+
+```text id="j6ov4m"
+Minute = 0
+Hour = 9
+Daily execution
+```
+
+---
+
+# Example — Every 5 Minutes
+
+```python id="z5uwwq"
+schedule="*/5 * * * *"
+```
+
+---
+
+# Example — Every Monday
+
+```python id="vsh8x5"
+schedule="0 0 * * 1"
+```
+
+---
+
+# Important Concept — start_date
+
+```python id="dzq1u3"
+start_date=datetime(2025, 1, 1)
+```
+
+Defines:
+
+* when scheduler starts considering DAG runs
+
+Not actual execution time.
+
+This confuses beginners heavily.
+
+---
+
+# Important Concept — catchup
+
+## What is Catchup?
+
+Controls whether missed DAG runs execute.
+
+---
+
+# Example
+
+Suppose:
+
+```text id="8vxy4j"
+start_date = Jan 1
+today = Jan 10
+schedule = daily
+```
+
+Missed runs:
+
+* Jan 1
+* Jan 2
+* Jan 3
+  ...
+
+---
+
+# catchup=True
+
+Airflow runs all missed schedules.
+
+---
+
+# catchup=False
+
+Airflow runs only latest schedule.
+
+---
+
+# Recommended for Beginners
+
+```python id="nl5cfz"
+catchup=False
+```
+
+Otherwise:
+
+* huge backfills
+* confusing executions
+* too many DAG runs
+
+---
+
+# Real Production Example
+
+```text id="hzsmom"
+Sales ETL Pipeline
+Runs every day at 2 AM
+```
+
+```python id="f6cqun"
+schedule="0 2 * * *"
+```
+
+---
+
+# Full Example DAG
+
+```python id="u1gg7r"
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+
+def sample():
+    print("Scheduled DAG Running")
+
+with DAG(
+    dag_id="scheduled_dag",
+    start_date=datetime(2025, 1, 1),
+    schedule="*/5 * * * *",
+    catchup=False
+) as dag:
+
+    task1 = PythonOperator(
+        task_id="sample_task",
+        python_callable=sample
+    )
+```
+
+---
+
+# Scheduler Flow
+
+```text id="z77ul9"
+Scheduler Reads DAG
+        ↓
+Checks Schedule
+        ↓
+Creates DAG Run
+        ↓
+Tasks Execute
+```
+
+---
+
+# Important Distinction
+
+## DAG Definition
+
+Static Python code.
+
+---
+
+## DAG Run
+
+Actual execution instance.
+
+Example:
+
+```text id="dyy3s7"
+daily_sales_dag
+```
+
+Can have:
+
+* Jan 1 run
+* Jan 2 run
+* Jan 3 run
+
+Same DAG definition.
+Different DAG runs.
+
+---
+
+# GitHub Notes Version
+
+```md id="5jx0ll"
+# DAG Scheduling in Airflow
+
+## What is Scheduling?
+Defines when and how often DAG runs execute.
+
+## Common Schedules
+
+### Run Once
+schedule="@once"
+
+### Daily
+schedule="@daily"
+
+### Hourly
+schedule="@hourly"
+
+### Weekly
+schedule="@weekly"
+
+## Cron Format
+minute hour day month weekday
+
+## Example Cron
+
+### Daily at 9 AM
+schedule="0 9 * * *"
+
+### Every 5 Minutes
+schedule="*/5 * * * *"
+
+## start_date
+Defines when scheduler starts considering DAG runs.
+
+## catchup
+
+### catchup=True
+Runs missed schedules.
+
+### catchup=False
+Runs only latest schedule.
+
+## Recommended
+Use catchup=False for beginners.
+
+## Important Concept
+
+### DAG
+Workflow definition.
+
+### DAG Run
+Actual execution instance.
+```
+
+---
+
+Now your task:
+
+1. Create scheduled DAG
+2. Use cron schedule
+3. Observe automatic execution
+4. Observe DAG Runs section
+5. Understand difference between DAG and DAG Run
+
+Only after this we move to:
+
+# XCom (task communication)
+
+That is where tasks start sharing data.

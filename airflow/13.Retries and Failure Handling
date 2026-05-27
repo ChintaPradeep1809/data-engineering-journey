@@ -1,0 +1,392 @@
+Perfect. That is the correct balance now:
+
+Theory
+↓
+Immediate Execution
+↓
+Production Thinking
+↓
+Project Building
+
+Not:
+
+Endless topic consumption
+
+So now we officially move into:
+
+Phase 1 — Production Workflow Essentials
+
+These topics are what separate:
+
+tutorial learners from
+
+engineers who can operate pipelines.
+
+
+
+---
+
+Topic 14 — Retries and Failure Handling
+
+Why This Topic Matters
+
+In real production systems:
+
+pipelines fail constantly
+
+APIs timeout
+
+DB connections fail
+
+files arrive late
+
+network issues happen
+
+
+A pipeline without retry logic is fragile.
+
+
+---
+
+What are Retries?
+
+Retries allow failed tasks to execute again automatically.
+
+
+---
+
+Retry Flow
+
+Task Fails
+    ↓
+Wait retry_delay
+    ↓
+Retry Task
+    ↓
+Success or Failure
+
+
+---
+
+Why Retries are Important
+
+Without retries:
+
+Temporary API failure
+        ↓
+Entire pipeline fails
+
+With retries:
+
+Temporary issue
+      ↓
+Retry succeeds
+      ↓
+Pipeline continues
+
+
+---
+
+Retry Parameters
+
+retries
+
+Defines number of retry attempts.
+
+
+---
+
+Example
+
+retries=3
+
+Meaning:
+
+initial execution
+
++3 retry attempts
+
+
+
+---
+
+retry_delay
+
+Defines waiting time between retries.
+
+
+---
+
+Example
+
+from datetime import timedelta
+
+retry_delay=timedelta(minutes=2)
+
+Meaning:
+
+wait 2 minutes before retrying
+
+
+
+---
+
+Full Example DAG
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+
+def failing_task():
+    raise Exception("Task Failed")
+
+with DAG(
+    dag_id="retry_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    task1 = PythonOperator(
+        task_id="retry_task",
+        python_callable=failing_task,
+        retries=3,
+        retry_delay=timedelta(minutes=1)
+    )
+
+
+---
+
+Execution Behavior
+
+Attempt 1 → failed
+Wait 1 minute
+Attempt 2 → failed
+Wait 1 minute
+Attempt 3 → failed
+Wait 1 minute
+Final Failure
+
+
+---
+
+Task States During Retry
+
+State	Meaning
+
+running	task executing
+up_for_retry	waiting for retry
+failed	retries exhausted
+success	task completed
+
+
+
+---
+
+timeout
+
+What is timeout?
+
+Defines maximum execution duration allowed.
+
+
+---
+
+Example
+
+execution_timeout=timedelta(minutes=5)
+
+If task exceeds:
+
+5 minutes
+
+Airflow terminates task.
+
+
+---
+
+Why timeout Matters
+
+Prevents:
+
+hanging pipelines
+
+infinite waits
+
+blocked workers
+
+
+
+---
+
+Real Production Examples
+
+API Retry
+
+API unavailable
+    ↓
+Retry after 2 minutes
+
+
+---
+
+Database Connection Retry
+
+Temporary DB outage
+        ↓
+Retry connection
+
+
+---
+
+File Arrival Delay
+
+File not ready
+    ↓
+Retry later
+
+
+---
+
+Important Production Understanding
+
+Retries should handle:
+
+temporary failures
+
+
+Retries should NOT hide:
+
+bad logic
+
+broken SQL
+
+incorrect credentials
+
+
+Otherwise:
+
+pipeline repeatedly fails uselessly
+
+
+---
+
+Failure Handling Strategy
+
+Good pipeline design distinguishes:
+
+Failure Type	Action
+
+temporary	retry
+permanent	fail immediately
+
+
+
+---
+
+Retry Best Practices
+
+Good
+
+Small retry count
+Reasonable retry delay
+
+
+---
+
+Bad
+
+retries=100
+
+This can overload systems.
+
+
+---
+
+Important Industry Reality
+
+A huge percentage of production Airflow engineering is:
+
+retry tuning
++
+failure debugging
++
+monitoring unstable systems
+
+Not DAG creation.
+
+
+---
+
+GitHub Notes Version
+
+# Retries and Failure Handling in Airflow
+
+## What are Retries?
+Retries allow failed tasks to execute again automatically.
+
+## Important Parameters
+
+### retries
+Number of retry attempts.
+
+Example:
+retries=3
+
+### retry_delay
+Waiting time between retries.
+
+Example:
+retry_delay=timedelta(minutes=2)
+
+### execution_timeout
+Maximum allowed task runtime.
+
+Example:
+execution_timeout=timedelta(minutes=5)
+
+## Important Task States
+
+### up_for_retry
+Task waiting for retry.
+
+### failed
+Retries exhausted.
+
+### success
+Task completed successfully.
+
+## Used For
+- API failures
+- DB outages
+- Temporary network issues
+
+## Best Practice
+Retries should handle temporary failures only.
+
+
+---
+
+Your task now:
+
+1. Create intentionally failing task
+
+
+2. Add retries
+
+
+3. Observe up_for_retry
+
+
+4. Observe retry attempts
+
+
+5. Test timeout behavior
+
+
+
+After this we move to:
+
+Logging and Monitoring
+
+That is where real debugging skills begin.

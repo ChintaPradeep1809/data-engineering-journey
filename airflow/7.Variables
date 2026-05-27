@@ -1,0 +1,318 @@
+Perfect. Now you officially understand:
+
+```text id="a8m7tw"
+Task Execution
+      ↓
+Task Dependencies
+      ↓
+Task Communication
+```
+
+That is the core foundation of Airflow orchestration.
+
+Now we move to the next production-level concept.
+
+---
+
+# Topic 9 — Variables in Airflow
+
+# What are Variables?
+
+Variables are global key-value storage in Apache Airflow.
+
+Used to store reusable configuration values.
+
+---
+
+# Why Variables are Needed
+
+Without variables:
+
+```python id="m2s0zl"
+file_path = "/sales/2025/january/file.csv"
+```
+
+Hardcoded values create:
+
+* maintenance problems
+* deployment issues
+* environment conflicts
+
+Variables solve this.
+
+---
+
+# Variable Flow
+
+```text id="4m7m1g"
+Store Value in Airflow
+         ↓
+Access from DAG
+         ↓
+Use Dynamically
+```
+
+---
+
+# Used For
+
+Variables commonly store:
+
+* file paths
+* API URLs
+* environment names
+* batch sizes
+* config values
+
+---
+
+# When NOT to Use Variables
+
+Do NOT store:
+
+* passwords
+* secrets
+* credentials
+
+Use Connections or Secret Managers for that.
+
+---
+
+# Creating Variables
+
+## Through UI
+
+Go to:
+
+```text id="t39m4f"
+Admin → Variables
+```
+
+---
+
+# Example Variable
+
+| Key       | Value     |
+| --------- | --------- |
+| file_name | sales.csv |
+
+---
+
+# Accessing Variables in DAG
+
+## Import Variable
+
+```python id="jlwm70"
+from airflow.models import Variable
+```
+
+---
+
+# Get Variable
+
+```python id="v7cghj"
+file = Variable.get("file_name")
+```
+
+---
+
+# Example DAG
+
+```python id="2b7gt4"
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.models import Variable
+from datetime import datetime
+
+def read_variable():
+    file = Variable.get("file_name")
+    print(file)
+
+with DAG(
+    dag_id="variable_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    task1 = PythonOperator(
+        task_id="read_variable_task",
+        python_callable=read_variable
+    )
+```
+
+---
+
+# Default Value
+
+If variable missing:
+
+```python id="4jmxzt"
+Variable.get("file_name", default_var="default.csv")
+```
+
+---
+
+# JSON Variables
+
+Variables can store JSON.
+
+---
+
+# Example JSON
+
+```json id="2tthv4"
+{
+  "bucket": "sales-data",
+  "region": "us-east-1"
+}
+```
+
+---
+
+# Read JSON Variable
+
+```python id="2iq8ev"
+config = Variable.get(
+    "aws_config",
+    deserialize_json=True
+)
+```
+
+---
+
+# Production Use Cases
+
+## Environment Switching
+
+```text id="8d5brw"
+dev
+test
+prod
+```
+
+---
+
+## Dynamic File Paths
+
+```text id="fys24m"
+s3://bucket/raw/
+```
+
+---
+
+## API Configuration
+
+```text id="b0ozho"
+api_url
+batch_size
+```
+
+---
+
+# Important Understanding
+
+Variables are:
+
+* global
+* reusable
+* Airflow-managed
+
+They help avoid hardcoding.
+
+---
+
+# Variable vs XCom
+
+| Feature  | Variable      | XCom               |
+| -------- | ------------- | ------------------ |
+| Scope    | Global        | Task-level         |
+| Used For | Configuration | Task communication |
+| Lifetime | Persistent    | DAG-run scoped     |
+
+---
+
+# Best Practices
+
+## Good
+
+```text id="9sck91"
+Store reusable config
+```
+
+---
+
+## Bad
+
+```text id="it7hm9"
+Store secrets/passwords
+```
+
+---
+
+# GitHub Notes Version
+
+```md id="n2rq5k"
+# Variables in Airflow
+
+## What are Variables?
+Global key-value storage used for reusable configuration.
+
+## Used For
+- File paths
+- API URLs
+- Config values
+- Environment names
+
+## Not Used For
+- Passwords
+- Secrets
+- Credentials
+
+## Create Variable
+Admin → Variables
+
+## Access Variable
+
+from airflow.models import Variable
+
+file = Variable.get("file_name")
+
+## Default Value
+
+Variable.get("file_name", default_var="default.csv")
+
+## JSON Variable
+
+Variable.get(
+    "aws_config",
+    deserialize_json=True
+)
+
+## Variable vs XCom
+
+### Variable
+Global configuration.
+
+### XCom
+Task communication.
+
+## Best Practice
+Avoid hardcoded configuration values.
+```
+
+---
+
+Your task now:
+
+1. Create variables from UI
+2. Read variables inside DAG
+3. Print values in logs
+4. Try default_var
+5. Try JSON variable
+
+After that we move to:
+
+# Connections
+
+That is where databases and external systems enter Airflow.

@@ -1,0 +1,480 @@
+Topic 15 — Logging and Monitoring in Airflow
+
+Why Logging Matters
+
+In real projects, pipelines fail regularly.
+
+Engineers spend major time on:
+
+checking logs
+
+debugging failures
+
+tracing execution flow
+
+identifying bottlenecks
+
+
+Without logs:
+
+You cannot debug pipelines properly.
+
+
+---
+
+What is Logging?
+
+Logging records task execution details inside Apache Airflow.
+
+Logs help track:
+
+execution steps
+
+errors
+
+retries
+
+task outputs
+
+
+
+---
+
+Logging Flow
+
+Task Executes
+      ↓
+Logs Generated
+      ↓
+Stored by Airflow
+      ↓
+Viewed in UI
+
+
+---
+
+What Logs Contain
+
+Logs commonly include:
+
+task start time
+
+task end time
+
+print statements
+
+exceptions/errors
+
+retries
+
+execution metadata
+
+
+
+---
+
+Accessing Logs
+
+From Airflow UI
+
+Flow:
+
+DAG
+ ↓
+Task
+ ↓
+Logs
+
+
+---
+
+Example Log Output
+
+Task started
+Processing sales.csv
+Task completed successfully
+
+
+---
+
+Using print()
+
+Simplest logging method.
+
+Example:
+
+def process():
+    print("Processing started")
+
+Output appears inside task logs.
+
+
+---
+
+Python Logging Module
+
+Better production approach.
+
+
+---
+
+Import
+
+import logging
+
+
+---
+
+Example
+
+def process():
+    logging.info("Processing started")
+
+
+---
+
+Why logging.info() is Better
+
+Compared to:
+
+print()
+
+logging provides:
+
+structured logs
+
+severity levels
+
+better monitoring support
+
+
+
+---
+
+Logging Levels
+
+Level	Used For
+
+info	normal execution
+warning	suspicious behavior
+error	failures/problems
+critical	severe issues
+
+
+
+---
+
+Examples
+
+Info
+
+logging.info("Pipeline started")
+
+
+---
+
+Warning
+
+logging.warning("Missing optional column")
+
+
+---
+
+Error
+
+logging.error("Database connection failed")
+
+
+---
+
+Full Example DAG
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+import logging
+
+def process():
+
+    logging.info("Pipeline started")
+
+    file = "sales.csv"
+
+    logging.info(f"Processing file: {file}")
+
+with DAG(
+    dag_id="logging_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    task1 = PythonOperator(
+        task_id="process_task",
+        python_callable=process
+    )
+
+
+---
+
+Monitoring in Airflow
+
+What is Monitoring?
+
+Monitoring means tracking:
+
+DAG health
+
+task states
+
+failures
+
+retries
+
+execution duration
+
+
+
+---
+
+Important Monitoring Areas
+
+DAG Runs
+
+Shows:
+
+running DAGs
+
+failed DAGs
+
+successful DAGs
+
+
+
+---
+
+Graph View
+
+Visual workflow execution.
+
+Very important for debugging dependencies.
+
+
+---
+
+Gantt View
+
+Shows task execution duration.
+
+Used to identify:
+
+slow tasks
+
+bottlenecks
+
+
+
+---
+
+Task Duration
+
+Helps identify:
+
+performance problems
+
+stuck tasks
+
+
+
+---
+
+Important Task States
+
+State	Meaning
+
+queued	waiting
+running	executing
+success	completed
+failed	failed
+up_for_retry	retry pending
+skipped	branch skipped
+
+
+
+---
+
+Real Production Monitoring
+
+Engineers monitor:
+
+failed pipelines
+
+delayed schedules
+
+retry frequency
+
+task duration spikes
+
+
+
+---
+
+Common Debugging Flow
+
+Task Failed
+    ↓
+Open Logs
+    ↓
+Read Error
+    ↓
+Identify Root Cause
+    ↓
+Fix DAG / System
+
+
+---
+
+Important Production Reality
+
+Most Airflow work becomes:
+
+Observability
++
+Failure analysis
++
+Pipeline debugging
+
+Not DAG syntax writing.
+
+
+---
+
+Best Practices
+
+Good Logging
+
+logging.info("Extract step started")
+
+
+---
+
+Bad Logging
+
+print("something happened")
+
+Too vague.
+
+
+---
+
+Important Rule
+
+Logs should explain:
+
+what happened
+
+where failure occurred
+
+what data was processed
+
+
+Otherwise debugging becomes painful.
+
+
+---
+
+GitHub Notes Version
+
+# Logging and Monitoring in Airflow
+
+## What is Logging?
+Logging records task execution details.
+
+## Logs Contain
+- execution steps
+- errors
+- retries
+- task outputs
+
+## Access Logs
+DAG → Task → Logs
+
+## Logging Methods
+
+### print()
+Basic logging.
+
+### logging.info()
+Production-style structured logging.
+
+## Logging Levels
+
+### info
+Normal execution.
+
+### warning
+Suspicious behavior.
+
+### error
+Failures/problems.
+
+### critical
+Severe failures.
+
+## Monitoring Areas
+
+### DAG Runs
+Track workflow executions.
+
+### Graph View
+Visualize dependencies.
+
+### Gantt View
+Analyze task duration.
+
+## Important Task States
+- queued
+- running
+- success
+- failed
+- up_for_retry
+- skipped
+
+## Best Practice
+Logs should clearly explain execution flow and failures.
+
+
+---
+
+Your task now:
+
+1. Replace print() with logging.info()
+
+
+2. Generate multiple logs
+
+
+3. Trigger intentional failure
+
+
+4. Observe error logs
+
+
+5. Explore Graph View and Gantt View
+
+
+6. Check retry logs carefully
+
+
+
+After this we move to:
+
+Trigger Rules
+
+Very important for:
+
+branching workflows
+
+downstream execution logic
+
+complex orchestration systems.

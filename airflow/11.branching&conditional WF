@@ -1,0 +1,333 @@
+# Topic 13 — Branching and Conditional Workflows
+
+# What is Branching?
+
+Branching allows a DAG to choose different execution paths based on conditions in Apache Airflow.
+
+---
+
+# Why Branching is Needed
+
+Real workflows are not always linear.
+
+Example:
+
+```text id="jlwm72"
+If file exists → process file
+Else → send alert
+```
+
+Airflow branching handles this logic.
+
+---
+
+# Branching Flow
+
+```text id="w3d7jm"
+          Condition
+          /      \
+       True      False
+        ↓          ↓
+Process Task   Alert Task
+```
+
+---
+
+# What Branching Does
+
+Branching helps:
+
+* execute selective tasks
+* skip unnecessary tasks
+* build dynamic workflows
+
+---
+
+# BranchPythonOperator
+
+## What is it?
+
+Special operator used for conditional execution.
+
+---
+
+# Import
+
+```python id="2j9fr6"
+from airflow.operators.python import BranchPythonOperator
+```
+
+---
+
+# Important Rule
+
+Branch function must return:
+
+* task_id
+* list of task_ids
+
+Airflow executes returned branch only.
+
+Other branches become:
+
+```text id="jlwm73"
+skipped
+```
+
+---
+
+# Example Logic
+
+```text id="4x1z2v"
+If sales > 1000
+    ↓
+Run high_sales_task
+Else
+    ↓
+Run low_sales_task
+```
+
+---
+
+# Example DAG
+
+```python id="jlwm74"
+from airflow import DAG
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from datetime import datetime
+
+def choose_branch():
+    value = 100
+
+    if value > 50:
+        return "high_task"
+    else:
+        return "low_task"
+
+def high():
+    print("High branch executed")
+
+def low():
+    print("Low branch executed")
+
+with DAG(
+    dag_id="branch_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    branch_task = BranchPythonOperator(
+        task_id="branch_task",
+        python_callable=choose_branch
+    )
+
+    high_task = PythonOperator(
+        task_id="high_task",
+        python_callable=high
+    )
+
+    low_task = PythonOperator(
+        task_id="low_task",
+        python_callable=low
+    )
+
+    branch_task >> [high_task, low_task]
+```
+
+---
+
+# Execution Example
+
+Suppose:
+
+```python id="jlwm75"
+value = 100
+```
+
+Execution:
+
+```text id="jlwm76"
+branch_task
+      ↓
+high_task → success
+low_task → skipped
+```
+
+---
+
+# Important Understanding
+
+Branching does NOT run all downstream tasks.
+
+It only runs:
+
+* selected branch
+
+Others become skipped automatically.
+
+---
+
+# Real Data Engineering Use Cases
+
+## Data Quality Checks
+
+```text id="jlwm77"
+Valid Data → Load Warehouse
+Invalid Data → Send Alert
+```
+
+---
+
+## File Validation
+
+```text id="jlwm78"
+File Exists → Process
+Missing File → Notify Team
+```
+
+---
+
+## Dynamic Pipeline Routing
+
+```text id="jlwm79"
+CSV → CSV Pipeline
+JSON → JSON Pipeline
+```
+
+---
+
+# Trigger Rules Problem
+
+Branching introduces skipped tasks.
+
+This affects downstream execution.
+
+---
+
+# Example Problem
+
+```text id="jlwm80"
+Branch A → success
+Branch B → skipped
+```
+
+Final task may not run automatically.
+
+---
+
+# Trigger Rules
+
+Used to control downstream behavior.
+
+Example:
+
+```python id="jlwm81"
+trigger_rule="none_failed_min_one_success"
+```
+
+---
+
+# Common Trigger Rules
+
+| Trigger Rule | Meaning              |
+| ------------ | -------------------- |
+| all_success  | all upstream success |
+| one_success  | one upstream success |
+| none_failed  | no failures          |
+
+---
+
+# EmptyOperator in Branching
+
+Commonly used for:
+
+* dummy branches
+* workflow organization
+
+---
+
+# Important Production Reality
+
+Branching becomes critical in:
+
+* data validation
+* retry routing
+* alert systems
+* dynamic ingestion pipelines
+
+This is where Airflow workflows become intelligent.
+
+---
+
+# Best Practice
+
+Keep branch logic:
+
+* simple
+* deterministic
+* readable
+
+Avoid:
+
+* huge branching complexity
+* nested branch chaos
+
+Otherwise DAG debugging becomes painful.
+
+---
+
+# GitHub Notes Version
+
+```md id="jlwm82"
+# Branching in Airflow
+
+## What is Branching?
+Branching allows DAGs to execute different paths based on conditions.
+
+## BranchPythonOperator
+Used for conditional workflow execution.
+
+## Important Rule
+Branch function returns:
+- task_id
+- list of task_ids
+
+## Example Flow
+
+Condition
+   ↓
+True → Task A
+False → Task B
+
+## Important Behavior
+Non-selected branches become skipped.
+
+## Used For
+- Data validation
+- Alert routing
+- Dynamic pipelines
+- File checks
+
+## Trigger Rules
+
+### all_success
+All upstream tasks succeed.
+
+### one_success
+At least one upstream task succeeds.
+
+### none_failed
+No upstream failures.
+
+## Best Practice
+Keep branching logic simple and readable.
+```
+
+---
+
+Next topic:
+
+# Dynamic DAGs and Parameterization
+
+That is where workflows become reusable instead of hardcoded pipelines.

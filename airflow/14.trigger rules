@@ -1,0 +1,378 @@
+Topic 16 — Trigger Rules in Airflow
+
+Why Trigger Rules Matter
+
+By default, Airflow expects:
+
+All upstream tasks must succeed
+
+before downstream task executes.
+
+But real workflows are more complex.
+
+Example:
+
+One branch succeeds
+Another branch skipped
+
+Should downstream task run or not?
+
+Trigger Rules solve this.
+
+
+---
+
+What are Trigger Rules?
+
+Trigger Rules define conditions required for a task to execute.
+
+They control downstream behavior.
+
+
+---
+
+Default Trigger Rule
+
+all_success
+
+Default behavior.
+
+Meaning:
+
+All upstream tasks must succeed
+
+
+---
+
+Example
+
+task1 → success
+task2 → success
+       ↓
+task3 runs
+
+
+---
+
+Problem with Branching
+
+Example:
+
+branch_a → success
+branch_b → skipped
+
+Downstream task may not execute because:
+
+not all upstream tasks succeeded
+
+
+---
+
+Trigger Rule Flow
+
+Upstream Tasks
+      ↓
+Trigger Rule Evaluated
+      ↓
+Should Task Run?
+
+
+---
+
+Setting Trigger Rule
+
+Example:
+
+trigger_rule="one_success"
+
+
+---
+
+Common Trigger Rules
+
+Trigger Rule	Meaning
+
+all_success	all upstream success
+one_success	at least one success
+none_failed	no failures
+all_failed	all upstream failed
+all_done	execute regardless of status
+
+
+
+---
+
+one_success
+
+Meaning
+
+Task runs if:
+
+At least one upstream task succeeds
+
+
+---
+
+Example
+
+task1 → success
+task2 → failed
+       ↓
+downstream runs
+
+
+---
+
+none_failed
+
+Meaning
+
+Task runs if:
+
+No upstream task failed
+
+Skipped tasks allowed.
+
+
+---
+
+Example
+
+task1 → success
+task2 → skipped
+       ↓
+downstream runs
+
+Very important after branching.
+
+
+---
+
+all_done
+
+Meaning
+
+Task runs regardless of:
+
+success
+
+failure
+
+skipped
+
+
+
+---
+
+Used For
+
+Commonly used in:
+
+cleanup tasks
+
+notifications
+
+final reporting
+
+
+
+---
+
+Example
+
+trigger_rule="all_done"
+
+
+---
+
+Real Branching Example
+
+Branch
+          /      \
+      success   skipped
+          \      /
+        Final Task
+
+Without proper trigger rule:
+
+Final task may never execute
+
+
+---
+
+Full Example DAG
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.empty import EmptyOperator
+from datetime import datetime
+
+def success():
+    print("Success")
+
+with DAG(
+    dag_id="trigger_rule_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    task1 = PythonOperator(
+        task_id="task1",
+        python_callable=success
+    )
+
+    task2 = EmptyOperator(
+        task_id="task2"
+    )
+
+    final_task = EmptyOperator(
+        task_id="final_task",
+        trigger_rule="none_failed"
+    )
+
+    [task1, task2] >> final_task
+
+
+---
+
+Important Production Use Cases
+
+Branching Workflows
+
+Most common use case.
+
+
+---
+
+Cleanup Tasks
+
+Delete temp files
+
+Should execute even after failures.
+
+
+---
+
+Notification Systems
+
+Send alert regardless of pipeline outcome
+
+
+---
+
+Important Production Reality
+
+A lot of Airflow debugging becomes:
+
+"Why downstream task did not execute?"
+
+Very often:
+
+trigger rule issue
+
+
+---
+
+Best Practice
+
+Good
+
+Use explicit trigger rules in:
+
+branching DAGs
+
+final tasks
+
+cleanup tasks
+
+
+
+---
+
+Bad
+
+Relying blindly on:
+
+default all_success
+
+in complex workflows.
+
+
+---
+
+Important Understanding
+
+Trigger rules evaluate:
+
+upstream task states
+
+
+They do NOT evaluate:
+
+business logic
+
+data correctness
+
+
+
+---
+
+GitHub Notes Version
+
+# Trigger Rules in Airflow
+
+## What are Trigger Rules?
+Trigger rules define conditions required for task execution.
+
+## Default Trigger Rule
+
+### all_success
+All upstream tasks must succeed.
+
+## Common Trigger Rules
+
+### one_success
+At least one upstream success.
+
+### none_failed
+No upstream failures.
+
+### all_failed
+All upstream tasks failed.
+
+### all_done
+Runs regardless of upstream status.
+
+## Used For
+- Branching workflows
+- Cleanup tasks
+- Notification systems
+
+## Important Production Use Case
+Trigger rules are critical in branching DAGs.
+
+## Best Practice
+Use explicit trigger rules in complex workflows.
+
+
+---
+
+Now you have completed the major Airflow orchestration concepts.
+
+Next phase:
+
+Real ETL Pipelines
+
+We start building actual:
+
+PostgreSQL ETL workflows
+
+API ingestion pipelines
+
+validation pipelines
+
+Spark orchestration
+
+
+This is where your GitHub portfolio starts becoming strong.

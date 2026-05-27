@@ -1,0 +1,318 @@
+Good. Now we move into one of the most important production concepts.
+
+Without this, Airflow remains only a scheduler.
+
+---
+
+# Topic 10 — Connections in Airflow
+
+# What are Connections?
+
+Connections store external system credentials and connection details inside Apache Airflow.
+
+Used to connect:
+
+* databases
+* APIs
+* cloud services
+* warehouses
+
+---
+
+# Why Connections are Needed
+
+Without connections:
+
+```python id="k4smjt"
+username = "admin"
+password = "mypassword"
+```
+
+Problems:
+
+* hardcoded credentials
+* security risks
+* poor maintainability
+
+Connections solve this.
+
+---
+
+# Connection Flow
+
+```text id="5w8n6m"
+Store Connection in Airflow
+            ↓
+Access in DAG
+            ↓
+Connect External System
+```
+
+---
+
+# Used For
+
+Connections commonly store:
+
+* PostgreSQL credentials
+* MySQL credentials
+* AWS access
+* API authentication
+* SFTP details
+
+---
+
+# Important Rule
+
+## Variables
+
+Used for:
+
+* configuration
+
+---
+
+## Connections
+
+Used for:
+
+* credentials
+* authentication
+* external systems
+
+---
+
+# Creating Connection
+
+Go to:
+
+```text id="jlwm9l"
+Admin → Connections
+```
+
+---
+
+# Important Fields
+
+| Field     | Purpose                |
+| --------- | ---------------------- |
+| Conn Id   | unique connection name |
+| Conn Type | database/service type  |
+| Host      | server address         |
+| Login     | username               |
+| Password  | password               |
+| Port      | connection port        |
+| Schema    | database name          |
+
+---
+
+# Example PostgreSQL Connection
+
+| Field     | Value         |
+| --------- | ------------- |
+| Conn Id   | postgres_conn |
+| Conn Type | PostgreSQL    |
+| Host      | postgres      |
+| Login     | airflow       |
+| Password  | airflow       |
+| Port      | 5432          |
+| Schema    | airflow       |
+
+---
+
+# Accessing Connections
+
+Airflow operators/hooks use connection IDs.
+
+Example:
+
+```python id="6e2ov4"
+postgres_conn
+```
+
+---
+
+# What is Conn Id?
+
+Unique identifier used inside DAGs.
+
+Example:
+
+```python id="ef23aj"
+postgres_conn
+aws_default
+mysql_conn
+```
+
+---
+
+# Connection Types
+
+| Type                | Used For      |
+| ------------------- | ------------- |
+| PostgreSQL          | Postgres DB   |
+| MySQL               | MySQL DB      |
+| HTTP                | APIs          |
+| Amazon Web Services | AWS           |
+| SFTP                | File transfer |
+
+---
+
+# Real Production Example
+
+```text id="14m7cg"
+Airflow DAG
+      ↓
+PostgreSQL Connection
+      ↓
+Load Warehouse Data
+```
+
+---
+
+# Important Understanding
+
+Connections are centrally managed.
+
+Benefits:
+
+* secure
+* reusable
+* environment friendly
+
+---
+
+# Test Connection
+
+Airflow UI allows:
+
+* testing connectivity
+* validating credentials
+
+Very important during debugging.
+
+---
+
+# Environment Migration
+
+Same DAG can run across:
+
+* dev
+* test
+* prod
+
+Only connection changes.
+
+DAG code remains same.
+
+This is huge in production engineering.
+
+---
+
+# Connection Security
+
+Better than hardcoding credentials.
+
+Still:
+
+* enterprises use secret managers
+* Vault
+* AWS Secrets Manager
+* Azure Key Vault
+
+---
+
+# Variable vs Connection
+
+| Feature  | Variable      | Connection           |
+| -------- | ------------- | -------------------- |
+| Purpose  | Config values | External system auth |
+| Used For | File paths    | DB/API credentials   |
+| Security | Low           | Better               |
+
+---
+
+# Important Industry Reality
+
+A large part of Airflow work is:
+
+* debugging failed connections
+* expired credentials
+* network issues
+* authentication failures
+
+Not just DAG coding.
+
+---
+
+# GitHub Notes Version
+
+```md id="6t7r1o"
+# Connections in Airflow
+
+## What are Connections?
+Used to store external system credentials and authentication details.
+
+## Used For
+- Databases
+- APIs
+- AWS
+- SFTP
+- Warehouses
+
+## Create Connection
+Admin → Connections
+
+## Important Fields
+
+### Conn Id
+Unique connection name.
+
+### Conn Type
+Type of external system.
+
+### Host
+Server address.
+
+### Login
+Username.
+
+### Password
+Authentication password.
+
+### Port
+Connection port.
+
+## Connection Types
+- PostgreSQL
+- MySQL
+- HTTP
+- AWS
+- SFTP
+
+## Variable vs Connection
+
+### Variable
+Configuration storage.
+
+### Connection
+Authentication storage.
+
+## Best Practice
+Do not hardcode credentials in DAGs.
+```
+
+---
+
+Your next task:
+
+1. Create PostgreSQL connection
+2. Create HTTP/API connection
+3. Understand Conn Id usage
+4. Explore available connection types
+
+After that we move to:
+
+# Hooks
+
+That is where Airflow starts actually interacting with databases programmatically.

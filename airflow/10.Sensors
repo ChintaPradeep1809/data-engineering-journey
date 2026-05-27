@@ -1,0 +1,366 @@
+# Topic 12 — Sensors in Airflow
+
+# What are Sensors?
+
+Sensors are special operators used to wait for an external event before continuing workflow execution in Apache Airflow.
+
+---
+
+# Why Sensors are Needed
+
+Real pipelines depend on external events.
+
+Example:
+
+```text id="d1h0xz"
+Wait for CSV file
+        ↓
+Process Data
+```
+
+Without waiting:
+
+* pipeline may fail
+* file may not exist yet
+* downstream tasks break
+
+Sensors solve this.
+
+---
+
+# Sensor Flow
+
+```text id="z7d6ti"
+Sensor Starts
+      ↓
+Checks Condition
+      ↓
+Condition Met?
+   ↓        ↓
+ No         Yes
+ ↓           ↓
+Wait      Continue DAG
+```
+
+---
+
+# What Sensors Do
+
+Sensors continuously check:
+
+* file availability
+* database updates
+* API readiness
+* DAG completion
+
+---
+
+# Common Sensors
+
+| Sensor             | Used For                  |
+| ------------------ | ------------------------- |
+| FileSensor         | wait for file             |
+| ExternalTaskSensor | wait for another DAG/task |
+| HttpSensor         | wait for API response     |
+| S3KeySensor        | wait for S3 object        |
+
+---
+
+# Important Understanding
+
+Sensor does NOT process data.
+
+It only:
+
+* waits
+* checks
+* monitors condition
+
+---
+
+# FileSensor
+
+## What is it?
+
+Waits for file existence.
+
+---
+
+# Import
+
+```python id="fj4pxj"
+from airflow.sensors.filesystem import FileSensor
+```
+
+---
+
+# Example
+
+```python id="0r6jqj"
+wait_for_file = FileSensor(
+    task_id="wait_for_file",
+    filepath="/tmp/data.csv",
+    poke_interval=10,
+    timeout=60
+)
+```
+
+---
+
+# Important Parameters
+
+## filepath
+
+File path to monitor.
+
+---
+
+## poke_interval
+
+Time between checks.
+
+Example:
+
+```python id="8z0xw2"
+poke_interval=10
+```
+
+Checks every 10 seconds.
+
+---
+
+## timeout
+
+Maximum waiting time.
+
+Example:
+
+```python id="z9f8jw"
+timeout=60
+```
+
+Fails after 60 seconds.
+
+---
+
+# Execution Example
+
+```text id="i7p4rl"
+Sensor starts
+      ↓
+Checks file
+      ↓
+File not found
+      ↓
+Waits 10 seconds
+      ↓
+Checks again
+```
+
+---
+
+# ExternalTaskSensor
+
+## What is it?
+
+Waits for another DAG/task completion.
+
+---
+
+# Used For
+
+Example:
+
+```text id="jlwm71"
+Raw Data DAG
+       ↓
+Warehouse DAG
+```
+
+Warehouse DAG waits until Raw DAG finishes.
+
+---
+
+# Example
+
+```python id="hwrv6m"
+from airflow.sensors.external_task import ExternalTaskSensor
+```
+
+---
+
+# Real Data Engineering Example
+
+```text id="cx4q8w"
+Wait for API file
+        ↓
+Validate Data
+        ↓
+Transform Data
+        ↓
+Load Warehouse
+```
+
+Sensors are extremely common in production pipelines.
+
+---
+
+# Full Example DAG
+
+```python id="7pqxx9"
+from airflow import DAG
+from airflow.sensors.filesystem import FileSensor
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+
+def process():
+    print("Processing file")
+
+with DAG(
+    dag_id="sensor_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    wait_for_file = FileSensor(
+        task_id="wait_for_file",
+        filepath="/tmp/data.csv",
+        poke_interval=10,
+        timeout=60
+    )
+
+    process_task = PythonOperator(
+        task_id="process_task",
+        python_callable=process
+    )
+
+    wait_for_file >> process_task
+```
+
+---
+
+# Important Sensor States
+
+| State   | Meaning            |
+| ------- | ------------------ |
+| running | actively checking  |
+| success | condition met      |
+| failed  | timeout reached    |
+| skipped | condition bypassed |
+
+---
+
+# Important Production Reality
+
+Bad sensor configuration can:
+
+* waste worker resources
+* block execution slots
+* slow scheduler
+
+Sensors must be configured carefully in large systems.
+
+---
+
+# Sensor Modes
+
+## poke mode
+
+Continuously occupies worker.
+
+---
+
+## reschedule mode
+
+Releases worker while waiting.
+
+Better for long waits.
+
+---
+
+# Best Practice
+
+Use sensors for:
+
+* orchestration waiting
+* dependency synchronization
+* event-driven workflows
+
+Not for:
+
+* heavy computation
+* data processing
+
+---
+
+# Hook vs Sensor
+
+| Feature | Hook                  | Sensor             |
+| ------- | --------------------- | ------------------ |
+| Purpose | interact with systems | wait for condition |
+| Action  | execute operations    | monitor events     |
+
+---
+
+# GitHub Notes Version
+
+```md id="r1yht0"
+# Sensors in Airflow
+
+## What are Sensors?
+Sensors wait for external events before continuing workflow execution.
+
+## Used For
+- File arrival
+- DAG completion
+- API readiness
+- S3 object availability
+
+## Common Sensors
+
+### FileSensor
+Waits for file existence.
+
+### ExternalTaskSensor
+Waits for another DAG/task.
+
+### HttpSensor
+Waits for API response.
+
+## Important Parameters
+
+### filepath
+File path to monitor.
+
+### poke_interval
+Time between condition checks.
+
+### timeout
+Maximum waiting duration.
+
+## Sensor States
+- running
+- success
+- failed
+- skipped
+
+## Sensor Modes
+
+### poke
+Occupies worker continuously.
+
+### reschedule
+Releases worker while waiting.
+
+## Best Practice
+Use sensors for orchestration waiting logic only.
+```
+
+---
+
+Next topic:
+
+# Branching and Conditional Workflows
+
+That is where DAGs become dynamic instead of fixed execution pipelines.

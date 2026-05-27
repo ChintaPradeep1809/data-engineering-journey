@@ -1,0 +1,350 @@
+Perfect.
+
+Now we move into one of the most important concepts in Apache Airflow.
+
+Until now:
+
+* tasks executed independently
+
+Now:
+
+* tasks start communicating
+
+---
+
+# Topic 8 — XCom (Cross Communication)
+
+# What is XCom?
+
+XCom allows tasks to exchange small amounts of data between each other.
+
+---
+
+# Why XCom is Needed
+
+Example:
+
+```text id="s3p2iw"
+Task 1 fetches file name
+          ↓
+Task 2 needs that file name
+```
+
+Tasks need communication.
+
+XCom solves this.
+
+---
+
+# Full Form
+
+```text id="b8m86z"
+XCom = Cross Communication
+```
+
+---
+
+# Important Understanding
+
+Airflow tasks are isolated.
+
+One task cannot directly access another task’s variables.
+
+XCom acts as temporary shared storage.
+
+---
+
+# XCom Flow
+
+```text id="4wlzud"
+Task 1 Pushes Data
+          ↓
+       XCom Store
+          ↓
+Task 2 Pulls Data
+```
+
+---
+
+# When XCom is Used
+
+Used for:
+
+* passing filenames
+* passing API responses
+* passing counts/status
+* dynamic workflow logic
+
+---
+
+# When NOT to Use XCom
+
+Do NOT use for:
+
+* huge datasets
+* large files
+* DataFrames
+* heavy data transfer
+
+XCom is for small metadata only.
+
+Wrong usage:
+
+```text id="12i8z8"
+Passing 1 GB CSV through XCom
+```
+
+Correct usage:
+
+```text id="ofx0sn"
+Passing CSV file path
+```
+
+---
+
+# XCom Push
+
+## What is it?
+
+Stores value into XCom.
+
+---
+
+# Example
+
+```python id="p7r3j7"
+def push_data(ti):
+    ti.xcom_push(key="file_name", value="sales.csv")
+```
+
+---
+
+# Important Terms
+
+## ti
+
+Task Instance object.
+
+Used for:
+
+* XCom operations
+* task metadata
+
+---
+
+# key
+
+Identifier name.
+
+Example:
+
+```python id="jlwm0l"
+key="file_name"
+```
+
+---
+
+# value
+
+Actual data stored.
+
+Example:
+
+```python id="t10wq8"
+value="sales.csv"
+```
+
+---
+
+# XCom Pull
+
+## What is it?
+
+Retrieves stored value.
+
+---
+
+# Example
+
+```python id="6gnhci"
+def pull_data(ti):
+    file = ti.xcom_pull(
+        task_ids="push_task",
+        key="file_name"
+    )
+
+    print(file)
+```
+
+---
+
+# task_ids
+
+Defines which task pushed the value.
+
+---
+
+# Full Example DAG
+
+```python id="fmzv1y"
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+
+def push_data(ti):
+    ti.xcom_push(key="file_name", value="sales.csv")
+
+def pull_data(ti):
+    file = ti.xcom_pull(
+        task_ids="push_task",
+        key="file_name"
+    )
+
+    print(file)
+
+with DAG(
+    dag_id="xcom_example",
+    start_date=datetime(2025, 1, 1),
+    schedule="@daily",
+    catchup=False
+) as dag:
+
+    push_task = PythonOperator(
+        task_id="push_task",
+        python_callable=push_data
+    )
+
+    pull_task = PythonOperator(
+        task_id="pull_task",
+        python_callable=pull_data
+    )
+
+    push_task >> pull_task
+```
+
+---
+
+# Execution Flow
+
+```text id="ef22yv"
+push_task
+   ↓
+Stores sales.csv in XCom
+   ↓
+pull_task
+   ↓
+Reads sales.csv from XCom
+```
+
+---
+
+# Important Production Reality
+
+XCom is commonly used for:
+
+* file paths
+* execution dates
+* row counts
+* API tokens
+* status flags
+
+Not for actual large data processing.
+
+Large data should go to:
+
+* S3
+* database
+* data lake
+* warehouse
+
+---
+
+# Automatic XCom Return
+
+PythonOperator automatically pushes return values.
+
+Example:
+
+```python id="04td7l"
+def get_name():
+    return "Pradeep"
+```
+
+Airflow stores return value automatically in XCom.
+
+---
+
+# Pulling Automatic Return
+
+```python id="g9fhyz"
+ti.xcom_pull(task_ids="get_name_task")
+```
+
+---
+
+# GitHub Notes Version
+
+```md id="jlwm9e"
+# XCom in Airflow
+
+## What is XCom?
+XCom allows tasks to exchange small amounts of data.
+
+## Full Form
+Cross Communication
+
+## Used For
+- File names
+- API responses
+- Metadata
+- Status values
+
+## Not Used For
+- Large datasets
+- DataFrames
+- Heavy file transfer
+
+## XCom Push
+
+Stores value into XCom.
+
+Example:
+ti.xcom_push(key="file_name", value="sales.csv")
+
+## XCom Pull
+
+Retrieves value from XCom.
+
+Example:
+ti.xcom_pull(task_ids="push_task", key="file_name")
+
+## Important Terms
+
+### ti
+Task Instance object.
+
+### key
+Identifier name.
+
+### value
+Stored data.
+
+## Best Practice
+Use XCom only for lightweight metadata.
+```
+
+---
+
+Now your task:
+
+1. Create push task
+2. Create pull task
+3. Pass filename using XCom
+4. Print pulled value in logs
+5. Observe task dependency behavior
+
+After that we move to:
+
+# Variables and Connections
+
+That is where Airflow becomes configurable and production-ready.

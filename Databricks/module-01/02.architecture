@@ -1,9 +1,6 @@
-# Module 1: Databricks Fundamentals
-
 # Topic 2: Databricks Architecture
 
 ## Concept
-
 Databricks follows a **Control Plane + Compute Plane** architecture. The Control Plane manages the platform, while the Compute Plane executes your workloads.
 
 ---
@@ -19,7 +16,6 @@ Databricks follows a **Control Plane + Compute Plane** architecture. The Control
 
 ## Architecture
 
-```text
                   Databricks Architecture
 
 +----------------------+
@@ -53,12 +49,6 @@ Databricks follows a **Control Plane + Compute Plane** architecture. The Control
 
 ---
 
-## Syntax
-
-**N/A** (Architecture topic)
-
----
-
 ## Interview Questions
 
 1. What are the main components of Databricks architecture?
@@ -68,23 +58,3 @@ Databricks follows a **Control Plane + Compute Plane** architecture. The Control
 5. Which component actually executes Spark jobs?
 
 ---
-
-## Practical
-
-### Exercise
-
-Open your Databricks workspace and identify:
-
-* Workspace
-* Compute
-* Catalog
-* Jobs
-* SQL
-
-Try to map each service to the **Control Plane** or **Compute Plane**.
-
----
-
-**✅ Topic 2 Complete**
-
-**Next Topic:** **Databricks vs Apache Spark vs EMR vs Synapse**

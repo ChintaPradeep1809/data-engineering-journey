@@ -1,0 +1,240 @@
+Good approach. Since you've already completed SQL, Python, PySpark, Airflow, and core Data Engineering concepts, we'll treat Databricks as an interview-focused specialization instead of just learning the UI.
+
+Here's the roadmap we'll follow.
+
+# Databricks Complete Roadmap (Data Engineer)
+
+## Module 1: Databricks Fundamentals
+
+1. What is Databricks?
+2. Why Databricks?
+3. Databricks Architecture
+4. Databricks vs Spark vs EMR vs Synapse
+5. Databricks Editions & Cloud Providers
+
+---
+
+## Module 2: Workspace & Compute
+
+6. Workspace Overview
+7. Users, Groups & Permissions
+8. Clusters
+9. Cluster Types
+10. Cluster Policies
+11. Cluster Pools
+12. Cluster Configuration
+13. Photon Engine
+14. Serverless Compute
+
+---
+
+## Module 3: Databricks Notebooks
+
+15. Notebook Basics
+16. Python, SQL, Scala, R
+17. Magic Commands
+18. Widgets
+19. Markdown
+20. Notebook Workflows
+21. Parameterization
+22. Version History
+
+---
+
+## Module 4: Storage & File Management
+
+23. DBFS
+24. Volumes
+25. Mount Points
+26. Reading Files
+27. Writing Files
+28. Auto Loader
+29. COPY INTO
+
+---
+
+## Module 5: Delta Lake ⭐⭐⭐⭐⭐
+
+30. What is Delta Lake?
+31. Delta Architecture
+32. ACID Transactions
+33. Time Travel
+34. Schema Enforcement
+35. Schema Evolution
+36. Merge (UPSERT)
+37. Update
+38. Delete
+39. Optimize
+40. Z-Ordering
+41. Vacuum
+42. Transaction Log
+
+---
+
+## Module 6: Unity Catalog ⭐⭐⭐⭐⭐
+
+43. Why Unity Catalog?
+44. Metastore
+45. Catalog
+46. Schema
+47. Tables
+48. External Locations
+49. Storage Credentials
+50. Permissions
+51. Row-Level Security
+52. Column-Level Security
+
+---
+
+## Module 7: Delta Live Tables (DLT)
+
+53. Introduction
+54. Expectations
+55. Pipelines
+56. Incremental Processing
+57. Data Quality Rules
+
+---
+
+## Module 8: Medallion Architecture ⭐⭐⭐⭐⭐
+
+58. Bronze Layer
+59. Silver Layer
+60. Gold Layer
+61. End-to-End Pipeline
+62. Best Practices
+
+---
+
+## Module 9: Databricks SQL
+
+63. SQL Warehouse
+64. Query Editor
+65. Dashboards
+66. Alerts
+67. Query Optimization
+
+---
+
+## Module 10: Workflows
+
+68. Jobs
+69. Scheduling
+70. Multi-task Jobs
+71. Job Parameters
+72. Retry Policies
+73. Notifications
+
+---
+
+## Module 11: Streaming
+
+74. Structured Streaming
+75. Streaming Tables
+76. Trigger Modes
+77. Watermarking
+78. Checkpointing
+79. Auto Loader + Streaming
+
+---
+
+## Module 12: Performance Optimization ⭐⭐⭐⭐⭐
+
+80. Spark UI
+81. Adaptive Query Execution
+82. Broadcast Join
+83. Partitioning
+84. Repartition vs Coalesce
+85. Caching
+86. Data Skew
+87. File Sizes
+88. Shuffle Optimization
+89. Explain Plan
+
+---
+
+## Module 13: Security & Governance
+
+90. Secrets
+91. Secret Scopes
+92. Access Control
+93. Audit Logs
+94. Network Security
+
+---
+
+## Module 14: DevOps
+
+95. Git Integration
+96. Repos
+97. Asset Bundles
+98. CI/CD Basics
+99. Deployment Strategy
+
+---
+
+## Module 15: Interview Preparation
+
+100. Common Databricks Interview Questions
+101. Scenario-Based Questions
+102. Troubleshooting Scenarios
+103. Performance Tuning Scenarios
+104. System Design Questions
+
+---
+
+## Module 16: Certification (Optional)
+
+105. Databricks Certified Data Engineer Associate
+106. Mock Exam
+
+---
+
+# Projects (after completing all topics)
+
+We'll then build these in order:
+
+1. **E-commerce ETL Pipeline**
+
+   * Bronze → Silver → Gold
+   * Delta Lake
+   * Unity Catalog
+   * Airflow orchestration
+
+2. **Retail Data Warehouse**
+
+   * SCD Type 2
+   * Incremental Loads
+   * Data Quality
+   * Medallion Architecture
+
+3. **Real-Time Streaming Pipeline**
+
+   * Kafka
+   * Structured Streaming
+   * Auto Loader
+   * Delta Lake
+   * Monitoring
+
+4. **Capstone Project**
+
+   * Enterprise-grade Data Lakehouse
+   * CI/CD
+   * Git Integration
+   * Performance Tuning
+   * Dashboard-ready Gold layer
+
+This roadmap is designed to cover the Databricks skills commonly expected for **10–15 LPA Data Engineer** roles with around **1–2 years of experience**.
+
+We'll study **one topic at a time**. For every topic, we'll cover:
+
+* Concept and theory
+* Architecture
+* Syntax (where applicable)
+* Real-world use cases
+* Advantages and limitations
+* Interview questions
+* Hands-on exercise
+* Mini assignment
+
+Only after you're comfortable with that topic will we move to the next one.

@@ -1,0 +1,89 @@
+# Module 2: Workspace & Compute
+
+# Topic 6: Users, Groups & Permissions
+
+## Concept
+
+Databricks uses **Role-Based Access Control (RBAC)** to manage access. Permissions are assigned to **Users** or **Groups** instead of giving everyone full access.
+
+---
+
+## Theory
+
+* **User** → Individual account.
+* **Group** → Collection of users (recommended).
+* **Permission** → Defines what actions a user/group can perform.
+* Permissions can be applied to Workspaces, Clusters, Jobs, Notebooks, Catalogs, Schemas, and Tables.
+
+**Best Practice:** Assign permissions to **Groups**, not individual users.
+
+---
+
+## Architecture
+
+```text
+          Admin
+            │
+            ▼
+        Create Groups
+            │
+     ┌──────┴──────┐
+     ▼             ▼
+ Data Engineers   Analysts
+     │             │
+     ▼             ▼
+ Permissions    Permissions
+```
+
+---
+
+## Syntax
+GRANT <privilege>
+ON <object_type> <object_name>
+TO `<user_or_group>`;
+
+
+**Grant permission (SQL)**
+
+```sql
+GRANT SELECT ON TABLE sales TO data_engineers;
+```
+
+**Revoke permission**
+
+```sql
+REVOKE SELECT ON TABLE sales FROM data_engineers;
+```
+
+---
+
+## Interview Questions
+
+1. What is RBAC?
+2. Difference between User and Group?
+3. Why are Groups preferred over Users?
+4. Where can permissions be applied in Databricks?
+5. What does the `GRANT` command do?
+
+---
+
+## Practical
+
+1. Create a group (if you have admin access).
+2. Add a user to the group.
+3. Grant **SELECT** permission on a table.
+4. Verify the user can access the table.
+
+---
+
+### 💡 Interview Tip
+
+A common scenario question is:
+
+> **"You have 100 Data Engineers. Would you assign permissions to each user individually?"**
+
+**Correct answer:** No. Create a **Group**, add users to it, and assign permissions to the Group. This is easier to manage and scales better.
+
+
+
+**Next Topic:** **Clusters** (one of the most important Databricks topics for interviews).

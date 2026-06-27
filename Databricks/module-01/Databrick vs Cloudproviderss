@@ -84,3 +84,79 @@ For **1–2 years of experience**, remember this:
 This distinction is asked very frequently.
 
 ---
+
+
+
+# Module 1: Databricks Fundamentals
+
+## Concept
+
+Databricks is available on **AWS, Azure, and GCP**. The core platform is the same, but it integrates with each cloud provider's services.
+
+---
+
+## Theory
+
+### Cloud Providers
+
+| Cloud | Storage   | IAM                 |
+| ----- | --------- | ------------------- |
+| AWS   | S3        | IAM                 |
+| Azure | ADLS Gen2 | Entra ID (Azure AD) |
+| GCP   | GCS       | Cloud IAM           |
+
+### Databricks Editions
+
+* **Community Edition** – Free, limited features (learning only).
+* **Standard** – Basic workloads.
+* **Premium** – Enterprise security & governance.
+* **Enterprise** – Advanced governance, compliance, and large-scale deployments.
+
+---
+
+## Architecture
+
+```text
+                Databricks
+                     │
+      ┌──────────────┼──────────────┐
+      │              │              │
+      ▼              ▼              ▼
+    AWS           Azure           GCP
+     │              │              │
+     S3          ADLS Gen2         GCS
+```
+
+---
+
+## Interview Questions
+
+1. Which cloud providers support Databricks?
+2. Is Databricks cloud-independent?
+3. What storage does Databricks use on AWS?
+4. What is Community Edition used for?
+5. Which edition is typically used in enterprises?
+
+---
+Create a comparison table in your GitHub notes:
+
+| Cloud | Storage   | Identity Service |
+| ----- | --------- | ---------------- |
+| AWS   | S3        | IAM              |
+| Azure | ADLS Gen2 | Entra ID         |
+| GCP   | GCS       | Cloud IAM        |
+
+Memorize this table—it's a common interview question.
+
+---
+
+### ✅ Module 1 Complete
+
+You now understand:
+
+* ✔ What Databricks is
+* ✔ Databricks Architecture
+* ✔ Databricks vs Spark vs EMR vs Synapse
+* ✔ Cloud Providers & Editions
+
+---

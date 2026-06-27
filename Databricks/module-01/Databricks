@@ -1,0 +1,60 @@
+# Module 1: Databricks Fundamentals
+
+# Topic 1: What is Databricks?
+
+## Concept
+
+Databricks is a **cloud-based Lakehouse platform** built on Apache Spark that enables Data Engineering, Data Analytics, Machine Learning, and AI on a single platform.
+---
+
+## Theory
+
+* Built by the creators of Apache Spark.
+* Provides managed Spark clusters.
+* Combines Data Lake + Data Warehouse (Lakehouse).
+* Supports batch and streaming workloads.
+* Integrates with AWS, Azure, and GCP.
+
+---
+
+## Architecture
+
+        Users
+           │
+           ▼
+ +----------------------+
+ |   Databricks Workspace |
+ +----------------------+
+           │
+           ▼
+ +----------------------+
+ |    Compute Cluster   |
+ +----------------------+
+           │
+           ▼
+ +----------------------+
+ |  Delta Lake Storage  |
+ +----------------------+
+           │
+           ▼
+ Dashboards / ETL / ML
+```
+**Flow:** Workspace → Compute → Delta Lake → Analytics/ETL/ML
+
+---
+---
+
+## Interview Questions
+
+### Q1. What is Databricks?
+
+### Q2. Why is Databricks preferred over running Apache Spark manually?
+
+### Q3. What is a Lakehouse architecture?
+
+### Q4. Which cloud providers support Databricks?
+
+### Q5. What workloads can Databricks handle?
+
+---
+

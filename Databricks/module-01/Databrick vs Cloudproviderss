@@ -1,0 +1,86 @@
+
+# Topic 3: Databricks vs Apache Spark vs EMR vs Synapse
+
+## Concept
+
+These are different technologies used for big data processing. **Apache Spark** is the processing engine, while **Databricks, EMR, and Synapse** are platforms/services that use Spark.
+
+---
+
+## Theory
+
+| Technology   | Purpose                                                   |
+| ------------ | --------------------------------------------------------- |
+| Apache Spark | Distributed data processing engine                        |
+| Databricks   | Managed Lakehouse platform built on Spark                 |
+| EMR          | AWS-managed big data platform (Spark, Hive, Hadoop, etc.) |
+| Synapse      | Azure analytics platform (SQL + Spark + Data Warehouse)   |
+
+---
+
+## Architecture
+
+```text
+Apache Spark
+      │
+      ├── Databricks (AWS/Azure/GCP)
+      ├── AWS EMR
+      └── Azure Synapse
+```
+
+> Spark is the engine. The others provide infrastructure and management around it.
+
+---
+
+## Syntax
+
+**Spark (same everywhere)**
+
+```python
+df = spark.read.csv("/path/file.csv", header=True)
+```
+
+The Spark code is nearly identical on Databricks, EMR, and Synapse.
+
+---
+
+## Interview Questions
+
+1. Is Databricks the same as Apache Spark?
+2. Why do companies choose Databricks over EMR?
+3. Can Spark run without Databricks?
+4. Which cloud services support Spark?
+5. Does Synapse use Spark?
+
+---
+
+## Practical
+
+### Exercise
+
+Research and compare:
+
+* Databricks
+* AWS EMR
+* Azure Synapse
+
+Identify:
+
+* Which one is managed?
+* Which one requires more infrastructure management?
+* Which one is easiest for Data Engineers?
+
+---
+
+## Interview Tip ⭐
+
+For **1–2 years of experience**, remember this:
+
+* **Apache Spark** = Processing Engine
+* **Databricks** = Managed Spark + Lakehouse Platform
+* **EMR** = AWS Managed Big Data Service
+* **Synapse** = Azure Analytics Platform
+
+This distinction is asked very frequently.
+
+---

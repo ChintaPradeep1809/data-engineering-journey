@@ -1,0 +1,219 @@
+Perfect. From now on, I'll cover **2–3 related topics together** when they are lightweight. This will make the course faster without losing clarity. I'll still keep each topic separate in the notes so your GitHub remains organized.
+
+---
+
+# Module 3: Databricks Notebooks
+
+# Topic 14: Notebook Basics ⭐⭐⭐⭐⭐
+
+## Concept
+
+A **Notebook** is an interactive workspace where you write, execute, and document code.
+
+---
+
+## Theory
+
+* Supports multiple languages.
+* Executes code on a cluster.
+* Can mix code, SQL, and documentation.
+* Used for ETL, analysis, and testing.
+
+---
+
+## Architecture
+
+```text
+Notebook
+    │
+    ▼
+Compute Cluster
+    │
+    ▼
+Delta Lake / Cloud Storage
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. What is a Databricks Notebook?
+2. Does a notebook execute code without a cluster?
+3. Why are notebooks preferred?
+
+---
+
+## Practical
+
+* Create a notebook.
+* Attach it to a cluster.
+* Run:
+
+```python
+print("Hello Databricks")
+```
+
+---
+
+# Topic 15: Supported Languages ⭐⭐⭐⭐
+
+## Concept
+
+A Databricks notebook supports **Python, SQL, Scala, and R**.
+
+---
+
+## Theory
+
+| Language | Use Case          |
+| -------- | ----------------- |
+| Python   | ETL, PySpark      |
+| SQL      | Analytics         |
+| Scala    | Spark Development |
+| R        | Data Science      |
+
+Python and SQL are the most commonly used by Data Engineers.
+
+---
+
+## Architecture
+
+```text
+Notebook
+   │
+ ┌─┼──────────────┐
+ ▼ ▼ ▼ ▼
+Python SQL Scala R
+```
+
+---
+
+## Syntax
+
+```python
+print("Python")
+```
+
+```sql
+SELECT * FROM sales;
+```
+
+---
+
+## Interview Questions
+
+1. Which languages are supported?
+2. Which language is most used by Data Engineers?
+3. Can multiple languages be used in one notebook?
+
+---
+
+## Practical
+
+Create one cell in:
+
+* Python
+* SQL
+
+Execute both.
+
+---
+
+# Topic 16: Magic Commands ⭐⭐⭐⭐⭐
+
+## Concept
+
+Magic commands allow switching languages or performing notebook-specific operations within the same notebook.
+
+---
+
+## Theory
+
+Common magic commands:
+
+| Command   | Purpose              |
+| --------- | -------------------- |
+| `%python` | Python cell          |
+| `%sql`    | SQL cell             |
+| `%scala`  | Scala cell           |
+| `%r`      | R cell               |
+| `%md`     | Markdown             |
+| `%run`    | Run another notebook |
+
+---
+
+## Architecture
+
+```text
+Notebook
+    │
+Magic Command
+    │
+    ▼
+Python / SQL / Scala / R
+```
+
+---
+
+## Syntax
+
+```python
+%python
+print("Hello")
+```
+
+```sql
+%sql
+SELECT current_date();
+```
+
+```text
+%md
+# Databricks Notebook
+```
+
+```python
+%run /Shared/ETL_Notebook
+```
+
+---
+
+## Interview Questions
+
+1. What are Magic Commands?
+2. Why use `%run`?
+3. Difference between `%python` and `%sql`?
+4. Which command is used for Markdown?
+
+---
+
+## Practical
+
+Create a notebook with:
+
+* One Python cell
+* One SQL cell
+* One Markdown cell
+
+Run all successfully.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic               | One-line Answer                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| Notebook            | Interactive environment to write and execute code.                                  |
+| Supported Languages | Python, SQL, Scala, and R.                                                          |
+| Magic Commands      | Switch languages and perform notebook operations (`%sql`, `%python`, `%run`, etc.). |
+
+---
+
+
+These three naturally fit together and are commonly used in real ETL development.

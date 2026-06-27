@@ -1,0 +1,49 @@
+# Module 2: Workspace & Compute
+
+# Topic 5: Databricks Workspace
+
+## Concept
+
+A **Workspace** is the main development environment in Databricks where Data Engineers create notebooks, manage clusters, run jobs, and collaborate.
+
+---
+
+## Theory
+
+The Workspace contains:
+
+* **Workspace** → Notebooks & folders
+* **Catalog** → Data & metadata
+* **Compute** → Clusters
+* **Jobs** → Scheduled workflows
+* **SQL** → Analytics & dashboards
+* **Repos** → Git integration
+
+---
+
+## Architecture
+
+                 Workspace
+                      │
+ ┌──────────┬──────────┬──────────┬──────────┐
+ │          │          │          │          │
+ ▼          ▼          ▼          ▼          ▼
+Notebooks Catalog   Compute     Jobs      SQL
+```
+
+---
+
+
+## Interview Questions
+
+1. What is a Databricks Workspace?
+2. What are the main components of a Workspace?
+3. Where do you write code in Databricks?
+4. Where are clusters managed?
+5. Where are scheduled jobs created?
+
+---
+
+
+
+**Next Topic:** **Users, Groups & Permissions**

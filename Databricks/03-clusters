@@ -1,0 +1,70 @@
+# Module 2: Workspace & Compute
+
+# Topic 7: Clusters ⭐⭐⭐⭐⭐
+
+## Concept
+
+A **Cluster** is a collection of virtual machines (Driver + Worker nodes) used to execute Spark applications in Databricks.
+
+---
+
+## Theory
+
+* **Driver Node** → Coordinates the Spark application.
+* **Worker Nodes** → Execute tasks and process data.
+* A cluster can have **1 Driver** and **multiple Workers**.
+* Clusters can be manually created or automatically created by Jobs.
+
+---
+
+## Architecture
+
+```text
+               Cluster
+                  │
+        ┌─────────┴─────────┐
+        ▼                   ▼
+   Driver Node        Worker Nodes
+   (Coordinator)      (Task Execution)
+                           │
+                     Process Data
+```
+
+---
+
+## Interview Questions
+
+1. What is a Databricks Cluster?
+2. What is the role of the Driver node?
+3. What is the role of Worker nodes?
+4. Can a cluster have multiple Driver nodes?
+5. Who executes Spark tasks: Driver or Workers?
+
+---
+
+## Practical
+
+1. Go to **Compute**.
+2. Click **Create Compute**.
+3. Observe:
+
+   * Cluster Name
+   * Runtime Version
+   * Node Type
+   * Driver
+   * Workers
+4. Create a small cluster (if your environment allows).
+
+---
+
+### ⭐ Interview Tip
+
+Remember this distinction:
+
+* **Driver Node** → Creates execution plan, schedules tasks, collects results.
+* **Worker Nodes** → Execute tasks and process partitions of data.
+
+This is one of the **most frequently asked** Databricks and Spark interview questions.
+
+---
+

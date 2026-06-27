@@ -1,0 +1,90 @@
+# Module 1: Databricks Fundamentals
+
+# Topic 2: Databricks Architecture
+
+## Concept
+
+Databricks follows a **Control Plane + Compute Plane** architecture. The Control Plane manages the platform, while the Compute Plane executes your workloads.
+
+---
+
+## Theory
+
+* **Control Plane:** Managed by Databricks (UI, notebooks, jobs, cluster management).
+* **Compute Plane:** Spark clusters where your code runs.
+* **Storage:** Data resides in your cloud storage (S3, ADLS, GCS), typically as Delta tables.
+* Control Plane communicates with Compute Plane, which reads/writes data to storage.
+
+---
+
+## Architecture
+
+```text
+                  Databricks Architecture
+
++----------------------+
+|    Control Plane     |
+|----------------------|
+| Workspace            |
+| Notebooks            |
+| Jobs                 |
+| Cluster Manager      |
++----------+-----------+
+           |
+           |
+           ▼
++----------------------+
+|    Compute Plane     |
+|----------------------|
+| Driver Node          |
+| Worker Nodes         |
+| Apache Spark         |
++----------+-----------+
+           |
+           ▼
++----------------------+
+| Cloud Storage        |
+| Delta Lake           |
+| S3 / ADLS / GCS      |
++----------------------+
+```
+
+**Flow:** User → Control Plane → Compute Plane → Cloud Storage
+
+---
+
+## Syntax
+
+**N/A** (Architecture topic)
+
+---
+
+## Interview Questions
+
+1. What are the main components of Databricks architecture?
+2. What is the difference between the Control Plane and Compute Plane?
+3. Where is data stored in Databricks?
+4. Does Databricks store your data?
+5. Which component actually executes Spark jobs?
+
+---
+
+## Practical
+
+### Exercise
+
+Open your Databricks workspace and identify:
+
+* Workspace
+* Compute
+* Catalog
+* Jobs
+* SQL
+
+Try to map each service to the **Control Plane** or **Compute Plane**.
+
+---
+
+**✅ Topic 2 Complete**
+
+**Next Topic:** **Databricks vs Apache Spark vs EMR vs Synapse**

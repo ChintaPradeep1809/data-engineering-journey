@@ -1,0 +1,234 @@
+# Module 3: Databricks Notebooks
+
+# Topic 17: Widgets ⭐⭐⭐⭐
+
+## Concept
+
+**Widgets** allow users to pass **input parameters** to notebooks, making them reusable.
+
+---
+
+## Theory
+
+* Accept user input at runtime.
+* Used for parameterized ETL.
+* Common in scheduled Jobs.
+* Types: `text`, `dropdown`, `combobox`, `multiselect`.
+
+---
+
+## Architecture
+
+```text
+User Input
+     │
+     ▼
+   Widget
+     │
+     ▼
+ Notebook
+     │
+     ▼
+Execute Logic
+```
+
+---
+
+## Syntax
+
+```python
+dbutils.widgets.text("file_name", "sales.csv")
+```
+
+```python
+file = dbutils.widgets.get("file_name")
+print(file)
+```
+
+---
+
+## Interview Questions
+
+1. What are Widgets?
+2. Why use Widgets?
+3. How do you read a Widget value?
+4. Which widget types are available?
+
+---
+
+## Practical
+
+Create a text widget and print its value.
+
+---
+
+# Topic 18: Markdown ⭐⭐⭐
+
+## Concept
+
+**Markdown** is used to document notebooks with headings, notes, tables, images, and code explanations.
+
+---
+
+## Theory
+
+* Improves readability.
+* Documents ETL logic.
+* Used for collaboration.
+* Supports HTML.
+
+---
+
+## Architecture
+
+```text
+Notebook
+ ├── Markdown
+ ├── Code
+ └── Output
+```
+
+---
+
+## Syntax
+
+```text
+%md
+
+# ETL Pipeline
+
+## Bronze Layer
+
+This notebook loads raw data.
+```
+
+---
+
+## Interview Questions
+
+1. Why use Markdown?
+2. Does Markdown execute code?
+3. Which magic command enables Markdown?
+
+---
+
+## Practical
+
+Create a notebook containing:
+
+* Title
+* Description
+* One code section
+
+---
+
+# Topic 19: Notebook Workflows ⭐⭐⭐⭐⭐
+
+## Concept
+
+Notebook Workflows allow one notebook to execute another, enabling modular ETL pipelines.
+
+---
+
+## Theory
+
+Methods:
+
+* `%run` → Imports another notebook (same session).
+* `dbutils.notebook.run()` → Executes another notebook (new session) and returns a value.
+
+> **Use `%run` for shared code and `dbutils.notebook.run()` for orchestration.**
+
+---
+
+## Architecture
+
+```text
+Main Notebook
+      │
+      ▼
+Notebook A
+      │
+      ▼
+Notebook B
+      │
+      ▼
+Notebook C
+```
+
+---
+
+## Syntax
+
+### Import another notebook
+
+```python
+%run /Shared/CommonFunctions
+```
+
+### Execute another notebook
+
+```python
+result = dbutils.notebook.run(
+    "/Shared/LoadSales",
+    300,
+    {"date":"2026-06-27"}
+)
+```
+
+---
+
+## Interview Questions
+
+1. Difference between `%run` and `dbutils.notebook.run()`?
+2. Which method returns a value?
+3. Which method runs in a separate session?
+4. When should you use Notebook Workflows?
+
+---
+
+## Practical
+
+Create:
+
+* `Notebook_A`
+* `Notebook_B`
+
+Call `Notebook_B` from `Notebook_A` using:
+
+* `%run`
+* `dbutils.notebook.run()`
+
+Compare the behavior.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic                    | One-line Answer                                                 |
+| ------------------------ | --------------------------------------------------------------- |
+| Widgets                  | Pass runtime parameters to notebooks.                           |
+| Markdown                 | Documents notebook logic for readability.                       |
+| `%run`                   | Imports another notebook into the same session.                 |
+| `dbutils.notebook.run()` | Executes another notebook in a new session and returns a value. |
+
+---
+
+## 🔥 Common Interview Question
+
+**Q:** What is the difference between `%run` and `dbutils.notebook.run()`?
+
+| `%run`               | `dbutils.notebook.run()`        |
+| -------------------- | ------------------------------- |
+| Same session         | New session                     |
+| Imports notebook     | Executes notebook               |
+| Used for shared code | Used for workflow orchestration |
+| No return value      | Returns a string value          |
+| Faster               | Slightly slower                 |
+
+**Memorize this table.** It's one of the most frequently asked Databricks interview questions.
+
+---
+
+
+After that, we'll move to **Storage & File Management**, where you'll start working with DBFS, Volumes, Auto Loader, and Delta tables.

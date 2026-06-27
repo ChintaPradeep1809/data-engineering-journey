@@ -1,0 +1,300 @@
+# Module 2: Workspace & Compute
+
+# Topic 8: Cluster Types ⭐⭐⭐⭐⭐
+
+## Concept
+
+Databricks provides different cluster types based on the workload.
+
+---
+
+## Theory
+
+| Cluster Type    | Purpose                                        | Auto Terminates       | Best For             |
+| --------------- | ---------------------------------------------- | --------------------- | -------------------- |
+| **All-Purpose** | Interactive development                        | Yes                   | Development, Testing |
+| **Job Cluster** | Created for a job and deleted after completion | Yes                   | Production ETL       |
+| **Serverless**  | Fully managed compute                          | Managed by Databricks | SQL, ETL, Analytics  |
+
+> **Best Practice:** Use **All-Purpose** for development and **Job Clusters** for production.
+
+---
+
+## Architecture
+
+```text
+Developer
+    │
+    ▼
+All-Purpose Cluster
+    │
+Interactive Work
+
+Scheduler
+    │
+    ▼
+Job Cluster
+    │
+ETL Job
+    │
+Auto Terminates
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. Difference between All-Purpose and Job Cluster?
+2. Which cluster is cheaper for production?
+3. Why are Job Clusters preferred in ETL pipelines?
+4. What is Serverless Compute?
+
+---
+
+## Practical
+
+* Create an **All-Purpose Cluster**.
+* Observe how to create a **Job Cluster** while creating a Job.
+
+---
+
+# Topic 9: Cluster Policies
+
+## Concept
+
+A **Cluster Policy** is a set of rules that controls how clusters can be created to ensure cost, security, and compliance.
+
+---
+
+## Theory
+
+Policies can restrict:
+
+* Node type
+* Runtime version
+* Maximum workers
+* Auto termination
+* Instance type
+* Photon enablement
+
+> Admins create policies; users create clusters based on those policies.
+
+---
+
+## Architecture
+
+```text
+Admin
+   │
+Create Policy
+   │
+   ▼
+Developers
+   │
+Create Cluster
+   │
+Policy Applied
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. What is a Cluster Policy?
+2. Why do organizations use Cluster Policies?
+3. Who creates Cluster Policies?
+4. Can users bypass a Cluster Policy?
+
+---
+
+## Practical
+
+If you have admin access:
+
+* Navigate to **Compute → Policies**.
+* Create or inspect a policy.
+* Check restrictions applied to cluster creation.
+
+---
+
+# Topic 10: Cluster Pools
+
+## Concept
+
+A **Cluster Pool** is a pool of pre-started virtual machines that reduces cluster startup time and improves resource utilization.
+
+---
+
+## Theory
+
+Without Pool:
+
+* Create VM
+* Install Runtime
+* Start Cluster
+* **2–5 minutes**
+
+With Pool:
+
+* Reuse existing VM
+* Cluster starts in **seconds**
+
+Benefits:
+
+* Faster startup
+* Lower cloud provisioning overhead
+* Better cost efficiency for frequently created clusters
+
+---
+
+## Architecture
+
+```text
+         Cluster Pool
+      ┌─────┬─────┬─────┐
+      ▼     ▼     ▼
+     VM1   VM2   VM3
+       │
+       ▼
+ New Cluster Uses Existing VM
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. What is a Cluster Pool?
+2. Why are Cluster Pools used?
+3. Do Pools reduce execution time or startup time?
+4. Can multiple clusters use the same Pool?
+
+---
+
+## Practical
+
+Go to:
+**Compute → Pools**
+
+Observe:
+
+* Pool Name
+* Idle Instances
+* Node Type
+
+---
+
+# Topic 11: Cluster Configuration ⭐⭐⭐⭐⭐
+
+## Concept
+
+Cluster Configuration defines how a cluster is created and how much compute power it has.
+
+---
+
+## Theory
+
+Important configurations:
+
+| Configuration    | Description                         |
+| ---------------- | ----------------------------------- |
+| Runtime Version  | Spark + Databricks version          |
+| Node Type        | VM size (CPU/RAM)                   |
+| Driver Type      | Driver machine configuration        |
+| Workers          | Number of worker nodes              |
+| Autoscaling      | Automatically adds/removes workers  |
+| Auto Termination | Stops idle clusters to save cost    |
+| Photon           | Faster query engine                 |
+| Access Mode      | Single User / Shared / No Isolation |
+
+**Most Important Settings for Interviews:**
+
+* Runtime
+* Node Type
+* Workers
+* Autoscaling
+* Auto Termination
+* Photon
+
+---
+
+## Architecture
+
+```text
+Create Cluster
+      │
+      ▼
+Runtime
+Node Type
+Workers
+Autoscaling
+Photon
+Auto Termination
+      │
+      ▼
+Cluster Ready
+```
+
+---
+
+## Syntax
+
+**N/A** (Configured through the UI or APIs.)
+
+---
+
+## Interview Questions
+
+1. Which cluster settings are most important?
+2. What is Autoscaling?
+3. Why use Auto Termination?
+4. What is Photon?
+5. How do you reduce Databricks costs?
+6. How do you choose the number of workers?
+
+---
+
+## Practical
+
+Create a cluster and identify:
+
+* Runtime Version
+* Node Type
+* Driver Type
+* Worker Count
+* Autoscaling
+* Auto Termination
+* Photon Enabled/Disabled
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic                   | One-line Answer                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| **All-Purpose Cluster** | Used for interactive development.                                                |
+| **Job Cluster**         | Created for a job and deleted after completion.                                  |
+| **Cluster Policy**      | Rules that control how clusters can be created.                                  |
+| **Cluster Pool**        | Pre-warmed VMs that reduce cluster startup time.                                 |
+| **Autoscaling**         | Automatically adjusts the number of worker nodes.                                |
+| **Photon**              | Databricks' optimized execution engine for faster Spark SQL/DataFrame workloads. |
+| **Auto Termination**    | Stops idle clusters to reduce cloud costs.                                       |
+
+**These topics are frequently asked in Databricks interviews because they test both platform knowledge and cost optimization.**

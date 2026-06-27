@@ -1,0 +1,136 @@
+# Module 2: Workspace & Compute
+
+# Topic 12: Photon Engine ⭐⭐⭐⭐⭐
+
+## Concept
+
+**Photon** is Databricks' **high-performance native query engine** that accelerates Spark SQL and DataFrame workloads without changing your code.
+
+---
+
+## Theory
+
+* Built in **C++** for better performance.
+* Optimized for SQL and DataFrame APIs.
+* No code changes required.
+* Reduces query execution time and cloud costs.
+* Supports Delta Lake operations.
+
+---
+
+## Architecture
+
+```text
+SQL / DataFrame
+       │
+       ▼
+   Photon Engine
+       │
+       ▼
+ Faster Execution
+       │
+       ▼
+ Delta Lake
+```
+
+---
+
+## Syntax
+
+**Enable Photon while creating a Cluster**
+
+* Compute → Create Cluster → **Enable Photon**
+
+No code changes required.
+
+---
+
+## Interview Questions
+
+1. What is Photon?
+2. Does Photon require code changes?
+3. Which workloads benefit most from Photon?
+4. Is Photon a replacement for Spark?
+5. How does Photon improve performance?
+
+---
+
+## Practical
+
+1. Create a cluster.
+2. Enable **Photon**.
+3. Run the same SQL/DataFrame query with and without Photon.
+4. Compare execution time.
+
+---
+
+# Topic 13: Serverless Compute ⭐⭐⭐⭐
+
+## Concept
+
+**Serverless Compute** is a fully managed compute option where Databricks provisions and manages the infrastructure automatically.
+
+---
+
+## Theory
+
+* No cluster management.
+* Faster startup.
+* Auto-scaling built in.
+* Pay only for usage.
+* Ideal for SQL analytics and lightweight ETL.
+
+---
+
+## Architecture
+
+```text
+User
+ │
+ ▼
+Serverless Compute
+ │
+ ▼
+Databricks Manages Infrastructure
+ │
+ ▼
+Execute Queries
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. What is Serverless Compute?
+2. How is it different from a regular cluster?
+3. Who manages the infrastructure?
+4. When would you choose Serverless?
+
+---
+
+## Practical
+
+1. Navigate to **Compute**.
+2. Check if **Serverless** is available.
+3. Create a Serverless compute resource (if your workspace supports it).
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic                  | One-line Answer                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Photon**             | Databricks' native execution engine that speeds up Spark SQL/DataFrame workloads without code changes. |
+| **Serverless Compute** | Fully managed compute where Databricks handles provisioning, scaling, and infrastructure.              |
+
+---
+
+
+
+This module is highly practical and is used daily by Data Engineers.

@@ -1,0 +1,225 @@
+# Module 3: Databricks Notebooks
+
+# Topic 20: Parameterization ⭐⭐⭐⭐
+
+## Concept
+
+**Parameterization** makes notebooks reusable by passing different input values at runtime.
+
+---
+
+## Theory
+
+* Uses **Widgets** + **Notebook Jobs**.
+* Avoids hardcoded values.
+* Common parameters:
+
+  * File Path
+  * Date
+  * Table Name
+  * Environment (Dev/Test/Prod)
+
+---
+
+## Architecture
+
+```text
+Job
+ │
+ ▼
+Parameters
+ │
+ ▼
+Notebook
+ │
+ ▼
+ETL Execution
+```
+
+---
+
+## Syntax
+
+```python
+dbutils.widgets.text("date", "2026-06-27")
+
+date = dbutils.widgets.get("date")
+print(date)
+```
+
+---
+
+## Interview Questions
+
+1. What is parameterization?
+2. Why avoid hardcoded values?
+3. How do you pass parameters to a notebook?
+
+---
+
+## Practical
+
+Create a widget for **table_name** and print its value.
+
+---
+
+# Topic 21: Version History ⭐⭐⭐
+
+## Concept
+
+Version History tracks notebook changes and allows restoring previous versions.
+
+---
+
+## Theory
+
+* Tracks notebook modifications.
+* Restore older versions.
+* Helps collaboration.
+* Not a replacement for Git.
+
+---
+
+## Architecture
+
+```text
+Notebook
+    │
+    ▼
+Version History
+    │
+ ├── V1
+ ├── V2
+ └── V3
+```
+
+---
+
+## Syntax
+
+**N/A**
+
+---
+
+## Interview Questions
+
+1. What is Version History?
+2. Can you restore an old notebook version?
+3. Is Version History the same as Git?
+
+---
+
+## Practical
+
+* Edit a notebook.
+* Open **Version History**.
+* Restore an older version (if available).
+
+---
+
+# Topic 22: Repos (Git Integration) ⭐⭐⭐⭐⭐
+
+## Concept
+
+**Repos** integrates Databricks with Git repositories for version control and team collaboration.
+
+---
+
+## Theory
+
+Supported Git providers:
+
+* GitHub
+* Azure DevOps
+* GitLab
+* Bitbucket
+
+Common operations:
+
+* Clone
+* Commit
+* Pull
+* Push
+* Branch
+
+---
+
+## Architecture
+
+```text
+Developer
+     │
+     ▼
+Databricks Repos
+     │
+     ▼
+Git Repository
+     │
+     ▼
+GitHub / Azure DevOps
+```
+
+---
+
+## Syntax
+
+**Git Commands**
+
+```bash
+git clone
+git pull
+git add .
+git commit -m "message"
+git push
+```
+
+---
+
+## Interview Questions
+
+1. What are Databricks Repos?
+2. Which Git providers are supported?
+3. Difference between Repos and Workspace?
+4. Why use Git with Databricks?
+5. What is the Git workflow in Databricks?
+
+---
+
+## Practical
+
+1. Open **Repos**.
+2. Connect your GitHub account.
+3. Clone a repository.
+4. Modify a notebook.
+5. Commit and Push changes.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic            | One-line Answer                                        |
+| ---------------- | ------------------------------------------------------ |
+| Parameterization | Makes notebooks reusable using runtime inputs.         |
+| Version History  | Tracks and restores notebook changes.                  |
+| Repos            | Git integration for version control and collaboration. |
+
+---
+
+## ⭐ Most Asked Interview Scenario
+
+**Q:** Why use **Repos** instead of only storing notebooks in the Workspace?
+
+**Answer:**
+
+* Version control
+* Team collaboration
+* Branching
+* Code reviews
+* CI/CD integration
+* Backup and traceability
+
+---
+
+
+
+This module is one of the most important because almost every Databricks project involves reading and writing data. It also introduces concepts that are frequently tested in interviews before moving on to **Delta Lake**.

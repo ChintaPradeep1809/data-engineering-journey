@@ -1,0 +1,354 @@
+Perfect. From now on, we're entering the **Enterprise Databricks** section.
+
+I consider **Unity Catalog** to be the **second most important module** after Delta Lake because almost every company using modern Databricks uses it.
+
+---
+
+# Module 6: Unity Catalog ⭐⭐⭐⭐⭐
+
+Today we'll cover:
+
+1. **Metastore**
+2. **Catalog**
+3. **Schema**
+
+These three are inseparable. Once you understand their hierarchy, the remaining Unity Catalog topics become much easier.
+
+---
+
+# Topic 43: Metastore ⭐⭐⭐⭐⭐
+
+## Why was Metastore introduced?
+
+Imagine a company has:
+
+* 500 Data Engineers
+* 200 Analysts
+* Thousands of tables
+* Multiple projects
+
+Questions arise:
+
+* Who owns which table?
+* Who can access it?
+* Where is it stored?
+* What schema does it have?
+
+Managing this manually is impossible.
+
+A **Metastore** solves this by acting as the central metadata repository.
+
+---
+
+## Concept
+
+A **Metastore** is the **top-level metadata repository** in Unity Catalog.
+
+It stores information **about data**, not the data itself.
+
+> **Simple Definition:** A Metastore manages metadata for all Databricks objects.
+
+---
+
+## Theory
+
+A Metastore stores:
+
+* Catalogs
+* Schemas
+* Tables
+* Views
+* Volumes
+* Permissions
+* Metadata
+
+It **does not store actual business data**.
+
+---
+
+## Architecture
+
+```text
+                 Metastore
+                      │
+      ┌───────────────┼───────────────┐
+      ▼               ▼               ▼
+   Catalog A      Catalog B      Catalog C
+```
+
+---
+
+## Interview Questions
+
+### What is a Metastore?
+
+A central repository that stores metadata and manages Unity Catalog objects.
+
+---
+
+### Does a Metastore store actual data?
+
+No.
+
+It stores **metadata only**.
+
+---
+
+### Can one Metastore contain multiple Catalogs?
+
+Yes.
+
+---
+
+## Common Mistakes
+
+❌ Thinking a Metastore stores table data.
+
+---
+
+# Topic 44: Catalog ⭐⭐⭐⭐⭐
+
+## Why was Catalog introduced?
+
+Suppose a company has multiple departments:
+
+* Sales
+* Finance
+* HR
+* Marketing
+
+Keeping everything in one place creates confusion.
+
+A **Catalog** separates data by business domain.
+
+---
+
+## Concept
+
+A **Catalog** is the **highest logical container** inside a Metastore.
+
+> **Simple Definition:** A Catalog groups related Schemas.
+
+---
+
+## Theory
+
+Example:
+
+```text
+Metastore
+     │
+     ├── Sales
+     ├── Finance
+     ├── HR
+```
+
+Each department has its own Catalog.
+
+---
+
+## Architecture
+
+```text
+Metastore
+     │
+     ├─────────────┐
+     ▼             ▼
+ Sales Catalog  HR Catalog
+```
+
+---
+
+## Interview Questions
+
+### What is a Catalog?
+
+A logical container that organizes Schemas.
+
+---
+
+### Why use multiple Catalogs?
+
+To separate business domains and simplify governance.
+
+---
+
+## Common Mistakes
+
+❌ Thinking Catalogs store data files.
+
+---
+
+# Topic 45: Schema ⭐⭐⭐⭐⭐
+
+## Why was Schema introduced?
+
+Inside the Sales department, you may have:
+
+* Customers
+* Orders
+* Products
+* Inventory
+
+You need another level of organization.
+
+---
+
+## Concept
+
+A **Schema** is a container inside a Catalog that organizes related database objects such as tables, views, and volumes.
+
+> **Simple Definition:** A Schema groups related tables.
+
+---
+
+## Theory
+
+Hierarchy:
+
+```text
+Metastore
+    │
+Catalog
+    │
+Schema
+    │
+Tables
+Views
+Volumes
+```
+
+---
+
+## Architecture
+
+```text
+Metastore
+     │
+ Sales Catalog
+     │
+ Analytics Schema
+     │
+ ├── Orders
+ ├── Customers
+ ├── Products
+```
+
+---
+
+## Interview Questions
+
+### What is a Schema?
+
+A logical container inside a Catalog.
+
+---
+
+### Can a Catalog have multiple Schemas?
+
+Yes.
+
+---
+
+### What objects can a Schema contain?
+
+* Tables
+* Views
+* Volumes
+
+---
+
+## Common Mistakes
+
+❌ Confusing Schema with table structure (column definitions).
+
+In Unity Catalog, a **Schema** is a **namespace/container**, similar to a database in many traditional systems.
+
+---
+
+# ⭐ The Most Important Diagram in Unity Catalog
+
+```
+Metastore
+    │
+    ▼
+Catalog
+    │
+    ▼
+Schema
+    │
+    ▼
+Tables
+Views
+Volumes
+```
+
+**Memorize this hierarchy.** It is the foundation of Unity Catalog.
+
+---
+
+# 🏢 Real-World Example
+
+Imagine an e-commerce company:
+
+```
+Metastore
+│
+├── Sales Catalog
+│      ├── Bronze Schema
+│      ├── Silver Schema
+│      └── Gold Schema
+│
+├── Finance Catalog
+│      ├── Reporting Schema
+│      └── Audit Schema
+│
+└── HR Catalog
+       ├── Employees Schema
+       └── Payroll Schema
+```
+
+This is how large organizations keep data organized and secure.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Level         | Purpose                            |
+| ------------- | ---------------------------------- |
+| **Metastore** | Top-level metadata repository      |
+| **Catalog**   | Organizes data by business domain  |
+| **Schema**    | Organizes related database objects |
+| **Table**     | Stores business data               |
+| **View**      | Virtual table                      |
+| **Volume**    | Stores non-tabular files           |
+
+---
+
+# 🎯 Interview Scenario
+
+**Q:** Your company has Sales, Finance, and HR teams. How would you organize Unity Catalog?
+
+**Expected Answer:**
+
+* **One Metastore**
+* **Three Catalogs**: Sales, Finance, HR
+* Each Catalog contains multiple **Schemas**
+* Each Schema contains **Tables, Views, and Volumes**
+
+---
+
+## 📌 One small correction to our roadmap
+
+When we planned this course, we listed **Tables** and **Volumes** as separate topics under Unity Catalog. After teaching many learners, I think it's better to teach them as part of the Unity Catalog hierarchy:
+
+* Hierarchy (today)
+* **Managed vs External Tables**
+* **Volumes**
+* **External Locations**
+* **Storage Credentials**
+* **Permissions**
+* **Row-Level Security**
+* **Column-Level Security**
+
+That order reflects how Unity Catalog is actually designed and makes the remaining topics easier to understand.

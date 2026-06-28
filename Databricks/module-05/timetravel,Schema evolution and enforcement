@@ -1,0 +1,449 @@
+Excellent. These are the **three most frequently asked Delta Lake interview topics**. If you understand them well, you'll be able to answer many scenario-based questions confidently.
+
+---
+
+# Module 5: Delta Lake
+
+# Topic 33: Time Travel ⭐⭐⭐⭐⭐
+
+## Why was Time Travel introduced?
+
+Suppose a Data Engineer accidentally runs:
+
+```sql
+DELETE FROM sales;
+```
+
+Millions of records are deleted.
+
+Without Time Travel:
+
+* ❌ Data is lost.
+* ❌ Restore from backup.
+* ❌ Downtime.
+
+Delta Lake solves this.
+
+---
+
+## Concept
+
+**Time Travel** allows you to access **previous versions** of a Delta table.
+
+> **Simple Definition:** Read a Delta table as it existed in the past.
+
+---
+
+## Theory
+
+Every change creates a **new version** in `_delta_log`.
+
+Example:
+
+```text
+Version 0 → Initial Data
+Version 1 → Insert
+Version 2 → Update
+Version 3 → Delete
+```
+
+You can read **any previous version**.
+
+---
+
+## Architecture
+
+```text
+Delta Table
+      │
+      ▼
+ _delta_log
+      │
+ ├── Version 0
+ ├── Version 1
+ ├── Version 2
+ └── Version 3
+```
+
+---
+
+## Syntax
+
+### Read by Version
+
+```python
+df = spark.read.format("delta") \
+.option("versionAsOf", 2) \
+.load("/delta/sales")
+```
+
+### Read by Timestamp
+
+```python
+df = spark.read.format("delta") \
+.option("timestampAsOf","2026-06-29") \
+.load("/delta/sales")
+```
+
+---
+
+## Real Example
+
+Employee table
+
+```
+Version 0 → 100 Employees
+
+Version 1 → Added 20 Employees
+
+Version 2 → Deleted 5 Employees
+```
+
+Need yesterday's data?
+
+Read **Version 1**.
+
+---
+
+## Interview Questions
+
+### What is Time Travel?
+
+Reading previous versions of a Delta table.
+
+---
+
+### How does Delta support Time Travel?
+
+Using `_delta_log`.
+
+---
+
+### Can CSV files support Time Travel?
+
+No.
+
+---
+
+## Common Mistakes
+
+❌ Thinking Time Travel is backup.
+
+❌ Thinking every file format supports it.
+
+---
+
+# Topic 34: Schema Enforcement ⭐⭐⭐⭐⭐
+
+## Why was Schema Enforcement introduced?
+
+Suppose your table is
+
+```
+ID
+Name
+Salary
+```
+
+Someone loads
+
+```
+ID
+Name
+Age
+```
+
+Without validation,
+
+your data becomes inconsistent.
+
+---
+
+## Concept
+
+**Schema Enforcement** ensures that incoming data **matches the existing table schema**.
+
+> **Simple Definition:** Prevents invalid data from entering a table.
+
+---
+
+## Theory
+
+Existing Table
+
+```
+ID
+Name
+Salary
+```
+
+Incoming Data
+
+```
+ID
+Name
+Age
+```
+
+Delta rejects the write.
+
+---
+
+## Architecture
+
+```text
+Incoming Data
+      │
+      ▼
+Schema Validation
+      │
+ ┌────┴────┐
+ │         │
+Valid    Invalid
+ │         │
+ ▼         ▼
+Write    Reject
+```
+
+---
+
+## Syntax
+
+```python
+df.write.format("delta").save("/delta/sales")
+```
+
+If schema doesn't match,
+
+Spark throws an error.
+
+---
+
+## Real Example
+
+Customers table
+
+```
+CustomerID
+Name
+City
+```
+
+Someone uploads
+
+```
+CustomerID
+Phone
+```
+
+Delta rejects it.
+
+---
+
+## Interview Questions
+
+### What is Schema Enforcement?
+
+Validation that prevents incorrect schemas from being written.
+
+---
+
+### Why is it important?
+
+Maintains data quality.
+
+---
+
+### Does Delta automatically allow new columns?
+
+No.
+
+---
+
+## Common Mistakes
+
+❌ Thinking Delta automatically accepts schema changes.
+
+---
+
+# Topic 35: Schema Evolution ⭐⭐⭐⭐⭐
+
+## Why was Schema Evolution introduced?
+
+Business requirements change.
+
+Old schema
+
+```
+EmployeeID
+Name
+Salary
+```
+
+New requirement
+
+```
+EmployeeID
+Name
+Salary
+Department
+```
+
+Without Schema Evolution,
+
+the write fails.
+
+---
+
+## Concept
+
+**Schema Evolution** allows Delta Lake to **add compatible schema changes** automatically.
+
+> **Simple Definition:** Allows tables to grow when the schema changes.
+
+---
+
+## Theory
+
+Old Schema
+
+```
+ID
+Name
+```
+
+New Data
+
+```
+ID
+Name
+Email
+```
+
+Enable Schema Evolution
+
+↓
+
+New Table
+
+```
+ID
+Name
+Email
+```
+
+---
+
+## Architecture
+
+```text
+Incoming Data
+      │
+      ▼
+New Column?
+      │
+ ┌────┴────┐
+ │         │
+ No       Yes
+ │         │
+ ▼         ▼
+Write   Update Schema
+            │
+            ▼
+          Write
+```
+
+---
+
+## Syntax
+
+```python
+df.write \
+.option("mergeSchema","true") \
+.format("delta") \
+.mode("append") \
+.save("/delta/employees")
+```
+
+---
+
+## Real Example
+
+Yesterday
+
+```
+ID
+Name
+```
+
+Today
+
+```
+ID
+Name
+Email
+```
+
+With
+
+```python
+mergeSchema=true
+```
+
+Delta automatically adds **Email**.
+
+---
+
+## Interview Questions
+
+### What is Schema Evolution?
+
+Automatically updating the table schema to include compatible new columns.
+
+---
+
+### Difference between Schema Enforcement and Schema Evolution?
+
+* **Enforcement** → Rejects schema mismatch.
+* **Evolution** → Allows compatible schema changes.
+
+---
+
+### Which option enables Schema Evolution?
+
+```python
+mergeSchema=true
+```
+
+---
+
+## Common Mistakes
+
+❌ Confusing Schema Enforcement with Schema Evolution.
+
+❌ Assuming all schema changes are allowed (incompatible changes may still fail).
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic              | One-line Answer                                            |
+| ------------------ | ---------------------------------------------------------- |
+| Time Travel        | Read previous versions of a Delta table.                   |
+| Schema Enforcement | Rejects invalid schema writes.                             |
+| Schema Evolution   | Allows compatible schema changes using `mergeSchema=true`. |
+
+---
+
+# 🎯 Most Asked Interview Question
+
+### Q: Difference between Schema Enforcement and Schema Evolution?
+
+| Schema Enforcement      | Schema Evolution                        |
+| ----------------------- | --------------------------------------- |
+| Validates schema        | Updates schema                          |
+| Rejects mismatched data | Adds compatible new columns             |
+| Default behavior        | Requires `mergeSchema=true`             |
+| Improves data quality   | Supports changing business requirements |
+
+---

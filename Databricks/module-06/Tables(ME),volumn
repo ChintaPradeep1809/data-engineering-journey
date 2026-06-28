@@ -1,0 +1,364 @@
+Excellent. Now that you understand the hierarchy, the next topic is much easier.
+
+Today we'll cover:
+
+1. **Managed Tables**
+2. **External Tables**
+3. **Volumes (Unity Catalog perspective)**
+
+These three are frequently asked together in interviews.
+
+---
+
+# Module 6: Unity Catalog
+
+# Topic 46: Managed Tables ⭐⭐⭐⭐⭐
+
+## Why?
+
+When creating a table, someone must manage:
+
+* Data files
+* Metadata
+* Deletion
+* Storage
+
+Should Databricks handle this, or should you?
+
+---
+
+## Concept
+
+A **Managed Table** is a table where **Databricks manages both the metadata and the data files**.
+
+> **Simple Definition:** Databricks owns and manages everything.
+
+---
+
+## Theory
+
+Databricks manages:
+
+* Table
+* Storage location
+* Metadata
+* File cleanup
+
+If you **DROP** the table:
+
+* Metadata is deleted.
+* Data files are also deleted.
+
+---
+
+## Architecture
+
+```text
+Managed Table
+      │
+      ▼
+Databricks
+├── Metadata
+└── Data Files
+```
+
+---
+
+## Syntax
+
+```sql
+CREATE TABLE employees (
+    id INT,
+    name STRING
+)
+USING DELTA;
+```
+
+---
+
+## Real Example
+
+You create:
+
+```text
+employees
+```
+
+Databricks automatically decides where to store the files.
+
+You don't provide a storage path.
+
+---
+
+## Interview Questions
+
+### What is a Managed Table?
+
+A table where Databricks manages both metadata and storage.
+
+---
+
+### What happens when you DROP a Managed Table?
+
+Both metadata and data files are deleted.
+
+---
+
+## Common Mistake
+
+❌ Thinking Managed Tables keep data after DROP.
+
+---
+
+# Topic 47: External Tables ⭐⭐⭐⭐⭐
+
+## Why?
+
+Many companies already store data in:
+
+* AWS S3
+* Azure ADLS
+* GCP GCS
+
+They don't want Databricks to own those files.
+
+---
+
+## Concept
+
+An **External Table** is a table where **Databricks manages only the metadata**, while the **data remains in external cloud storage**.
+
+> **Simple Definition:** You manage the data; Databricks manages only the table definition.
+
+---
+
+## Theory
+
+Databricks manages:
+
+* Metadata ✅
+
+Cloud Storage manages:
+
+* Data Files ✅
+
+DROP TABLE:
+
+* Metadata deleted ✅
+* Data files remain ✅
+
+---
+
+## Architecture
+
+```text
+External Table
+      │
+      ▼
+Databricks
+      │
+ Metadata
+      │
+      ▼
+Cloud Storage
+(S3 / ADLS / GCS)
+```
+
+---
+
+## Syntax
+
+```sql
+CREATE TABLE employees
+USING DELTA
+LOCATION 's3://company-data/employees';
+```
+
+---
+
+## Real Example
+
+Company stores:
+
+```text
+S3
+ │
+employees/
+```
+
+Databricks simply references this location.
+
+---
+
+## Interview Questions
+
+### What is an External Table?
+
+A table whose metadata is managed by Databricks while data remains in external storage.
+
+---
+
+### What happens after DROP?
+
+Only metadata is removed.
+
+The data remains in cloud storage.
+
+---
+
+## Common Mistake
+
+❌ Thinking DROP TABLE deletes S3 data.
+
+---
+
+# Topic 48: Volumes (Unity Catalog Perspective) ⭐⭐⭐⭐
+
+## Why?
+
+Not all files are tables.
+
+Companies also store:
+
+* CSV
+* JSON
+* Images
+* PDFs
+* ML Models
+
+These need governance too.
+
+---
+
+## Concept
+
+A **Volume** is a Unity Catalog object used to securely store **non-tabular files**.
+
+> **Simple Definition:** A governed folder for files.
+
+---
+
+## Theory
+
+Volumes store:
+
+* CSV
+* JSON
+* Images
+* PDFs
+* ZIP
+* ML Models
+
+They do **not** store tables.
+
+---
+
+## Architecture
+
+```text
+Metastore
+    │
+Catalog
+    │
+Schema
+    │
+Volume
+    │
+CSV / JSON / PDF
+```
+
+---
+
+## Syntax
+
+Read CSV
+
+```python
+df = spark.read.csv(
+"/Volumes/main/sales/raw/orders.csv"
+)
+```
+
+---
+
+## Interview Questions
+
+### What is a Volume?
+
+A Unity Catalog object used to store non-tabular files.
+
+---
+
+### Can a Volume store Delta Tables?
+
+No.
+
+---
+
+### Difference between Volume and Table?
+
+* Table → Structured data
+* Volume → Files
+
+---
+
+## Common Mistake
+
+❌ Treating a Volume like a database table.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Managed Table                      | External Table                   | Volume            |
+| ---------------------------------- | -------------------------------- | ----------------- |
+| Databricks manages metadata + data | Databricks manages only metadata | Stores files      |
+| DROP removes data                  | DROP keeps data                  | Not a table       |
+| Default choice                     | Existing cloud storage           | CSV, JSON, Images |
+
+---
+
+# 🎯 Most Asked Interview Question
+
+## Managed vs External Table
+
+| Managed              | External                           |
+| -------------------- | ---------------------------------- |
+| Databricks owns data | Cloud owns data                    |
+| DROP deletes data    | DROP keeps data                    |
+| Easy to manage       | Best for enterprise shared storage |
+
+---
+
+## 🏢 Real-World Example
+
+An e-commerce company:
+
+```text
+Metastore
+│
+└── Sales Catalog
+      │
+      └── Bronze Schema
+            │
+            ├── orders (Managed Table)
+            ├── customers (External Table)
+            └── raw_files (Volume)
+```
+
+* **orders** → Databricks fully manages it.
+* **customers** → Data already exists in S3/ADLS, so Databricks references it.
+* **raw_files** → Stores incoming CSV, JSON, and Excel files before processing.
+
+---
+
+## 🎯 Interview Scenario
+
+**Q:** Your company already stores 100 TB of data in Amazon S3. Should you create a Managed Table or an External Table?
+
+**Answer:** **External Table**, because the data is already in cloud storage. Databricks should manage only the metadata while leaving the existing data in place.
+
+---
+
+
+These topics explain **how Databricks securely accesses cloud storage**, and they're heavily used in enterprise environments.

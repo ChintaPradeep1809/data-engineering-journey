@@ -1,0 +1,296 @@
+Excellent. **Auto Loader** is one of the most important Databricks features. Many companies use it in production instead of writing custom file ingestion logic.
+
+---
+
+# Module 4: Storage & File Management
+
+# Topic 28: Auto Loader ⭐⭐⭐⭐⭐
+
+## Why was Auto Loader introduced?
+
+Suppose a company receives **10,000 CSV files every day**.
+
+Without Auto Loader:
+
+* You have to check for new files.
+* Track which files are already processed.
+* Avoid duplicate processing.
+* Handle failures manually.
+
+This becomes difficult and error-prone.
+
+**Auto Loader solves this problem by automatically detecting and ingesting new files.**
+
+---
+
+## Concept
+
+**Auto Loader** is a Databricks feature that **automatically discovers and processes new files** from cloud storage.
+
+> **Simple definition:** It continuously watches a folder and ingests only newly arrived files.
+
+---
+
+## Theory
+
+* Built on **Structured Streaming**.
+* Supports incremental file ingestion.
+* Tracks processed files using a **checkpoint**.
+* Avoids duplicate processing.
+* Supports schema evolution.
+
+---
+
+## Architecture
+
+```text
+Cloud Storage
+(S3 / ADLS / GCS)
+        │
+        ▼
+  New File Arrives
+        │
+        ▼
+    Auto Loader
+        │
+        ▼
+   Spark DataFrame
+        │
+        ▼
+   Delta Table
+```
+
+---
+
+## Syntax
+
+```python
+df = (
+    spark.readStream
+         .format("cloudFiles")
+         .option("cloudFiles.format", "csv")
+         .load("/Volumes/main/sales/")
+)
+```
+
+Write to Delta:
+
+```python
+(
+df.writeStream
+  .option("checkpointLocation", "/checkpoint")
+  .toTable("sales")
+)
+```
+
+---
+
+## Real Example
+
+Every hour, a bank receives:
+
+```text
+transactions_1.csv
+transactions_2.csv
+transactions_3.csv
+```
+
+Auto Loader:
+
+* Detects new files.
+* Reads only new files.
+* Loads them into a Delta table.
+* Marks them as processed.
+
+Tomorrow, when another file arrives, it processes **only that new file**, not the old ones.
+
+---
+
+## Interview Questions
+
+### 1. What is Auto Loader?
+
+A Databricks feature that automatically ingests new files from cloud storage.
+
+---
+
+### 2. Does Auto Loader process old files repeatedly?
+
+No. It tracks processed files using checkpoints.
+
+---
+
+### 3. Is Auto Loader batch or streaming?
+
+It is built on **Structured Streaming**.
+
+---
+
+### 4. Why is Auto Loader preferred?
+
+Because it supports:
+
+* Incremental ingestion
+* Fault tolerance
+* Schema evolution
+* Automatic file discovery
+
+---
+
+## Common Mistakes
+
+❌ Thinking Auto Loader loads all files every time.
+
+❌ Forgetting checkpoints (can lead to reprocessing).
+
+❌ Thinking Auto Loader is only for CSV (it supports multiple formats).
+
+---
+
+# Topic 29: COPY INTO ⭐⭐⭐⭐
+
+## Why was COPY INTO introduced?
+
+Suppose you receive **100 CSV files once every night**.
+
+You don't need continuous monitoring.
+
+You just want to load all new files with a single SQL command.
+
+Instead of writing Spark code, Databricks provides **COPY INTO**.
+
+---
+
+## Concept
+
+**COPY INTO** is a SQL command used to **incrementally load files from cloud storage into a Delta table**.
+
+> **Simple definition:** A SQL-based file ingestion command.
+
+---
+
+## Theory
+
+* Reads files from storage.
+* Loads data into a Delta table.
+* Tracks loaded files.
+* Skips already loaded files.
+* Supports CSV, JSON, Parquet, etc.
+
+---
+
+## Architecture
+
+```text
+Cloud Storage
+       │
+       ▼
+   COPY INTO
+       │
+       ▼
+ Delta Table
+```
+
+---
+
+## Syntax
+
+```sql
+COPY INTO sales
+FROM '/Volumes/main/sales/'
+FILEFORMAT = CSV;
+```
+
+---
+
+## Real Example
+
+Every night:
+
+```text
+orders_1.csv
+orders_2.csv
+orders_3.csv
+```
+
+Run:
+
+```sql
+COPY INTO sales
+FROM '/Volumes/main/sales/'
+FILEFORMAT = CSV;
+```
+
+Tomorrow, if only `orders_4.csv` arrives:
+
+`COPY INTO` loads **only `orders_4.csv`**.
+
+---
+
+## Interview Questions
+
+### 1. What is COPY INTO?
+
+A SQL command that incrementally loads files into a Delta table.
+
+---
+
+### 2. Does COPY INTO reload old files?
+
+No.
+
+It tracks previously loaded files.
+
+---
+
+### 3. Difference between COPY INTO and Auto Loader?
+
+| Auto Loader                         | COPY INTO                            |
+| ----------------------------------- | ------------------------------------ |
+| Streaming                           | Batch                                |
+| Continuous ingestion                | On-demand ingestion                  |
+| PySpark API                         | SQL command                          |
+| Best for real-time/continuous files | Best for scheduled or one-time loads |
+
+---
+
+### 4. When would you use COPY INTO?
+
+When files arrive periodically (e.g., nightly) and SQL-based ingestion is sufficient.
+
+---
+
+## Common Mistakes
+
+❌ Thinking `COPY INTO` is continuous like Auto Loader.
+
+❌ Using `COPY INTO` for real-time ingestion.
+
+❌ Assuming it reloads previously processed files.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Feature                | Auto Loader          | COPY INTO           |
+| ---------------------- | -------------------- | ------------------- |
+| Type                   | Streaming            | Batch               |
+| Language               | PySpark              | SQL                 |
+| Detects New Files      | ✅                    | ✅                   |
+| Continuous             | ✅                    | ❌                   |
+| Tracks Processed Files | ✅                    | ✅                   |
+| Best Use               | Continuous ingestion | Scheduled ingestion |
+
+---
+
+## 🎯 Interview Scenario
+
+**Q:** Your company receives transaction files **every 5 minutes**. Which would you choose?
+
+**Answer:** **Auto Loader**, because it continuously detects and ingests new files.
+
+**Q:** Your company receives one file **every night at 12 AM**. Which would you choose?
+
+**Answer:** **COPY INTO**, because a scheduled batch load is simpler and sufficient.
+
+---

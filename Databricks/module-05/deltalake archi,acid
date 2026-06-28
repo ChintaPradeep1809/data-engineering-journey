@@ -1,0 +1,394 @@
+Perfect. From here onward, we're entering the **heart of Databricks**. If someone says, *"What makes Databricks special?"*, the answer is usually **Delta Lake**.
+
+We'll cover **3 topics** today:
+
+1. What is Delta Lake?
+2. Delta Lake Architecture
+3. ACID Transactions
+
+These three build the foundation for everything else (MERGE, Time Travel, OPTIMIZE, DLT, etc.).
+
+---
+
+# Module 5: Delta Lake ⭐⭐⭐⭐⭐
+
+# Topic 30: What is Delta Lake?
+
+## Why was Delta Lake introduced?
+
+Before Delta Lake, companies stored data in **CSV, JSON, or Parquet**.
+
+Problems:
+
+* ❌ No ACID transactions
+* ❌ No rollback/versioning
+* ❌ Data corruption during concurrent writes
+* ❌ Difficult updates and deletes
+* ❌ Poor data reliability
+
+Delta Lake was introduced to solve these problems.
+
+---
+
+## Concept
+
+**Delta Lake** is an **open-source storage layer** that adds **reliability, ACID transactions, versioning, and performance** to a Data Lake.
+
+> **Simple definition:** Delta Lake = Parquet + Transaction Log + ACID + Advanced Features.
+
+---
+
+## Theory
+
+Delta Lake provides:
+
+* ACID Transactions
+* Time Travel
+* Schema Enforcement
+* Schema Evolution
+* MERGE (UPSERT)
+* UPDATE
+* DELETE
+* OPTIMIZE
+* Data Versioning
+
+Internally, **Delta tables store data as Parquet files** plus a **transaction log (`_delta_log`)**.
+
+---
+
+## Architecture
+
+```text
+           Delta Table
+                │
+     ┌──────────┴──────────┐
+     ▼                     ▼
+ Parquet Files        _delta_log
+(Data Storage)    (Transaction History)
+```
+
+---
+
+## Syntax
+
+### Create Delta Table
+
+```sql
+CREATE TABLE sales
+USING DELTA;
+```
+
+### Write as Delta
+
+```python
+df.write.format("delta").save("/delta/sales")
+```
+
+---
+
+## Real Example
+
+Without Delta:
+
+```
+orders.csv
+orders.csv
+orders.csv
+```
+
+Anyone can overwrite the file accidentally.
+
+With Delta:
+
+```
+orders.parquet
+_delta_log/
+```
+
+Every change is recorded, making the data reliable and recoverable.
+
+---
+
+## Interview Questions
+
+### What is Delta Lake?
+
+An open-source storage layer that brings ACID transactions, versioning, and reliability to a Data Lake.
+
+---
+
+### Is Delta Lake a database?
+
+**No.**
+
+It is a **storage layer** built on top of Parquet.
+
+---
+
+### Which file format does Delta Lake use internally?
+
+**Parquet**
+
+---
+
+## Common Mistakes
+
+❌ Thinking Delta Lake is a database.
+
+❌ Thinking Delta stores data in a proprietary format.
+
+---
+
+# Topic 31: Delta Lake Architecture
+
+## Concept
+
+A Delta Table consists of:
+
+1. **Parquet Data Files**
+2. **Transaction Log (`_delta_log`)**
+
+---
+
+## Theory
+
+**Parquet Files**
+
+* Store the actual data.
+
+**_delta_log**
+
+* Stores metadata.
+* Tracks every transaction.
+* Maintains table versions.
+* Enables Time Travel.
+
+Every insert, update, or delete creates a new log entry.
+
+---
+
+## Architecture
+
+```text
+Delta Table
+│
+├── part-0001.parquet
+├── part-0002.parquet
+├── part-0003.parquet
+│
+└── _delta_log
+      │
+      ├── 000000.json
+      ├── 000001.json
+      ├── 000002.json
+```
+
+---
+
+## Syntax
+
+```python
+df.write.format("delta").save("/delta/orders")
+```
+
+---
+
+## Real Example
+
+Suppose you insert 1,000 records.
+
+Delta writes:
+
+* New Parquet file.
+* New transaction in `_delta_log`.
+
+The log knows:
+
+* Who changed the data.
+* When it changed.
+* What changed.
+
+---
+
+## Interview Questions
+
+### What are the two main components of a Delta Table?
+
+* Parquet Files
+* `_delta_log`
+
+---
+
+### Where is metadata stored?
+
+Inside `_delta_log`.
+
+---
+
+### Does `_delta_log` store the actual data?
+
+**No.**
+
+It stores metadata and transaction history.
+
+---
+
+## Common Mistakes
+
+❌ Thinking `_delta_log` contains business data.
+
+❌ Thinking Parquet stores transaction history.
+
+---
+
+# Topic 32: ACID Transactions ⭐⭐⭐⭐⭐
+
+## Why do we need ACID?
+
+Imagine two Data Engineers updating the same table at the same time.
+
+Without ACID:
+
+* Partial updates
+* Corrupted data
+* Inconsistent results
+
+ACID prevents this.
+
+---
+
+## Concept
+
+ACID ensures every transaction is **safe, reliable, and consistent**, even with concurrent operations.
+
+---
+
+## Theory
+
+### A – Atomicity
+
+Either the **entire transaction succeeds or it fails**.
+
+### C – Consistency
+
+The database moves from one valid state to another.
+
+### I – Isolation
+
+Multiple users can work simultaneously without interfering.
+
+### D – Durability
+
+Once committed, data is permanently saved.
+
+---
+
+## Architecture
+
+```text
+Write Request
+      │
+      ▼
+Transaction
+      │
+      ▼
+_delta_log
+      │
+      ▼
+Commit
+      │
+      ▼
+Data Visible
+```
+
+---
+
+## Syntax
+
+No special syntax.
+
+ACID is handled automatically by Delta Lake.
+
+---
+
+## Real Example
+
+### Bank Transfer
+
+```
+Account A → ₹1000
+Account B → ₹500
+```
+
+Transfer ₹200.
+
+If the system crashes after deducting ₹200 but before adding it to Account B:
+
+Without ACID:
+
+* A = ₹800
+* B = ₹500 ❌
+
+With ACID:
+
+* Transaction rolls back.
+* A = ₹1000
+* B = ₹500 ✅
+
+---
+
+## Interview Questions
+
+### What does ACID stand for?
+
+* Atomicity
+* Consistency
+* Isolation
+* Durability
+
+---
+
+### Does Delta Lake support ACID?
+
+**Yes.**
+
+This is one of its biggest advantages.
+
+---
+
+### Why is ACID important?
+
+To ensure reliable and consistent data during concurrent reads and writes.
+
+---
+
+## Common Mistakes
+
+❌ Thinking ACID is unique to Delta Lake (many databases support ACID).
+
+❌ Thinking ACID only matters for banking applications. It is important for any reliable data pipeline.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic              | One-line Answer                                             |
+| ------------------ | ----------------------------------------------------------- |
+| Delta Lake         | Storage layer that adds reliability and ACID to Data Lakes. |
+| Delta Architecture | Parquet files + `_delta_log`.                               |
+| `_delta_log`       | Stores transaction history and metadata.                    |
+| ACID               | Guarantees reliable transactions.                           |
+
+---
+
+# 🎯 Common Interview Scenario
+
+**Q:** Your ETL job fails halfway through writing data. Why doesn't the Delta table become corrupted?
+
+**Answer:**
+Because **Delta Lake uses ACID transactions**. A transaction is either fully committed or rolled back. Partial writes are not exposed to readers, and `_delta_log` ensures only successful commits become visible.
+
+---
+
+
+These are among the most frequently asked Delta Lake interview topics and naturally build on today's concepts.

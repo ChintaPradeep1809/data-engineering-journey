@@ -1,0 +1,277 @@
+Great. These two topics are the foundation of every ETL pipeline. Once you understand them, the rest (Auto Loader, Delta Lake, DLT) becomes much easier.
+
+---
+
+# Module 5: Reading & Writing Data
+
+# Topic 26: Reading Files ⭐⭐⭐⭐⭐
+
+## Concept
+
+**Reading Files** means loading data from a storage location (DBFS, Volumes, S3, ADLS, GCS) into a Spark DataFrame for processing.
+
+> **Simple Flow:** File → Spark DataFrame
+
+---
+
+## Theory
+
+* Spark does **not** modify the original file while reading.
+* The output of reading is always a **DataFrame**.
+* Spark supports multiple file formats:
+
+  * CSV
+  * JSON
+  * Parquet
+  * Delta
+  * ORC
+  * Avro (with package support)
+
+---
+
+## Architecture
+
+```text
+CSV / JSON / Parquet
+          │
+          ▼
+     spark.read
+          │
+          ▼
+      DataFrame
+          │
+          ▼
+ Data Processing
+```
+
+---
+
+## Syntax
+
+### Read CSV
+
+```python
+df = spark.read.csv(
+    "/Volumes/main/sales/orders.csv",
+    header=True,
+    inferSchema=True
+)
+```
+
+### Read JSON
+
+```python
+df = spark.read.json("/Volumes/main/sales/orders.json")
+```
+
+### Read Parquet
+
+```python
+df = spark.read.parquet("/Volumes/main/sales/orders.parquet")
+```
+
+### Read Delta Table
+
+```python
+df = spark.read.format("delta").load("/Volumes/main/sales/orders")
+```
+
+---
+
+## Interview Questions
+
+### 1. What is returned by `spark.read`?
+
+**Answer:** A Spark DataFrame.
+
+---
+
+### 2. Does Spark modify the source file while reading?
+
+**Answer:** No.
+
+---
+
+### 3. Which file format is fastest?
+
+**Answer:** Parquet and Delta (columnar formats).
+
+---
+
+### 4. Which format is commonly used for raw ingestion?
+
+**Answer:** CSV or JSON.
+
+---
+
+## Practical
+
+```python
+df = spark.read.csv(
+    "/Volumes/main/sales/orders.csv",
+    header=True,
+    inferSchema=True
+)
+
+df.show()
+df.printSchema()
+```
+
+---
+
+# Topic 27: Writing Files ⭐⭐⭐⭐⭐
+
+## Concept
+
+**Writing Files** means saving a processed DataFrame to storage.
+
+> **Simple Flow:** DataFrame → File
+
+---
+
+## Theory
+
+* Spark writes the **DataFrame**, not the original file.
+
+* Supports the same formats:
+
+  * CSV
+  * JSON
+  * Parquet
+  * Delta
+
+* Common write modes:
+
+  * `append`
+  * `overwrite`
+  * `ignore`
+  * `error` (default)
+
+---
+
+## Architecture
+
+```text
+DataFrame
+    │
+    ▼
+ spark.write
+    │
+    ▼
+CSV / Parquet / Delta
+```
+
+---
+
+## Syntax
+
+### Write CSV
+
+```python
+df.write.mode("overwrite").csv("/Volumes/main/output/")
+```
+
+### Write Parquet
+
+```python
+df.write.mode("overwrite").parquet("/Volumes/main/output/")
+```
+
+### Write Delta
+
+```python
+df.write.mode("overwrite").format("delta").save("/Volumes/main/output/")
+```
+
+---
+
+## Write Modes
+
+| Mode        | Description                    |
+| ----------- | ------------------------------ |
+| `append`    | Adds new data                  |
+| `overwrite` | Replaces existing data         |
+| `ignore`    | Skips if data exists           |
+| `error`     | Throws an error if data exists |
+
+---
+
+## Interview Questions
+
+### 1. What is the purpose of `spark.write`?
+
+To save a DataFrame to storage.
+
+---
+
+### 2. Difference between `append` and `overwrite`?
+
+* `append` → Adds new records.
+* `overwrite` → Replaces existing data.
+
+---
+
+### 3. Which write mode is the default?
+
+`error`
+
+---
+
+### 4. Which format is recommended in Databricks?
+
+**Delta Lake**, because it supports ACID transactions, schema evolution, and time travel. (We'll cover these in detail later.)
+
+---
+
+## Practical
+
+```python
+df.write.mode("overwrite").csv("/Volumes/main/output/")
+```
+
+Read it back:
+
+```python
+df2 = spark.read.csv("/Volumes/main/output/")
+df2.show()
+```
+
+---
+
+# ⭐ Common Mistakes
+
+❌ Thinking `spark.read` changes the original file.
+
+❌ Forgetting `header=True` when reading CSV.
+
+❌ Using `overwrite` unintentionally and deleting existing data.
+
+❌ Assuming all file formats have the same performance (Parquet/Delta are generally more efficient than CSV for analytics).
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Operation    | Command        |
+| ------------ | -------------- |
+| Read Data    | `spark.read`   |
+| Write Data   | `spark.write`  |
+| Read Output  | DataFrame      |
+| Write Input  | DataFrame      |
+| Best Format  | Delta          |
+| Fast Formats | Parquet, Delta |
+
+---
+
+## 🎯 Interview Scenario
+
+**Q:** Your ETL job runs every day and adds new records to the same dataset. Which write mode would you use?
+
+**Answer:** `append`
+
+**Reason:** Daily ETL pipelines usually insert new records without replacing historical data.
+
+---
+
+
+These two topics focus on **automated data ingestion** and are frequently discussed in real-world Databricks interviews.

@@ -1,0 +1,312 @@
+# Module 4: Storage & File Management
+
+# Topic 24: Unity Catalog Volumes ⭐⭐⭐⭐⭐
+
+## Concept
+
+A **Volume** is a **Unity Catalog-managed storage location** used to store and access **non-tabular files** (CSV, JSON, Excel, Images, PDFs, ML models, etc.) securely.
+
+> **Simple definition:** A Volume is like a secure folder inside Unity Catalog.
+
+---
+
+## Why were Volumes introduced?
+
+Before Unity Catalog, most files were stored in **DBFS**.
+
+Problems with DBFS:
+
+* Weak access control.
+* Difficult to manage permissions.
+* Not ideal for enterprise security.
+* Limited governance.
+
+Databricks introduced **Volumes** to solve these problems.
+
+---
+
+## Theory
+
+Imagine a company with three teams:
+
+* Data Engineers
+* Data Scientists
+* Analysts
+
+All need access to files, but **not everyone should access everything**.
+
+Example:
+
+```text
+Company Files
+
+├── Sales
+├── Finance
+├── HR
+```
+
+Only the HR team should access **HR** files.
+
+With **Volumes**, Unity Catalog controls **who can read or write each folder**.
+
+---
+
+## Architecture
+
+```text
+             Unity Catalog
+                    │
+        ┌───────────┴───────────┐
+        ▼                       ▼
+     Metadata              Permissions
+        │                       │
+        └───────────┬───────────┘
+                    ▼
+                 Volume
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+      CSV        JSON        Images
+                    │
+                    ▼
+              Spark Notebook
+```
+
+---
+
+## Where does a Volume exist?
+
+A Volume belongs to:
+
+```text
+Catalog
+   │
+Schema
+   │
+Volume
+   │
+Files
+```
+
+Example:
+
+```text
+main
+   │
+sales
+   │
+raw_files
+   │
+orders.csv
+```
+
+---
+
+## Path Structure
+
+Volumes use this format:
+
+```text
+/Volumes/<catalog>/<schema>/<volume>/<file>
+```
+
+Example
+
+```text
+/Volumes/main/sales/raw_files/orders.csv
+```
+
+Notice:
+
+There is **no `dbfs:/`**.
+
+---
+
+## What can be stored?
+
+✅ CSV
+
+✅ JSON
+
+✅ Excel
+
+✅ Images
+
+✅ PDFs
+
+✅ ZIP files
+
+✅ Machine Learning models
+
+Basically **any file**.
+
+---
+
+## What cannot be stored?
+
+Tables.
+
+Tables should be stored as
+
+* Delta Tables
+* Managed Tables
+* External Tables
+
+Volumes are only for **files**.
+
+---
+
+## Syntax
+
+### Read CSV
+
+```python
+df = spark.read.csv(
+"/Volumes/main/sales/raw_files/orders.csv",
+header=True
+)
+```
+
+---
+
+### Write CSV
+
+```python
+df.write.csv(
+"/Volumes/main/sales/output/"
+)
+```
+
+---
+
+### List Files
+
+```python
+display(
+dbutils.fs.ls("/Volumes/main/sales/")
+)
+```
+
+---
+
+## DBFS vs Volumes
+
+| DBFS                | Volumes               |
+| ------------------- | --------------------- |
+| Virtual File System | Unity Catalog Storage |
+| Basic Security      | Fine-grained Security |
+| Older Approach      | Modern Approach       |
+| Limited Governance  | Full Governance       |
+| Uses `dbfs:/`       | Uses `/Volumes/...`   |
+
+---
+
+## Real Example
+
+Suppose an insurance company receives
+
+```
+claims.csv
+customers.csv
+policies.csv
+```
+
+Instead of uploading to DBFS,
+
+they create
+
+```text
+Volume
+
+insurance
+     │
+incoming_files
+```
+
+Now only
+
+* Data Engineers ✅
+* Claims Team ✅
+
+can access the files.
+
+HR cannot.
+
+This is why enterprises prefer Volumes.
+
+---
+
+## Interview Questions
+
+### 1. What is a Volume?
+
+A Unity Catalog-managed storage location for non-tabular files.
+
+---
+
+### 2. Why were Volumes introduced?
+
+To provide better security, governance, and access control than DBFS.
+
+---
+
+### 3. Can a Volume store Delta Tables?
+
+No.
+
+Volumes store **files**.
+
+Tables belong in Unity Catalog as managed or external tables.
+
+---
+
+### 4. What kinds of files can be stored?
+
+CSV, JSON, Images, PDFs, Excel, ML Models, ZIP, etc.
+
+---
+
+### 5. Which is recommended for new projects?
+
+**Volumes.**
+
+---
+
+### 6. Difference between DBFS and Volumes?
+
+**DBFS** is a virtual file system.
+
+**Volumes** are Unity Catalog-managed secure storage locations.
+
+---
+
+## Practical
+
+If your Databricks workspace has Unity Catalog enabled:
+
+1. Open **Catalog**.
+2. Navigate to a Catalog → Schema.
+3. Create a Volume.
+4. Upload a CSV.
+5. Read it using:
+
+```python
+df = spark.read.csv("/Volumes/main/sales/raw_files/orders.csv")
+```
+
+If your workspace doesn't have Unity Catalog enabled, don't worry—we'll practice this later in our end-to-end projects.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+* **Volume = Secure folder managed by Unity Catalog.**
+* **Stores files, not tables.**
+* **Uses `/Volumes/...` path.**
+* **Recommended for new Databricks projects.**
+* **Provides fine-grained access control and governance.**
+
+---
+
+
+Think in terms of **security, governance, and enterprise requirements**. If you can answer that confidently, you've understood the core purpose of Volumes.

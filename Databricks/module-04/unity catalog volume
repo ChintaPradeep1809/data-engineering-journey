@@ -307,6 +307,38 @@ If your workspace doesn't have Unity Catalog enabled, don't worry—we'll practi
 * **Provides fine-grained access control and governance.**
 
 ---
+You're thinking about storage characteristics, but that's **not the main reason**. This is exactly the kind of misunderstanding interviewers look for.
 
+The correct answer is:
 
-Think in terms of **security, governance, and enterprise requirements**. If you can answer that confidently, you've understood the core purpose of Volumes.
+> **DBFS was not replaced because of performance or corruption. It was replaced because enterprises needed stronger security, governance, and centralized access control.**
+
+Here's the comparison:
+
+| DBFS                | Unity Catalog Volumes                       |
+| ------------------- | ------------------------------------------- |
+| Basic file access   | Enterprise-grade file access                |
+| Limited permissions | Fine-grained permissions (user/group level) |
+| Limited governance  | Centralized governance                      |
+| Older approach      | Modern recommended approach                 |
+
+### Interview Answer
+
+**Q: Why are Volumes preferred over DBFS?**
+
+**Answer:**
+
+> "Volumes are managed by Unity Catalog, which provides centralized governance, fine-grained access control, auditing, and better security. DBFS is still supported, but Volumes are the recommended approach for new enterprise projects."
+
+### One more important point
+
+You mentioned:
+
+> "because it is stored in cloud"
+
+Actually, **both DBFS and Volumes ultimately store data in cloud storage** (S3, ADLS, or GCS).
+
+The difference is **how Databricks manages and secures access**, not where the files physically reside.
+
+---
+

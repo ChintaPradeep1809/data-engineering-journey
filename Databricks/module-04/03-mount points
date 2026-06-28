@@ -1,0 +1,271 @@
+Excellent. After this topic, you'll clearly understand the difference between **DBFS**, **Volumes**, and **Mount Points**, which is a very common interview area.
+
+---
+
+# Module 4: Storage & File Management
+
+# Topic 25: Mount Points ⭐⭐⭐⭐
+
+## Concept
+
+A **Mount Point** is a connection between **external cloud storage** (S3, ADLS, GCS) and **DBFS**.
+
+> **Simple definition:** A Mount Point is like creating a shortcut from DBFS to your cloud storage.
+
+---
+
+## Why do we need Mount Points?
+
+Suppose your company stores data in AWS S3.
+
+Without a Mount Point, every notebook has to use the full S3 path:
+
+```text
+s3://company-data/sales/orders.csv
+```
+
+Instead, create a Mount Point:
+
+```text
+/mnt/sales
+```
+
+Now everyone can simply use:
+
+```text
+/mnt/sales/orders.csv
+```
+
+This makes code simpler and reusable.
+
+---
+
+## Theory
+
+A Mount Point does **not** copy data into Databricks.
+
+It only creates a **reference (link)** to external cloud storage.
+
+Think of it like a Windows shortcut:
+
+```text
+Desktop Shortcut
+        │
+        ▼
+Actual Folder
+```
+
+Deleting the shortcut **does not delete** the original folder.
+
+Similarly,
+
+```text
+Mount Point
+      │
+      ▼
+AWS S3 / ADLS / GCS
+```
+
+The data remains in cloud storage.
+
+---
+
+## Architecture
+
+```text
+Notebook
+    │
+    ▼
+DBFS Mount Point (/mnt/sales)
+    │
+    ▼
+Cloud Storage
+(S3 / ADLS / GCS)
+    │
+    ▼
+orders.csv
+```
+
+---
+
+## Path Structure
+
+Mounted path:
+
+```text
+/mnt/sales/orders.csv
+```
+
+Cloud path:
+
+```text
+s3://company-data/orders.csv
+```
+
+Both point to the **same file**.
+
+---
+
+## Syntax
+
+### Mount Storage
+
+```python
+dbutils.fs.mount(
+    source="s3://company-data",
+    mount_point="/mnt/sales"
+)
+```
+
+### Read File
+
+```python
+df = spark.read.csv("/mnt/sales/orders.csv")
+```
+
+### List Files
+
+```python
+display(dbutils.fs.ls("/mnt/sales"))
+```
+
+### Unmount
+
+```python
+dbutils.fs.unmount("/mnt/sales")
+```
+
+---
+
+## Real Example
+
+Suppose your company has:
+
+```text
+AWS S3
+
+company-data
+     │
+orders.csv
+customers.csv
+products.csv
+```
+
+Instead of every notebook using:
+
+```text
+s3://company-data/orders.csv
+```
+
+The admin creates:
+
+```text
+/mnt/company-data
+```
+
+Now every Data Engineer reads:
+
+```python
+spark.read.csv("/mnt/company-data/orders.csv")
+```
+
+The code is cleaner and easier to maintain.
+
+---
+
+## DBFS vs Mount Points
+
+| DBFS                  | Mount Point                                   |
+| --------------------- | --------------------------------------------- |
+| Virtual file system   | Link to external storage                      |
+| Stores/accesses files | Provides access to cloud storage through DBFS |
+| Uses `dbfs:/`         | Uses `/mnt/...`                               |
+
+---
+
+## Mount Points vs Volumes
+
+| Mount Points                     | Volumes                     |
+| -------------------------------- | --------------------------- |
+| Legacy approach                  | Modern approach             |
+| Uses cloud credentials           | Managed by Unity Catalog    |
+| Basic access control             | Fine-grained access control |
+| `/mnt/...`                       | `/Volumes/...`              |
+| Not recommended for new projects | ✅ Recommended               |
+
+---
+
+## Interview Questions
+
+### 1. What is a Mount Point?
+
+A Mount Point links external cloud storage to DBFS.
+
+---
+
+### 2. Does mounting copy the data?
+
+**No.**
+
+It only creates a reference to the existing data.
+
+---
+
+### 3. Why are Mount Points less preferred today?
+
+Because **Unity Catalog Volumes** provide better security, governance, and centralized permission management.
+
+---
+
+### 4. What happens if you unmount a Mount Point?
+
+The **link is removed**, but the data in S3/ADLS/GCS remains unchanged.
+
+---
+
+### 5. When will you still see Mount Points?
+
+Mostly in **legacy Databricks projects** that were built before Unity Catalog became the standard.
+
+---
+
+## Practical
+
+If you have access to cloud storage:
+
+1. Create a Mount Point.
+2. Read a CSV using `/mnt/...`.
+3. Unmount it.
+4. Verify that the original file still exists in cloud storage.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+* **Mount Point = Link between DBFS and cloud storage.**
+* **It does not copy data.**
+* **Uses `/mnt/...` paths.**
+* **Legacy feature; new projects should use Unity Catalog Volumes.**
+* **Unmounting removes only the link, not the data.**
+
+---
+
+# 🎯 Final Comparison (Memorize This)
+
+| Feature      | DBFS                | Mount Point           | Volume              |
+| ------------ | ------------------- | --------------------- | ------------------- |
+| Purpose      | Virtual file system | Link to cloud storage | Secure file storage |
+| Path         | `dbfs:/`            | `/mnt/...`            | `/Volumes/...`      |
+| Managed By   | Databricks          | User/Admin            | Unity Catalog       |
+| Security     | Basic               | Basic                 | Fine-grained        |
+| New Projects | ⚠️ Limited use      | ❌ Legacy              | ✅ Recommended       |
+
+### One interview question for you:
+
+If your company is starting a **brand-new Databricks project today**, which would you choose for storing CSV files:
+
+1. DBFS
+2. Mount Points
+3. Unity Catalog Volumes
+
+And **why?** This is exactly how an interviewer may phrase it.

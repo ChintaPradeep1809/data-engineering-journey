@@ -1,0 +1,619 @@
+Excellent. These remaining topics are what separate someone who has *used Spark* from someone who understands **Delta Lake** in production. We'll finish them in logical groups.
+
+---
+
+# Module 5: Delta Lake
+
+# Topic 36: MERGE (UPSERT) ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose:
+
+**Existing Table**
+
+| ID | Name  |
+| -- | ----- |
+| 1  | Alice |
+| 2  | Bob   |
+
+**New File**
+
+| ID | Name    |
+| -- | ------- |
+| 2  | Bobby   |
+| 3  | Charlie |
+
+Expected Result
+
+| ID | Name    |
+| -- | ------- |
+| 1  | Alice   |
+| 2  | Bobby   |
+| 3  | Charlie |
+
+You need to **Update existing records + Insert new records**.
+
+---
+
+## Concept
+
+**MERGE** performs **UPDATE + INSERT** in a single command.
+
+> MERGE = UPSERT
+
+---
+
+## Theory
+
+Checks whether a matching record exists.
+
+* Exists → UPDATE
+* Doesn't exist → INSERT
+
+---
+
+## Architecture
+
+```text
+Source Table
+      │
+      ▼
+    MERGE
+      │
+      ▼
+Target Delta Table
+```
+
+---
+
+## Syntax
+
+```sql
+MERGE INTO target t
+USING source s
+ON t.id = s.id
+
+WHEN MATCHED
+THEN UPDATE SET *
+
+WHEN NOT MATCHED
+THEN INSERT *
+```
+
+---
+
+## Real-world Use
+
+* CDC (Change Data Capture)
+* Customer Master
+* Daily Sales Updates
+* Employee Data
+
+---
+
+## Interview Questions
+
+* What is MERGE?
+* Difference between INSERT and MERGE?
+* What is UPSERT?
+
+---
+
+## ETL Usage
+
+Bronze → Silver Layer
+
+---
+
+## Common Mistake
+
+❌ Using INSERT instead of MERGE for incremental loads.
+
+---
+
+# Topic 37: UPDATE ⭐⭐⭐⭐
+
+## Why?
+
+Need to correct existing records.
+
+Example
+
+```text
+Salary = 50000
+
+↓
+
+Salary = 55000
+```
+
+---
+
+## Concept
+
+Updates existing rows.
+
+---
+
+## Theory
+
+Only matching rows are modified.
+
+---
+
+## Architecture
+
+```text
+Delta Table
+     │
+ UPDATE
+     │
+Updated Rows
+```
+
+---
+
+## Syntax
+
+```sql
+UPDATE employees
+SET salary = 55000
+WHERE id = 10;
+```
+
+---
+
+## Real-world Use
+
+* Correct customer data
+* Update addresses
+* Salary revisions
+
+---
+
+## Interview Questions
+
+* Can Delta support UPDATE?
+* Why can't Parquet easily support UPDATE?
+
+---
+
+## ETL Usage
+
+Data Corrections
+
+---
+
+## Common Mistake
+
+❌ UPDATE without WHERE clause.
+
+---
+
+# Topic 38: DELETE ⭐⭐⭐⭐
+
+## Why?
+
+Need to remove invalid or old data.
+
+---
+
+## Concept
+
+Deletes matching rows.
+
+---
+
+## Theory
+
+Only matching records are removed.
+
+---
+
+## Architecture
+
+```text
+Delta Table
+     │
+ DELETE
+     │
+Remaining Data
+```
+
+---
+
+## Syntax
+
+```sql
+DELETE FROM employees
+WHERE id = 10;
+```
+
+---
+
+## Real-world Use
+
+* GDPR requests
+* Duplicate removal
+* Invalid transactions
+
+---
+
+## Interview Questions
+
+* Can Delta delete records?
+* Difference between DELETE and TRUNCATE?
+
+---
+
+## ETL Usage
+
+Data Cleansing
+
+---
+
+## Common Mistake
+
+❌ DELETE without WHERE clause.
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Command | Purpose              |
+| ------- | -------------------- |
+| MERGE   | Insert + Update      |
+| UPDATE  | Modify existing rows |
+| DELETE  | Remove rows          |
+
+---
+
+# 🎯 Interview Scenario
+
+A customer changes their address.
+
+Which command?
+
+✅ **UPDATE**
+
+---
+
+A new customer arrives and an existing customer updates their phone number.
+
+Which command?
+
+✅ **MERGE**
+
+---
+
+Customer requests account deletion.
+
+Which command?
+
+✅ **DELETE**
+
+---
+
+# Topic 39: OPTIMIZE ⭐⭐⭐⭐⭐
+
+## Why?
+
+Delta writes many small files over time.
+
+Too many small files = slower queries.
+
+---
+
+## Concept
+
+**OPTIMIZE** combines many small files into fewer larger files to improve query performance.
+
+---
+
+## Theory
+
+Before:
+
+```text
+1000 Small Files
+```
+
+↓
+
+After
+
+```text
+20 Large Files
+```
+
+Less file overhead = faster reads.
+
+---
+
+## Architecture
+
+```text
+Small Files
+     │
+ OPTIMIZE
+     │
+Large Files
+```
+
+---
+
+## Syntax
+
+```sql
+OPTIMIZE sales;
+```
+
+---
+
+## Real-world Use
+
+Run periodically after frequent writes.
+
+---
+
+## Interview Questions
+
+* Why use OPTIMIZE?
+* Does OPTIMIZE delete data?
+
+---
+
+## ETL Usage
+
+Performance Tuning
+
+---
+
+## Common Mistake
+
+❌ Thinking OPTIMIZE changes business data.
+
+---
+
+# Topic 40: Z-Ordering ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose queries always filter by
+
+```text
+Customer_ID
+```
+
+Without optimization,
+
+Spark scans unnecessary files.
+
+---
+
+## Concept
+
+Z-Ordering physically organizes data to reduce file scanning.
+
+---
+
+## Theory
+
+Groups similar values together.
+
+Faster filtering.
+
+---
+
+## Architecture
+
+```text
+Delta Table
+      │
+ZORDER BY(Customer_ID)
+      │
+Better Data Locality
+      │
+Faster Queries
+```
+
+---
+
+## Syntax
+
+```sql
+OPTIMIZE sales
+ZORDER BY (customer_id);
+```
+
+---
+
+## Real-world Use
+
+Large analytical tables.
+
+---
+
+## Interview Questions
+
+* What is ZORDER?
+* Difference between OPTIMIZE and ZORDER?
+
+---
+
+## ETL Usage
+
+Analytics Optimization
+
+---
+
+## Common Mistake
+
+❌ Using ZORDER on every column.
+
+---
+
+# Topic 41: VACUUM ⭐⭐⭐⭐⭐
+
+## Why?
+
+Time Travel keeps old files.
+
+Storage keeps increasing.
+
+---
+
+## Concept
+
+VACUUM removes obsolete files that are no longer needed.
+
+---
+
+## Theory
+
+Old versions remain until retention expires.
+
+VACUUM cleans them.
+
+---
+
+## Architecture
+
+```text
+Old Files
+      │
+   VACUUM
+      │
+Storage Reduced
+```
+
+---
+
+## Syntax
+
+```sql
+VACUUM sales;
+```
+
+---
+
+## Real-world Use
+
+Storage Cleanup
+
+---
+
+## Interview Questions
+
+* Why use VACUUM?
+* Does VACUUM improve performance?
+
+---
+
+## ETL Usage
+
+Storage Maintenance
+
+---
+
+## Common Mistake
+
+❌ Running VACUUM too early can remove files needed for Time Travel.
+
+---
+
+# Topic 42: Transaction Log (`_delta_log`) ⭐⭐⭐⭐⭐
+
+## Concept
+
+`_delta_log` is the **heart of Delta Lake**.
+
+It stores metadata and transaction history.
+
+---
+
+## Theory
+
+Every operation creates a new log entry.
+
+Example:
+
+```text
+000000.json
+000001.json
+000002.json
+```
+
+These files record:
+
+* INSERT
+* UPDATE
+* DELETE
+* MERGE
+* OPTIMIZE
+
+---
+
+## Architecture
+
+```text
+Delta Table
+│
+├── Parquet Files
+│
+└── _delta_log
+      │
+      ├── Version 0
+      ├── Version 1
+      └── Version 2
+```
+
+---
+
+## Syntax
+
+No direct syntax.
+
+Automatically maintained by Delta Lake.
+
+---
+
+## Real-world Use
+
+Enables:
+
+* ACID Transactions
+* Time Travel
+* Recovery
+* Versioning
+
+---
+
+## Interview Questions
+
+* What is `_delta_log`?
+* Does it store business data?
+* Why is it important?
+
+---
+
+## Common Mistake
+
+❌ Thinking `_delta_log` stores actual table data.
+
+---
+
+# ⭐ Delta Lake Final Interview Cheat Sheet
+
+| Feature      | Purpose                        |
+| ------------ | ------------------------------ |
+| MERGE        | Insert + Update                |
+| UPDATE       | Modify existing rows           |
+| DELETE       | Remove rows                    |
+| OPTIMIZE     | Compact small files            |
+| ZORDER       | Faster filtering               |
+| VACUUM       | Remove obsolete files          |
+| `_delta_log` | Metadata & transaction history |
+
+---

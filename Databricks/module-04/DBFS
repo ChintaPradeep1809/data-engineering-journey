@@ -1,0 +1,250 @@
+# Topic 23: DBFS (Databricks File System) ⭐⭐⭐⭐⭐
+
+## Concept
+
+**DBFS (Databricks File System)** is a **virtual file system** provided by Databricks that lets you access files stored in cloud storage (AWS S3, Azure ADLS, or GCP GCS) using a common file path.
+
+> **Key point:** DBFS is **not a storage service**. It is a **layer** that makes cloud storage look like a local file system.
+
+---
+
+## Why was DBFS created?
+
+Imagine you're working on three different cloud providers:
+
+* AWS → S3
+* Azure → ADLS
+* GCP → GCS
+
+Without DBFS, your Spark code would need different paths for each cloud.
+
+Example:
+
+```text
+AWS    → s3://sales-data/orders.csv
+Azure → abfss://sales-data/orders.csv
+GCP    → gs://sales-data/orders.csv
+```
+
+Databricks introduced DBFS so developers can use a **common path**:
+
+```text
+dbfs:/data/orders.csv
+```
+
+Now your code doesn't change when moving between clouds.
+
+---
+
+## Theory
+
+Think of DBFS as a translator.
+
+```text
+Notebook
+    │
+    ▼
+DBFS
+    │
+    ▼
+Cloud Storage
+```
+
+When you write:
+
+```python
+spark.read.csv("dbfs:/data/orders.csv")
+```
+
+DBFS translates that request to the actual cloud storage location.
+
+---
+
+## Architecture
+
+```text
+                User
+                  │
+                  ▼
+          Databricks Notebook
+                  │
+                  ▼
+         DBFS (Virtual Layer)
+                  │
+     ┌────────────┼────────────┐
+     ▼            ▼            ▼
+   AWS S3      Azure ADLS     GCP GCS
+                  │
+                  ▼
+               Data Files
+```
+
+**Flow:**
+
+1. You write code in a notebook.
+2. Spark asks DBFS for the file.
+3. DBFS locates the file in cloud storage.
+4. Spark reads the data.
+
+---
+
+## DBFS Path Structure
+
+Typical path:
+
+```text
+dbfs:/FileStore/data/orders.csv
+```
+
+Where:
+
+* `dbfs:/` → DBFS root
+* `FileStore/` → Common folder for uploaded files
+* `data/` → Your folder
+* `orders.csv` → File
+
+---
+
+## Syntax
+
+### Read CSV
+
+```python
+df = spark.read.csv("dbfs:/FileStore/data/orders.csv", header=True)
+```
+
+---
+
+### Write CSV
+
+```python
+df.write.mode("overwrite").csv("dbfs:/output/")
+```
+
+---
+
+### List Files
+
+```python
+display(dbutils.fs.ls("dbfs:/"))
+```
+
+---
+
+### Create Folder
+
+```python
+dbutils.fs.mkdirs("dbfs:/demo")
+```
+
+---
+
+### Remove Folder
+
+```python
+dbutils.fs.rm("dbfs:/demo", recurse=True)
+```
+
+---
+
+## Real Example
+
+Suppose your company receives **daily sales files**.
+
+Every morning:
+
+```text
+sales_01.csv
+sales_02.csv
+sales_03.csv
+```
+
+These files are uploaded to
+
+```text
+dbfs:/landing/
+```
+
+Your ETL job reads:
+
+```python
+spark.read.csv("dbfs:/landing/")
+```
+
+Processes the data and writes the cleaned data elsewhere.
+
+---
+
+## Interview Questions
+
+### 1. What is DBFS?
+
+**Answer:**
+A virtual file system provided by Databricks that offers a unified interface to access cloud storage.
+
+---
+
+### 2. Is DBFS a storage service?
+
+**Answer:**
+No. DBFS is a file system layer. The actual data is stored in cloud storage such as S3, ADLS, or GCS.
+
+---
+
+### 3. What is the difference between DBFS and S3?
+
+| DBFS                | S3                  |
+| ------------------- | ------------------- |
+| Virtual file system | Physical storage    |
+| Databricks feature  | AWS storage service |
+| Uses `dbfs:/` paths | Uses `s3://` paths  |
+
+---
+
+### 4. Where is data actually stored?
+
+In:
+
+* AWS → S3
+* Azure → ADLS
+* GCP → GCS
+
+---
+
+### 5. Is DBFS recommended for new projects?
+
+**Answer:**
+DBFS is still supported and widely seen in existing projects, but for new enterprise projects, **Unity Catalog Volumes** are the recommended approach because they provide stronger governance and security.
+
+---
+
+## Practical
+
+Run these commands:
+
+```python
+display(dbutils.fs.ls("dbfs:/"))
+```
+
+```python
+dbutils.fs.mkdirs("dbfs:/demo")
+```
+
+```python
+display(dbutils.fs.ls("dbfs:/"))
+```
+
+Observe how the new folder appears.
+
+---
+
+## ⭐ Summary
+
+* **DBFS = Virtual File System**
+* **Cloud Storage = Actual Storage**
+* **DBFS simplifies file access across AWS, Azure, and GCP**
+* **Modern Databricks favors Unity Catalog Volumes for new projects**
+
+---
+
+This is the level of depth I'd recommend for the remaining core topics like **Delta Lake, Unity Catalog, Auto Loader, Medallion Architecture, and Delta Live Tables**—deep enough to build intuition, but still concise enough to fit well into your GitHub notes.

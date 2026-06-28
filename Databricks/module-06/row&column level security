@@ -1,0 +1,289 @@
+Perfect. These are the **last two topics of Unity Catalog**. They're straightforward once you understand permissions.
+
+---
+
+# Module 6: Unity Catalog
+
+# Topic 52: Row-Level Security (RLS) ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose an employee in the **India** team logs in.
+
+Should they see **USA** employee records?
+
+❌ No.
+
+They should only see **India** records.
+
+This is where **Row-Level Security** comes in.
+
+---
+
+## Concept
+
+**Row-Level Security (RLS)** restricts **which rows** a user can view.
+
+> **Simple Definition:** Same table, different rows for different users.
+
+---
+
+## Theory
+
+Employee Table
+
+| ID | Name  | Country |
+| -- | ----- | ------- |
+| 1  | Alice | India   |
+| 2  | Bob   | USA     |
+| 3  | John  | UK      |
+
+### India User
+
+Sees
+
+| ID | Name  | Country |
+| -- | ----- | ------- |
+| 1  | Alice | India   |
+
+### USA User
+
+Sees
+
+| ID | Name | Country |
+| -- | ---- | ------- |
+| 2  | Bob  | USA     |
+
+Same table.
+
+Different rows.
+
+---
+
+## Architecture
+
+```text id="v3ov3x"
+Employee Table
+        │
+        ▼
+ Row-Level Security
+        │
+   ┌────┴────┐
+   ▼         ▼
+India User  USA User
+   │         │
+India Rows  USA Rows
+```
+
+---
+
+## Syntax
+
+Implemented using **Row Filters** (or dynamic views, depending on the setup).
+
+Concept is more important than syntax for interviews.
+
+---
+
+## Interview Questions
+
+### What is Row-Level Security?
+
+Restricts access to specific rows based on the user.
+
+---
+
+### Does RLS create multiple tables?
+
+No.
+
+One table.
+
+Different users see different rows.
+
+---
+
+## Real-world Use
+
+* Banking
+* HR
+* Healthcare
+* Multi-country companies
+
+---
+
+## Common Mistake
+
+❌ Thinking RLS hides columns.
+
+---
+
+# Topic 53: Column-Level Security (CLS) ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose HR has:
+
+| Employee | Salary | PAN |
+| -------- | ------ | --- |
+
+Should every employee see Salary and PAN?
+
+❌ No.
+
+Only HR Managers should.
+
+---
+
+## Concept
+
+**Column-Level Security (CLS)** restricts **which columns** a user can access.
+
+> **Simple Definition:** Same table, different columns for different users.
+
+---
+
+## Theory
+
+Employee Table
+
+| ID | Name | Salary |
+| -- | ---- | ------ |
+
+### HR Manager
+
+| ID | Name | Salary |
+| -- | ---- | ------ |
+
+### Employee
+
+| ID | Name |
+| -- | ---- |
+
+Salary is hidden.
+
+---
+
+## Architecture
+
+```text id="7lrd8o"
+Employee Table
+       │
+       ▼
+Column-Level Security
+       │
+  ┌────┴────┐
+  ▼         ▼
+ HR      Employee
+All      Salary Hidden
+```
+
+---
+
+## Syntax
+
+Implemented using **Column Masks** (or views, depending on the setup).
+
+Again, interviews focus more on the concept than the exact syntax.
+
+---
+
+## Interview Questions
+
+### What is Column-Level Security?
+
+Restricts access to specific columns.
+
+---
+
+### Difference between RLS and CLS?
+
+RLS filters rows.
+
+CLS hides columns.
+
+---
+
+## Real-world Use
+
+* Salary
+* Aadhaar
+* PAN
+* Credit Card
+* Medical Records
+
+---
+
+## Common Mistake
+
+❌ Thinking CLS removes rows.
+
+---
+
+# ⭐ Most Asked Interview Question
+
+## Row-Level Security vs Column-Level Security
+
+| Row-Level Security                    | Column-Level Security                |
+| ------------------------------------- | ------------------------------------ |
+| Controls rows                         | Controls columns                     |
+| Filters records                       | Hides sensitive fields               |
+| Same columns                          | Same rows                            |
+| Different users see different records | Different users see different fields |
+
+---
+
+# 🏢 Real-World Example
+
+Employee Table
+
+| ID | Name  | Country | Salary |
+| -- | ----- | ------- | ------ |
+| 1  | Alice | India   | 80K    |
+| 2  | Bob   | USA     | 100K   |
+| 3  | John  | India   | 90K    |
+
+### India Employee
+
+| ID | Name  | Country |
+| -- | ----- | ------- |
+| 1  | Alice | India   |
+| 3  | John  | India   |
+
+* **RLS** → Only India rows.
+* **CLS** → Salary column hidden.
+
+---
+
+# ⭐ Unity Catalog Interview Cheat Sheet
+
+| Object             | Purpose                            |
+| ------------------ | ---------------------------------- |
+| Metastore          | Top-level metadata repository      |
+| Catalog            | Business domain                    |
+| Schema             | Groups database objects            |
+| Managed Table      | Databricks manages data + metadata |
+| External Table     | Databricks manages metadata only   |
+| Volume             | Stores non-tabular files           |
+| Storage Credential | Authentication to cloud storage    |
+| External Location  | Secure reference to cloud storage  |
+| GRANT              | Give permission                    |
+| REVOKE             | Remove permission                  |
+| RLS                | Restrict rows                      |
+| CLS                | Restrict columns                   |
+
+---
+
+# 🎯 Final Interview Scenario
+
+**Q:** A manager in India should see only Indian employees, and should not see the Salary column. Which Unity Catalog features would you use?
+
+**Answer:**
+
+* **Row-Level Security (RLS)** → Filter records to India only.
+* **Column-Level Security (CLS)** → Hide the Salary column.
+
+---
+
+
+We'll move to **Module 8: Medallion Architecture** (following the revised learning order). It's a core Data Engineering design pattern used in many Databricks implementations and will connect everything you've learned so far into end-to-end pipelines.

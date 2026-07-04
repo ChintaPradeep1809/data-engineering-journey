@@ -1,0 +1,447 @@
+
+
+# Module 12: Performance Optimization
+
+Today we'll cover:
+
+1. Repartition vs Coalesce ⭐⭐⭐⭐⭐
+2. Caching (Persistence) ⭐⭐⭐⭐⭐
+
+---
+
+# Topic 76: Repartition vs Coalesce ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose your DataFrame has
+
+```text
+2 Partitions
+```
+
+Now your cluster has
+
+```text
+8 Executors
+```
+
+Only 2 executors work.
+
+6 executors remain idle.
+
+Performance suffers.
+
+You need to change the number of partitions.
+
+---
+
+## Concept
+
+Both **Repartition** and **Coalesce** change the number of partitions.
+
+> **Simple Definition:**
+
+* **Repartition** → Increase or decrease partitions (with shuffle).
+* **Coalesce** → Mainly decrease partitions (without full shuffle).
+
+---
+
+## Theory
+
+### Repartition
+
+* Can increase partitions.
+* Can decrease partitions.
+* Performs a **shuffle**.
+* Balances data evenly.
+
+---
+
+### Coalesce
+
+* Mainly decreases partitions.
+* Minimizes data movement.
+* Faster than repartition when reducing partitions.
+
+---
+
+## Architecture
+
+### Repartition
+
+```text
+4 Partitions
+      │
+      ▼
+Shuffle
+      │
+      ▼
+8 Partitions
+```
+
+---
+
+### Coalesce
+
+```text
+8 Partitions
+      │
+      ▼
+Merge
+      │
+      ▼
+4 Partitions
+```
+
+---
+
+## Syntax
+
+### Repartition
+
+```python
+df = df.repartition(10)
+```
+
+---
+
+### Coalesce
+
+```python
+df = df.coalesce(4)
+```
+
+---
+
+## Real Example
+
+Suppose
+
+```text
+500 Million Rows
+```
+
+Current
+
+```text
+2 Partitions
+```
+
+Need
+
+```text
+20 Partitions
+```
+
+Use
+
+```python
+repartition(20)
+```
+
+---
+
+Suppose
+
+```text
+100 Partitions
+```
+
+Need
+
+```text
+10 Partitions
+```
+
+Use
+
+```python
+coalesce(10)
+```
+
+---
+
+## Interview Questions
+
+### What is Repartition?
+
+Redistributes data by performing a shuffle to create a new number of partitions.
+
+---
+
+### What is Coalesce?
+
+Reduces the number of partitions with minimal data movement.
+
+---
+
+### Which is faster?
+
+**Coalesce**, when reducing partitions.
+
+---
+
+### Which one performs a shuffle?
+
+**Repartition.**
+
+---
+
+## ETL Usage
+
+* Before writing output files.
+* Balancing data.
+* Optimizing parallelism.
+
+---
+
+## Common Mistakes
+
+❌ Using Repartition when only reducing partitions.
+
+❌ Assuming Coalesce always balances data evenly.
+
+---
+
+# Topic 77: Caching (Persistence) ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose you calculate
+
+```text
+Sales Data
+```
+
+and use it
+
+* Report A
+* Report B
+* Report C
+
+Without caching,
+
+Spark recalculates the same DataFrame three times.
+
+Waste of CPU and time.
+
+---
+
+## Concept
+
+**Caching** stores a DataFrame in memory so it can be reused without recomputation.
+
+> **Simple Definition:** Store frequently used data in memory for faster access.
+
+---
+
+## Theory
+
+Without Cache
+
+```text
+Read Data
+    │
+Transform
+    │
+Report A
+
+Read Again
+    │
+Transform Again
+    │
+Report B
+
+Read Again
+    │
+Transform Again
+    │
+Report C
+```
+
+---
+
+With Cache
+
+```text
+Read Data
+    │
+Transform
+    │
+Cache
+    │
+ ┌──┴──┐
+ ▼     ▼
+A      B
+       ▼
+       C
+```
+
+Transformation happens only once.
+
+---
+
+## Architecture
+
+```text
+DataFrame
+     │
+     ▼
+Cache()
+     │
+     ▼
+Memory
+     │
+     ▼
+Multiple Actions
+```
+
+---
+
+## Syntax
+
+### Cache
+
+```python
+df.cache()
+```
+
+---
+
+### Persist
+
+```python
+df.persist()
+```
+
+---
+
+### Remove Cache
+
+```python
+df.unpersist()
+```
+
+---
+
+## Cache vs Persist
+
+| Cache            | Persist                         |
+| ---------------- | ------------------------------- |
+| Stores in memory | Can store in memory and/or disk |
+| Default storage  | Configurable storage level      |
+
+---
+
+## Real Example
+
+Sales Data
+
+↓
+
+Expensive Transformation
+
+↓
+
+Used by
+
+* Dashboard
+* ML Model
+* KPI Report
+
+Instead of recalculating,
+
+Cache once.
+
+---
+
+## Interview Questions
+
+### Why use Cache?
+
+To avoid recomputing frequently used DataFrames.
+
+---
+
+### Difference between Cache and Persist?
+
+Cache uses the default storage level (memory). Persist allows different storage levels (memory, disk, etc.).
+
+---
+
+### Should every DataFrame be cached?
+
+No.
+
+Only DataFrames reused multiple times and expensive to compute.
+
+---
+
+## ETL Usage
+
+* Common lookup tables.
+* Intermediate DataFrames.
+* Reused transformations.
+
+---
+
+## Common Mistakes
+
+❌ Caching everything.
+
+❌ Forgetting `unpersist()` when cached data is no longer needed.
+
+---
+
+# ⭐ Repartition vs Coalesce
+
+| Repartition                     | Coalesce                       |
+| ------------------------------- | ------------------------------ |
+| Increase or decrease partitions | Mainly decrease partitions     |
+| Shuffle                         | Minimal shuffle                |
+| Balanced distribution           | Faster for reducing partitions |
+| More expensive                  | More efficient when reducing   |
+
+---
+
+# ⭐ Cache vs Persist
+
+| Cache                 | Persist               |
+| --------------------- | --------------------- |
+| Memory only (default) | Memory, Disk, or both |
+| Simpler               | More flexible         |
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic       | One-line Answer                                     |
+| ----------- | --------------------------------------------------- |
+| Repartition | Change partition count using shuffle.               |
+| Coalesce    | Reduce partitions with minimal shuffle.             |
+| Cache       | Store DataFrame in memory for reuse.                |
+| Persist     | Store DataFrame using a configurable storage level. |
+
+---
+
+# 🎯 Most Asked Interview Questions
+
+### Q1. You have 2 partitions but 16 executors. What should you do?
+
+**Answer:** Use **Repartition** to increase the number of partitions and improve parallelism.
+
+---
+
+### Q2. Your DataFrame is used in five different reports. What optimization would you apply?
+
+**Answer:** **Cache** (or **Persist**) the DataFrame so Spark computes it once and reuses it.
+
+---
+
+### Q3. You need to reduce 200 partitions to 20 before writing output. Which would you choose?
+
+**Answer:** **Coalesce**, because you're reducing partitions and want to avoid the cost of a full shuffle.
+
+---
+
+These complete the optimization module and are especially valuable for troubleshooting slow Spark jobs.

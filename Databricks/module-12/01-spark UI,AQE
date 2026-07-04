@@ -1,0 +1,294 @@
+
+# Module 12: Performance Optimization ⭐⭐⭐⭐⭐
+
+Today we'll cover:
+
+1. Spark UI
+2. Adaptive Query Execution (AQE)
+
+---
+
+# Topic 72: Spark UI ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose your Spark job normally finishes in **5 minutes**.
+
+Today it takes **40 minutes**.
+
+How do you find the bottleneck?
+
+Spark UI.
+
+---
+
+## Concept
+
+**Spark UI** is a monitoring tool used to analyze and troubleshoot Spark applications.
+
+> **Simple Definition:** Spark UI shows what happened while your Spark job was running.
+
+---
+
+## Theory
+
+Spark UI helps identify:
+
+* Slow stages
+* Slow tasks
+* Shuffle operations
+* Failed jobs
+* Skewed partitions
+* Resource utilization
+
+It is the **first place to check** when a Spark job is slow.
+
+---
+
+## Architecture
+
+```text
+Spark Job
+     │
+     ▼
+ Spark UI
+     │
+     ├── Jobs
+     ├── Stages
+     ├── Tasks
+     ├── Executors
+     └── Storage
+```
+
+---
+
+## Important Tabs
+
+| Tab       | Purpose                 |
+| --------- | ----------------------- |
+| Jobs      | Overall job status      |
+| Stages    | Execution stages        |
+| Tasks     | Individual task details |
+| Executors | CPU & Memory usage      |
+| Storage   | Cached DataFrames       |
+
+---
+
+## Interview Questions
+
+### What is Spark UI?
+
+A monitoring and debugging tool for Spark applications.
+
+---
+
+### Why use Spark UI?
+
+To analyze performance and identify bottlenecks.
+
+---
+
+### Which tab helps identify slow stages?
+
+Stages.
+
+---
+
+## Real-world Use
+
+ETL Job
+
+↓
+
+Running slowly
+
+↓
+
+Open Spark UI
+
+↓
+
+Identify Stage 3 taking 90% of execution time
+
+↓
+
+Optimize Stage 3
+
+---
+
+## Common Mistakes
+
+❌ Looking only at total execution time.
+
+Always identify **which stage** is slow.
+
+---
+
+# Topic 73: Adaptive Query Execution (AQE) ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose Spark creates **200 partitions**.
+
+After filtering,
+
+only **10 MB** of data remains.
+
+Spark still processes 200 partitions.
+
+Waste of resources.
+
+AQE solves this automatically.
+
+---
+
+## Concept
+
+**Adaptive Query Execution (AQE)** allows Spark to optimize the execution plan **while the query is running**.
+
+> **Simple Definition:** Spark automatically changes its execution plan at runtime based on the actual data.
+
+---
+
+## Theory
+
+AQE can:
+
+* Merge small partitions.
+* Change join strategies (e.g., switch to Broadcast Join).
+* Handle skewed partitions.
+
+Instead of following the original plan blindly, Spark adapts during execution.
+
+---
+
+## Architecture
+
+```text
+Query
+   │
+   ▼
+Initial Plan
+   │
+   ▼
+AQE
+(Runtime Optimization)
+   │
+   ▼
+Optimized Plan
+```
+
+---
+
+## Syntax
+
+Enable AQE
+
+```python
+spark.conf.set("spark.sql.adaptive.enabled", "true")
+```
+
+---
+
+## Interview Questions
+
+### What is AQE?
+
+A Spark feature that optimizes query execution at runtime.
+
+---
+
+### Does AQE optimize before or during execution?
+
+During execution.
+
+---
+
+### What problems does AQE solve?
+
+* Small partitions
+* Skewed data
+* Better join selection
+
+---
+
+## Real-world Use
+
+Large ETL
+
+↓
+
+Heavy filtering
+
+↓
+
+AQE reduces unnecessary partitions
+
+↓
+
+Job completes faster
+
+---
+
+## Common Mistakes
+
+❌ Thinking AQE changes your business logic.
+
+It only changes the **execution plan**.
+
+---
+
+# ⭐ Spark UI vs AQE
+
+| Spark UI            | AQE                                |
+| ------------------- | ---------------------------------- |
+| Monitoring Tool     | Optimization Feature               |
+| Helps find problems | Helps solve problems automatically |
+| Used by engineers   | Used by Spark internally           |
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic    | One-line Answer              |
+| -------- | ---------------------------- |
+| Spark UI | Monitor and debug Spark jobs |
+| AQE      | Runtime query optimization   |
+
+---
+
+# 🎯 Most Asked Interview Questions
+
+### Q1. Your Spark job is taking 30 minutes instead of 5. What is the first thing you check?
+
+**Answer:** Spark UI.
+
+Reason: It helps identify which stage, task, or executor is causing the slowdown.
+
+---
+
+### Q2. Your query filters out 99% of the data, but Spark still processes many partitions. How can Spark optimize this automatically?
+
+**Answer:** Adaptive Query Execution (AQE).
+
+Reason: AQE can merge small partitions and optimize the execution plan at runtime.
+
+---
+
+## 🔥 Interview Tip
+
+For experienced Data Engineers, performance tuning questions often begin with:
+
+> "A Spark job is running slowly..."
+
+A strong answer starts with:
+
+1. Check **Spark UI**.
+2. Identify the bottleneck (stage, task, shuffle, skew, etc.).
+3. Apply the appropriate optimization (AQE, partitioning, broadcast join, caching, etc.).
+
+This structured approach is what interviewers are looking for—not just a list of tuning techniques.
+
+
+
+These are fundamental to Spark performance and appear regularly in Data Engineering interviews.

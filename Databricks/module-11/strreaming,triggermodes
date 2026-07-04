@@ -1,0 +1,424 @@
+ Module 11: Structured Streaming ⭐⭐⭐⭐⭐
+
+# Topic 66: What is Structured Streaming?
+
+## Why?
+
+Imagine an ATM system.
+
+Customers withdraw money every second.
+
+Should the bank wait until **midnight** to process all transactions?
+
+❌ No.
+
+Transactions must be processed immediately.
+
+This is where **Streaming** comes in.
+
+---
+
+## Concept
+
+**Structured Streaming** is Spark's stream processing engine that continuously processes incoming data as it arrives.
+
+> **Simple Definition:** Process data continuously instead of waiting for a batch.
+
+---
+
+## Theory
+
+Traditional ETL:
+
+```text
+Morning
+
+↓
+
+Receive Files
+
+↓
+
+Run ETL
+
+↓
+
+Finish
+```
+
+Streaming ETL:
+
+```text
+New Record
+
+↓
+
+Immediately Process
+
+↓
+
+Store Result
+```
+
+Data never stops arriving.
+
+The pipeline keeps running.
+
+---
+
+## Architecture
+
+```text
+Source
+(Kafka/API/File)
+      │
+      ▼
+Structured Streaming
+      │
+      ▼
+Spark DataFrame
+      │
+      ▼
+Delta Table
+```
+
+---
+
+## Syntax
+
+```python
+df = (
+    spark.readStream
+         .format("cloudFiles")
+         .load("/Volumes/input/")
+)
+```
+
+---
+
+## Real-world Use
+
+* ATM Transactions
+* Stock Market
+* Uber Location Updates
+* IoT Sensors
+* Website Clickstream
+
+---
+
+## Interview Questions
+
+### What is Structured Streaming?
+
+A Spark engine for processing continuous streams of data.
+
+---
+
+### Is Structured Streaming part of Spark?
+
+Yes.
+
+---
+
+### Does Structured Streaming stop after one execution?
+
+No.
+
+It keeps running until stopped.
+
+---
+
+
+# Topic 67: Batch Processing vs Streaming ⭐⭐⭐⭐⭐
+
+## Why?
+
+Not every problem requires streaming.
+
+Payroll runs once a month.
+
+ATM transactions happen every second.
+
+Choosing the wrong processing model wastes resources.
+
+---
+
+## Concept
+
+**Batch Processing** processes accumulated data at scheduled intervals.
+
+**Streaming Processing** processes data continuously as it arrives.
+
+---
+
+## Theory
+
+### Batch
+
+```text
+Morning
+
+↓
+
+100 Files
+
+↓
+
+One ETL Job
+
+↓
+
+Finish
+```
+
+### Streaming
+
+```text
+File 1
+
+↓
+
+Process
+
+↓
+
+File 2
+
+↓
+
+Process
+
+↓
+
+File 3
+
+↓
+
+Process
+```
+
+---
+
+## Architecture
+
+```text
+Batch
+
+Files
+ │
+ ▼
+ETL
+ │
+ ▼
+Output
+
+
+Streaming
+
+Events
+ │
+ ▼
+Continuous Processing
+ │
+ ▼
+Output
+```
+
+---
+
+## Comparison
+
+| Batch                  | Streaming         |
+| ---------------------- | ----------------- |
+| Scheduled              | Continuous        |
+| Higher latency         | Low latency       |
+| Finite data            | Infinite data     |
+| Stops after completion | Runs continuously |
+
+---
+
+## Interview Questions
+
+### Difference between Batch and Streaming?
+
+Batch processes accumulated data at intervals, while Streaming processes data continuously.
+
+---
+
+### Which is cheaper?
+
+Usually Batch.
+
+---
+
+### Which has lower latency?
+
+Streaming.
+
+---
+
+## Real-world Use
+
+**Batch**
+
+* Payroll
+* Monthly Reports
+* Daily ETL
+
+**Streaming**
+
+* Fraud Detection
+* Live Orders
+* GPS Tracking
+
+
+# Topic 68: Trigger Modes ⭐⭐⭐⭐
+
+## Why?
+
+A streaming query is continuously running.
+
+But **when should it process new data?**
+
+Every second?
+
+Every minute?
+
+Only once?
+
+Trigger modes answer this question.
+
+---
+
+## Concept
+
+A **Trigger** defines **when a streaming query executes**.
+
+> **Simple Definition:** Controls the execution frequency of a streaming job.
+
+---
+
+## Theory
+
+Common Trigger Modes:
+
+* **Default (Micro-batch)** → Processes data whenever new data is available.
+* **Processing Time** → Runs at fixed intervals (e.g., every 10 seconds).
+* **Available Now** → Processes all available data once, then stops.
+
+---
+
+## Architecture
+
+```text
+Streaming Source
+        │
+        ▼
+Trigger
+        │
+        ▼
+Process Data
+        │
+        ▼
+Delta Table
+```
+
+---
+
+## Syntax
+
+### Every 10 Seconds
+
+```python
+.writeStream \
+.trigger(processingTime="10 seconds")
+```
+
+### Available Now
+
+```python
+.writeStream \
+.trigger(availableNow=True)
+```
+
+---
+
+## Interview Questions
+
+### What is a Trigger?
+
+A mechanism that controls when a streaming query processes data.
+
+---
+
+### Which trigger is most commonly used?
+
+Micro-batch (default behavior).
+
+---
+
+### Which trigger processes available data once and stops?
+
+Available Now.
+
+---
+
+## Real-world Use
+
+**Micro-batch**
+
+* Continuous order processing
+
+**Available Now**
+
+* Incremental file ingestion
+
+---
+---
+
+# ⭐ Structured Streaming Cheat Sheet
+
+| Topic                | Purpose                      |
+| -------------------- | ---------------------------- |
+| Structured Streaming | Continuous data processing   |
+| Batch                | Scheduled processing         |
+| Streaming            | Continuous processing        |
+| Trigger              | Controls when streaming runs |
+
+---
+
+# ⭐ Interview Scenario
+
+### Q: An e-commerce company receives **one order every second**. Which processing model would you choose?
+
+**Answer:** Structured Streaming, because the business needs low-latency processing.
+
+---
+
+### Q: A company generates a **monthly payroll report**. Which processing model would you choose?
+
+**Answer:** Batch Processing, because the data is processed at scheduled intervals and real-time results are unnecessary.
+
+---
+
+## 🎯 One clarification
+
+There's one subtle but important point that many candidates miss:
+
+People often say:
+
+> **"Streaming processes records one by one."**
+
+For **Spark Structured Streaming**, that's **not completely accurate**.
+
+By default, Spark uses **micro-batches**:
+
+* It collects data for a short interval.
+* Processes that small batch.
+* Repeats continuously.
+
+This design gives a good balance between throughput and latency.
+
+Understanding this distinction can help you answer more advanced interview questions correctly.
+
+---

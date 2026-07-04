@@ -1,0 +1,376 @@
+# Module 10: Workflows ⭐⭐⭐⭐⭐
+
+We'll cover these 3 topics today:
+
+1. Jobs
+2. Scheduling
+3. Multi-task Jobs
+
+These three belong together.
+
+---
+
+# Topic 60: Jobs ⭐⭐⭐⭐⭐
+
+## Why?
+
+Imagine your ETL pipeline:
+
+```text
+Read CSV
+     │
+Clean Data
+     │
+Load Delta
+```
+
+Should someone log in every morning at **8 AM** and click **Run**?
+
+❌ No.
+
+You automate it using a **Job**.
+
+---
+
+## Concept
+
+A **Job** is a Databricks object that **automatically executes notebooks, SQL queries, Python scripts, or JARs**.
+
+> **Simple Definition:** A Job automates the execution of your workload.
+
+---
+
+## Theory
+
+A Job can execute:
+
+* Notebook
+* Python Script
+* SQL Query
+* JAR
+* Workflow
+
+Jobs are mainly used for:
+
+* Daily ETL
+* Batch Processing
+* Data Validation
+* Reporting
+
+---
+
+## Architecture
+
+```text
+Job
+ │
+ ▼
+Notebook / Python / SQL
+ │
+ ▼
+Cluster
+ │
+ ▼
+Delta Tables
+```
+
+---
+
+## Interview Questions
+
+### What is a Databricks Job?
+
+A Job automates workload execution.
+
+---
+
+### What can a Job execute?
+
+* Notebook
+* SQL
+* Python
+* JAR
+* Workflow
+
+---
+
+## Real-world Example
+
+Every morning at **6 AM**:
+
+```
+Orders.csv
+
+↓
+
+Bronze
+
+↓
+
+Silver
+
+↓
+
+Gold
+```
+
+A Job performs the entire pipeline automatically.
+
+---
+
+
+# Topic 61: Scheduling ⭐⭐⭐⭐
+
+## Why?
+
+Suppose Sales reports must refresh every day at **8 AM**.
+
+Nobody should trigger them manually.
+
+---
+
+## Concept
+
+A **Schedule** defines **when** a Job should execute.
+
+> **Simple Definition:** Scheduling determines the execution time of a Job.
+
+---
+
+## Theory
+
+Common schedules:
+
+* Every Hour
+* Daily
+* Weekly
+* Monthly
+* Cron Expression
+
+---
+
+## Architecture
+
+```text
+Scheduler
+     │
+6:00 AM
+     │
+     ▼
+Job
+     │
+     ▼
+Pipeline Runs
+```
+
+---
+
+## Interview Questions
+
+### What is Scheduling?
+
+Automatically running a Job at a specified time.
+
+---
+
+### Can Databricks use Cron expressions?
+
+Yes.
+
+---
+
+## Real-world Example
+
+```
+6:00 AM
+
+↓
+
+Job Starts
+
+↓
+
+Load Today's Sales
+
+↓
+
+Dashboard Updated
+```
+
+---
+
+
+---
+
+# Topic 62: Multi-task Jobs ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose your pipeline has:
+
+```
+Notebook A
+↓
+
+Notebook B
+↓
+
+Notebook C
+```
+
+Should one notebook contain everything?
+
+❌ No.
+
+Breaking the pipeline into multiple tasks makes it easier to maintain and recover from failures.
+
+---
+
+## Concept
+
+A **Multi-task Job** executes multiple dependent tasks within a single workflow.
+
+> **Simple Definition:** One Job containing multiple connected tasks.
+
+---
+
+## Theory
+
+Example ETL:
+
+Task 1
+
+* Bronze Load
+
+↓
+
+Task 2
+
+* Silver Transform
+
+↓
+
+Task 3
+
+* Gold Aggregation
+
+Each task starts only after the previous one succeeds.
+
+---
+
+## Architecture
+
+```text
+             Job
+              │
+      ┌───────┼────────┐
+      ▼       ▼        ▼
+  Bronze   Silver    Gold
+```
+
+Or with dependencies:
+
+```text
+Bronze
+   │
+   ▼
+Silver
+   │
+   ▼
+Gold
+```
+
+---
+
+## Interview Questions
+
+### What is a Multi-task Job?
+
+A Job consisting of multiple dependent tasks.
+
+---
+
+### Why use Multi-task Jobs?
+
+* Better modularity
+* Easier debugging
+* Independent retries
+* Cleaner workflows
+
+---
+
+### Can Task B run before Task A?
+
+No, if Task B depends on Task A.
+
+---
+
+## Real-world Example
+
+Daily Sales Pipeline
+
+```
+Task 1
+
+Read CSV
+
+↓
+
+Task 2
+
+Clean Data
+
+↓
+
+Task 3
+
+MERGE into Silver
+
+↓
+
+Task 4
+
+Build Gold KPIs
+
+↓
+
+Task 5
+
+Refresh Dashboard
+```
+
+Instead of one huge notebook, each step is a separate task.
+
+---
+
+## Common Mistake
+
+❌ Putting the entire ETL pipeline into a single notebook.
+
+---
+
+# ⭐ Workflow Cheat Sheet
+
+| Topic          | Purpose                       |
+| -------------- | ----------------------------- |
+| Job            | Automates execution           |
+| Schedule       | Decides when the Job runs     |
+| Multi-task Job | Runs multiple dependent tasks |
+
+---
+
+# 🎯 Most Asked Interview Question
+
+### Q: What is the difference between a Notebook and a Job?
+
+| Notebook             | Job                                  |
+| -------------------- | ------------------------------------ |
+| Contains code        | Executes code                        |
+| Manual by default    | Automated                            |
+| Used for development | Used for production                  |
+| Can be run directly  | Can run notebooks, SQL, Python, etc. |
+
+---
+
+
+These topics complete production-ready job orchestration and are commonly discussed in real-world Databricks implementations.

@@ -1,0 +1,431 @@
+# Module 12: Performance Optimization
+
+Today we'll cover:
+
+1. Broadcast Join ⭐⭐⭐⭐⭐
+2. Partitioning ⭐⭐⭐⭐⭐
+
+---
+
+# Topic 74: Broadcast Join ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose you have two tables.
+
+### Orders Table
+
+```text
+100 Million Records
+```
+
+### Customer Table
+
+```text
+1000 Records
+```
+
+Normal Spark Join
+
+```text
+Orders  ----------------\
+                          ---> Shuffle ---> Join
+Customers -------------/
+```
+
+Spark moves data across the network.
+
+This is expensive.
+
+---
+
+## Concept
+
+A **Broadcast Join** sends the **small table** to every executor, eliminating the need to shuffle the large table.
+
+> **Simple Definition:** Copy the small table to every executor instead of moving the large table.
+
+---
+
+## Theory
+
+### Without Broadcast
+
+```text
+Executor 1 ----\
+Executor 2 ----- > Shuffle
+Executor 3 ----/
+```
+
+Large network traffic.
+
+---
+
+### With Broadcast
+
+```text
+Small Table
+      │
+      ▼
+Broadcast
+      │
+ ┌────┼────┐
+ ▼    ▼    ▼
+E1   E2   E3
+
+Large Table stays where it is.
+```
+
+No shuffle for the large table.
+
+Much faster.
+
+---
+
+## Architecture
+
+```text
+Large Table
+      │
+      ▼
+Executor 1
+
+Executor 2
+
+Executor 3
+
+Small Table
+      │
+      ▼
+Broadcast
+      │
+      ▼
+All Executors
+```
+
+---
+
+## Syntax
+
+```python
+from pyspark.sql.functions import broadcast
+
+df = orders.join(
+    broadcast(customers),
+    "customer_id"
+)
+```
+
+---
+
+## Real-world Example
+
+Suppose:
+
+Orders
+
+```
+500 Million Rows
+```
+
+Countries
+
+```
+250 Rows
+```
+
+Broadcast
+
+```
+Countries
+```
+
+instead of
+
+```
+Orders
+```
+
+Result
+
+✔ Faster Join
+
+✔ No unnecessary shuffle
+
+---
+
+## Interview Questions
+
+### What is Broadcast Join?
+
+A join optimization where Spark sends the small table to every executor.
+
+---
+
+### Why is Broadcast Join faster?
+
+Because it avoids shuffling the large table.
+
+---
+
+### Which table should be broadcast?
+
+The smaller table.
+
+---
+
+### Can we broadcast a huge table?
+
+No.
+
+It can cause memory issues on executors.
+
+---
+
+## ETL Usage
+
+* Customer Master
+* Country Lookup
+* Currency Table
+* Product Category
+* Small Dimension Tables
+
+---
+
+## Common Mistakes
+
+❌ Broadcasting a very large table.
+
+❌ Thinking Broadcast Join works best for every join.
+
+---
+
+# Topic 75: Partitioning ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose
+
+```text
+100 Million Records
+```
+
+One executor processes everything.
+
+Other executors remain idle.
+
+Very slow.
+
+---
+
+## Concept
+
+**Partitioning** divides data into multiple partitions so Spark can process them in parallel.
+
+> **Simple Definition:** Split data into smaller pieces for parallel processing.
+
+---
+
+## Theory
+
+Without Partitioning
+
+```text
+100 Million Records
+
+↓
+
+Executor 1
+```
+
+---
+
+With Partitioning
+
+```text
+Partition 1 → Executor 1
+
+Partition 2 → Executor 2
+
+Partition 3 → Executor 3
+
+Partition 4 → Executor 4
+```
+
+All executors work simultaneously.
+
+---
+
+## Architecture
+
+```text
+Large Dataset
+      │
+      ▼
+Partitions
+ │   │   │   │
+ ▼   ▼   ▼   ▼
+E1  E2  E3  E4
+```
+
+---
+
+## Syntax
+
+```python
+df = df.repartition(8)
+```
+
+---
+
+## Types
+
+### Hash Partitioning
+
+Based on column values.
+
+Example
+
+```python
+df.repartition("customer_id")
+```
+
+---
+
+### Range Partitioning
+
+Based on value ranges.
+
+Useful for ordered data.
+
+---
+
+## Real-world Example
+
+Sales Table
+
+```
+500 Million Rows
+```
+
+Partition by
+
+```
+Country
+```
+
+Now
+
+India
+
+USA
+
+UK
+
+Australia
+
+can process independently.
+
+---
+
+## Interview Questions
+
+### What is Partitioning?
+
+Splitting data into smaller partitions for parallel processing.
+
+---
+
+### Why is Partitioning important?
+
+Improves parallelism and reduces execution time.
+
+---
+
+### Does Partitioning improve every query?
+
+No.
+
+Incorrect partitioning can increase shuffle and reduce performance.
+
+---
+
+## ETL Usage
+
+Large ETL
+
+↓
+
+Partition Data
+
+↓
+
+Parallel Processing
+
+↓
+
+Faster Pipeline
+
+---
+
+## Common Mistakes
+
+❌ Creating too many partitions (too much scheduling overhead).
+
+❌ Creating too few partitions (poor parallelism).
+
+❌ Partitioning by a low-cardinality column without considering data distribution (can create imbalance).
+
+---
+
+# ⭐ Broadcast Join vs Partitioning
+
+| Broadcast Join               | Partitioning                      |
+| ---------------------------- | --------------------------------- |
+| Join optimization            | Data distribution strategy        |
+| Used during joins            | Used before/throughout processing |
+| Small table copied           | Large dataset divided             |
+| Reduces shuffle during joins | Improves parallel processing      |
+
+---
+
+# ⭐ Interview Cheat Sheet
+
+| Topic          | One-line Answer                                                            |
+| -------------- | -------------------------------------------------------------------------- |
+| Broadcast Join | Send the small table to every executor to avoid shuffling the large table. |
+| Partitioning   | Split data into partitions for parallel processing.                        |
+
+---
+
+# 🎯 Most Asked Interview Question
+
+### Q: You have:
+
+Orders
+
+```
+500 Million Rows
+```
+
+Customers
+
+```
+5,000 Rows
+```
+
+How would you optimize the join?
+
+**Expected Answer:**
+
+Use a **Broadcast Join** on the **Customers** table because it's small. This avoids shuffling the large Orders table and improves performance.
+
+---
+
+### Q: Why doesn't Spark process one huge file using one executor?
+
+**Expected Answer:**
+
+Because Spark partitions the data so multiple executors can process it in parallel, improving performance and scalability.
+
+---

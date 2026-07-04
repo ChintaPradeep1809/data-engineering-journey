@@ -1,0 +1,380 @@
+
+# Topic 63: Job Parameters ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose you have one notebook:
+
+```text
+Load_Data
+```
+
+Today you load
+
+```text
+sales.csv
+```
+
+Tomorrow
+
+```text
+customers.csv
+```
+
+Next day
+
+```text
+products.csv
+```
+
+Should you create **3 notebooks**?
+
+❌ No.
+
+Pass the file name as a parameter.
+
+---
+
+## Concept
+
+**Job Parameters** allow you to pass values to a Job during execution.
+
+> **Simple Definition:** Runtime inputs for a Job.
+
+---
+
+## Theory
+
+Common Parameters
+
+* File Name
+* Date
+* Environment
+* Table Name
+* Batch ID
+
+Instead of changing code,
+
+only change the parameter.
+
+---
+
+## Architecture
+
+```text
+Scheduler
+      │
+      ▼
+Job
+      │
+Parameters
+      │
+      ▼
+Notebook
+```
+
+---
+
+## Example
+
+Today
+
+```text
+file = sales.csv
+```
+
+Tomorrow
+
+```text
+file = customers.csv
+```
+
+Same notebook.
+
+Different execution.
+
+---
+
+## Interview Questions
+
+### What are Job Parameters?
+
+Values passed to a Job during execution.
+
+---
+
+### Why use Parameters?
+
+To avoid hardcoding.
+
+---
+
+## Real-world Use
+
+Daily ETL
+
+```text
+Date = 2026-07-04
+
+↓
+
+Load today's file
+```
+
+---
+
+# Topic 64: Retry Policies ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose your ETL job fails because
+
+* Network issue
+* Storage unavailable
+* Temporary timeout
+
+Should the pipeline stop forever?
+
+❌ No.
+
+Automatically retry.
+
+---
+
+## Concept
+
+A **Retry Policy** automatically reruns a failed Job.
+
+> **Simple Definition:** Automatic recovery from temporary failures.
+
+---
+
+## Theory
+
+Example
+
+```text
+Job
+
+↓
+
+Failed
+
+↓
+
+Retry
+
+↓
+
+Success
+```
+
+You define:
+
+* Retry Count
+* Retry Interval
+
+---
+
+## Architecture
+
+```text
+Job
+ │
+ ▼
+Failure
+ │
+ ▼
+Retry
+ │
+ ▼
+Success / Failed
+```
+
+---
+
+## Interview Questions
+
+### Why use Retry Policies?
+
+To recover from temporary failures automatically.
+
+---
+
+### Should every failure be retried?
+
+No.
+
+Retry transient failures, not permanent logic errors.
+
+---
+
+## Real-world Use
+
+Database unavailable
+
+↓
+
+Retry after 5 minutes
+
+↓
+
+Pipeline succeeds
+
+---
+
+# Topic 65: Notifications ⭐⭐⭐⭐
+
+## Why?
+
+Suppose a daily ETL fails at **2 AM**.
+
+Nobody knows.
+
+Next morning,
+
+business reports are empty.
+
+---
+
+## Concept
+
+Notifications alert users about Job events.
+
+> **Simple Definition:** Inform users when a Job succeeds, fails, or starts.
+
+---
+
+## Theory
+
+Notifications can be sent on:
+
+* Success
+* Failure
+* Start
+* Completion
+
+Common channels:
+
+* Email
+* Webhook
+* Slack (through integrations)
+
+---
+
+## Architecture
+
+```text
+Job
+ │
+ ▼
+Completed
+ │
+ ▼
+Notification
+ │
+ ▼
+Email / Slack
+```
+
+---
+
+## Interview Questions
+
+### Why are Notifications important?
+
+They help teams respond quickly to pipeline failures.
+
+---
+
+### When are Notifications triggered?
+
+Based on configured Job events (e.g., success or failure).
+
+---
+
+## Real-world Use
+
+```text
+Job Failed
+
+↓
+
+Email Sent
+
+↓
+
+Engineer Fixes Issue
+```
+
+---
+
+
+# ⭐ Workflow Cheat Sheet
+
+| Topic          | Purpose                         |
+| -------------- | ------------------------------- |
+| Job Parameters | Pass runtime values             |
+| Retry Policy   | Recover from temporary failures |
+| Notifications  | Alert users about Job status    |
+
+---
+
+# ⭐ Complete Workflow Architecture
+
+```text
+Scheduler
+      │
+      ▼
+Job
+      │
+      ▼
+Parameters
+      │
+      ▼
+Notebook
+      │
+      ▼
+Delta Tables
+      │
+      ▼
+Success / Failure
+      │
+ ┌────┴────┐
+ ▼         ▼
+Retry   Notification
+```
+
+---
+
+# 🎯 Most Asked Interview Question
+
+### Q: Your ETL pipeline loads a different file every day. Would you create a new notebook each day?
+
+**Answer:**
+
+No.
+
+Create one notebook and pass the file name or date using **Job Parameters**.
+
+---
+
+### Q: Your Job failed because the database was temporarily unavailable. What should happen?
+
+**Answer:**
+
+Use a **Retry Policy** so the Job retries automatically after a configured interval.
+
+---
+
+### Q: Why are Notifications important?
+
+**Answer:**
+
+They ensure the operations team is immediately informed when a pipeline fails, allowing quick investigation and recovery.
+
+---
+
+
+
+We'll build these concepts from first principles, just like we did for Delta Lake. This module also ties directly into real-time data engineering systems.

@@ -1,0 +1,461 @@
+Excellent. These are the **core interview topics** of Structured Streaming.
+
+If you understand **Checkpointing** and **Watermarking**, you can answer many scenario-based Spark interview questions.
+
+---
+
+# Module 11: Structured Streaming
+
+Today we'll cover:
+
+1. Checkpointing
+2. Watermarking
+3. Streaming Tables
+
+---
+
+# Topic 69: Checkpointing ⭐⭐⭐⭐⭐
+
+## Why?
+
+Imagine your streaming job has been running for **5 days**.
+
+Suddenly,
+
+💥 Cluster crashes.
+
+Without Checkpointing:
+
+* Pipeline starts from the beginning.
+* Same files/events are processed again.
+* Duplicate records appear.
+
+This is unacceptable in production.
+
+---
+
+## Concept
+
+**Checkpointing** stores the **progress (state)** of a streaming query so it can resume after a failure.
+
+> **Simple Definition:** Checkpointing remembers where the stream stopped.
+
+---
+
+## Theory
+
+Checkpoint stores:
+
+* Processed file information
+* Offsets (Kafka/Event Hub, etc.)
+* Query progress
+* State information
+
+It **does not store business data**.
+
+It stores **stream metadata**.
+
+---
+
+## Architecture
+
+```text
+Streaming Source
+        │
+        ▼
+Structured Streaming
+        │
+        ├──────────────┐
+        ▼              ▼
+Delta Table     Checkpoint
+                     │
+                     ▼
+             Resume after failure
+```
+
+---
+
+## Syntax
+
+```python
+df.writeStream \
+.option("checkpointLocation",
+"/checkpoint/orders")
+```
+
+---
+
+## Real Example
+
+Day 1
+
+```
+Orders
+
+1
+2
+3
+4
+5
+```
+
+Checkpoint
+
+```
+Last Processed = 5
+```
+
+System crashes.
+
+New Orders
+
+```
+6
+7
+8
+```
+
+Restart
+
+↓
+
+Processing starts from
+
+```
+6
+```
+
+Not from
+
+```
+1
+```
+
+---
+
+## Interview Questions
+
+### What is Checkpointing?
+
+Stores the progress of a streaming query to recover after failures.
+
+---
+
+### Why is Checkpointing important?
+
+Provides fault tolerance and prevents reprocessing.
+
+---
+
+### Does Checkpoint store actual business data?
+
+No.
+
+Only stream metadata and progress.
+
+---
+
+## ETL Usage
+
+Every production streaming pipeline should use **Checkpointing**.
+
+---
+
+# Topic 70: Watermarking ⭐⭐⭐⭐⭐
+
+## Why?
+
+Imagine an IoT device sends data.
+
+Normal Events
+
+```
+10:00
+
+10:01
+
+10:02
+```
+
+Suddenly,
+
+a delayed event arrives
+
+```
+09:45
+```
+
+Should Spark keep waiting forever for late events?
+
+❌ No.
+
+This would delay processing indefinitely.
+
+---
+
+## Concept
+
+**Watermarking** defines **how long Spark should wait for late-arriving data** before ignoring it.
+
+> **Simple Definition:** Watermarking controls how much delay is acceptable for late events.
+
+---
+
+## Theory
+
+Example
+
+Current Event Time
+
+```
+10:30
+```
+
+Watermark
+
+```
+10 minutes
+```
+
+Any event earlier than
+
+```
+10:20
+```
+
+may be ignored for operations that use event-time state, such as windowed aggregations.
+
+---
+
+## Architecture
+
+```text
+Incoming Events
+       │
+       ▼
+Watermark
+       │
+ ┌─────┴─────┐
+ ▼           ▼
+On Time    Too Late
+ │           │
+ ▼           ▼
+Process    Ignore*
+```
+
+> *For stateful operations where the watermark applies.
+
+---
+
+## Syntax
+
+```python
+df.withWatermark(
+"event_time",
+"10 minutes"
+)
+```
+
+---
+
+## Real Example
+
+Events
+
+```
+10:00
+
+10:05
+
+10:10
+```
+
+Watermark
+
+```
+10 minutes
+```
+
+Late Event
+
+```
+09:30
+```
+
+↓
+
+Ignored in eligible stateful operations.
+
+---
+
+## Interview Questions
+
+### What is Watermarking?
+
+Defines the maximum delay allowed for late-arriving events.
+
+---
+
+### Why is Watermarking required?
+
+To prevent Spark from keeping state forever and to manage late data.
+
+---
+
+### Does Watermark delete data?
+
+No.
+
+It helps determine how long to keep state for event-time processing.
+
+---
+
+## ETL Usage
+
+* IoT
+* Banking
+* Clickstream
+* GPS Tracking
+
+---
+
+
+# Topic 71: Streaming Tables ⭐⭐⭐⭐
+
+## Why?
+
+Streaming pipelines continuously produce data.
+
+Where should this data be stored?
+
+In a streaming-friendly table.
+
+---
+
+## Concept
+
+A **Streaming Table** is a Delta table that is continuously updated by a streaming query.
+
+> **Simple Definition:** A Delta table that receives data from Structured Streaming.
+
+---
+
+## Theory
+
+Flow
+
+```
+Streaming Source
+
+↓
+
+Structured Streaming
+
+↓
+
+Delta Table
+```
+
+Every new event updates the table automatically.
+
+---
+
+## Architecture
+
+```text
+Kafka / Files / API
+        │
+        ▼
+Structured Streaming
+        │
+        ▼
+Streaming Table
+        │
+        ▼
+Analytics
+```
+
+---
+
+## Syntax
+
+```python
+df.writeStream \
+.toTable("orders")
+```
+
+---
+
+## Real Example
+
+Order arrives
+
+↓
+
+Streaming Job
+
+↓
+
+orders Delta Table
+
+↓
+
+Dashboard updates
+
+---
+
+## Interview Questions
+
+### What is a Streaming Table?
+
+A Delta table continuously updated by a streaming query.
+
+---
+
+### Can BI tools query Streaming Tables?
+
+Yes.
+
+Because they are Delta tables.
+
+---
+
+## ETL Usage
+
+* Live Dashboards
+* Fraud Detection
+* Real-time Analytics
+
+---
+
+
+
+# ⭐ Structured Streaming Cheat Sheet
+
+| Topic           | Purpose                          |
+| --------------- | -------------------------------- |
+| Checkpoint      | Save stream progress             |
+| Watermark       | Handle late events               |
+| Streaming Table | Delta table updated continuously |
+
+---
+
+# ⭐ Interview Scenario
+
+### Q: Your streaming job crashes after processing 1 million events. How do you avoid reprocessing all of them?
+
+**Answer:** Use **Checkpointing** so the job resumes from the last processed state.
+
+---
+
+### Q: An IoT device sends an event 30 minutes late. Should Spark wait forever?
+
+**Answer:** No. Configure **Watermarking** so Spark knows how long to wait for late events during stateful processing.
+
+---
+
+### Q: How do you continuously store streaming data for dashboards?
+
+**Answer:** Write the stream to a **Delta table (Streaming Table)**.
+
+---

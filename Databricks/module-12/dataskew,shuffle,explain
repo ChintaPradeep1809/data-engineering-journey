@@ -1,0 +1,402 @@
+# Module 12: Performance Optimization
+
+Today we'll cover:
+
+1. Data Skew ⭐⭐⭐⭐⭐
+2. Shuffle ⭐⭐⭐⭐⭐
+3. Explain Plan ⭐⭐⭐⭐
+
+---
+
+# Topic 78: Data Skew ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose you have **100 Million records**.
+
+You partition by **Country**.
+
+```text
+India      → 90 Million Records
+USA        → 5 Million Records
+UK         → 3 Million Records
+Australia  → 2 Million Records
+```
+
+Now Spark creates partitions.
+
+```text
+Executor 1 → India (90M)
+Executor 2 → USA (5M)
+Executor 3 → UK (3M)
+Executor 4 → Australia (2M)
+```
+
+Three executors finish quickly.
+
+One executor keeps running.
+
+The entire job waits for **Executor 1**.
+
+This is **Data Skew**.
+
+---
+
+## Concept
+
+**Data Skew** occurs when data is distributed **unevenly across partitions**, causing some tasks to process much more data than others.
+
+> **Simple Definition:** Uneven data distribution that creates slow tasks.
+
+---
+
+## Theory
+
+A Spark job finishes only after **all tasks** complete.
+
+If one partition is huge,
+
+everyone waits.
+
+This creates:
+
+* Slow jobs
+* Long-running stages
+* Poor resource utilization
+
+---
+
+## Architecture
+
+```text
+Dataset
+    │
+Partition By Country
+    │
+    ▼
+
+P1 → 90M
+P2 → 5M
+P3 → 3M
+P4 → 2M
+
+↓
+
+One slow task
+```
+
+---
+
+## How to Reduce Data Skew
+
+* Better partition keys
+* AQE (Adaptive Query Execution)
+* Broadcast Join (when applicable)
+* Salting (advanced technique)
+* Repartitioning
+
+---
+
+## Interview Questions
+
+### What is Data Skew?
+
+Uneven distribution of data across partitions.
+
+---
+
+### Why is Data Skew bad?
+
+One or more tasks take much longer than others, increasing total job time.
+
+---
+
+### How do you identify Data Skew?
+
+Using **Spark UI**.
+
+---
+
+## Real-world Use
+
+Large e-commerce datasets where one customer or country dominates the data.
+
+---
+
+## Common Mistakes
+
+❌ Thinking adding more executors automatically fixes skew.
+
+---
+
+# Topic 79: Shuffle ⭐⭐⭐⭐⭐
+
+## Why?
+
+Suppose Orders and Customers are stored on different executors.
+
+Before joining them,
+
+Spark must move data.
+
+This movement is called **Shuffle**.
+
+---
+
+## Concept
+
+**Shuffle** is the process of **redistributing data across executors** during operations like joins, aggregations, repartitioning, and sorting.
+
+> **Simple Definition:** Data movement between executors.
+
+---
+
+## Theory
+
+Shuffle happens during:
+
+* JOIN
+* GROUP BY
+* ORDER BY
+* DISTINCT
+* REPARTITION
+
+Shuffle is one of the **most expensive Spark operations** because it involves network I/O and disk I/O.
+
+---
+
+## Architecture
+
+```text
+Executor 1 ─────┐
+                │
+Executor 2 ─────┼──► Shuffle
+                │
+Executor 3 ─────┘
+                │
+                ▼
+New Partitions
+```
+
+---
+
+## Example
+
+### Before GROUP BY
+
+```text
+Executor 1
+
+A
+B
+
+Executor 2
+
+A
+C
+```
+
+To calculate totals,
+
+Spark moves all `A` records together.
+
+This movement is the shuffle.
+
+---
+
+## Interview Questions
+
+### What is Shuffle?
+
+Redistribution of data across executors.
+
+---
+
+### Why is Shuffle expensive?
+
+Because Spark transfers data over the network and may write intermediate data to disk.
+
+---
+
+### Which operations cause Shuffle?
+
+* Join
+* Group By
+* Order By
+* Distinct
+* Repartition
+
+---
+
+## Reduce Shuffle
+
+* Broadcast Join
+* Good partitioning
+* AQE
+* Avoid unnecessary repartitioning
+
+---
+
+## Common Mistakes
+
+❌ Thinking every transformation causes a shuffle.
+
+---
+
+# Topic 80: Explain Plan ⭐⭐⭐⭐
+
+## Why?
+
+How do you know
+
+* Which joins Spark chose?
+* Whether Broadcast Join is used?
+* Whether a shuffle will happen?
+
+Spark provides the execution plan.
+
+---
+
+## Concept
+
+**Explain Plan** shows how Spark will execute a query.
+
+> **Simple Definition:** Blueprint of Spark execution.
+
+---
+
+## Theory
+
+It displays:
+
+* Physical Plan
+* Logical Plan
+* Join Strategy
+* Shuffle Operations
+* Scan Operations
+
+This helps engineers understand and optimize queries.
+
+---
+
+## Architecture
+
+```text
+Spark Query
+      │
+      ▼
+Explain Plan
+      │
+      ▼
+Execution Steps
+```
+
+---
+
+## Syntax
+
+```python
+df.explain()
+```
+
+Detailed plan:
+
+```python
+df.explain(True)
+```
+
+---
+
+## Interview Questions
+
+### What is Explain Plan?
+
+A representation of how Spark executes a query.
+
+---
+
+### Why use Explain Plan?
+
+To identify execution strategies and optimization opportunities.
+
+---
+
+### Can Explain Plan show Broadcast Join?
+
+Yes.
+
+---
+
+## Real-world Use
+
+Before optimizing a slow query,
+
+check the execution plan to see what Spark intends to do.
+
+---
+
+## Common Mistakes
+
+❌ Ignoring Explain Plan and guessing why a job is slow.
+
+---
+
+# ⭐ Data Skew vs Shuffle
+
+| Data Skew                | Shuffle               |
+| ------------------------ | --------------------- |
+| Uneven data distribution | Data movement         |
+| One slow partition       | Network communication |
+| Performance issue        | Spark operation       |
+
+---
+
+# ⭐ Spark UI + Explain Plan
+
+| Spark UI            | Explain Plan                 |
+| ------------------- | ---------------------------- |
+| Shows what happened | Shows what Spark plans to do |
+| Runtime analysis    | Execution strategy           |
+
+---
+
+# ⭐ Performance Optimization Cheat Sheet
+
+| Topic          | Purpose                        |
+| -------------- | ------------------------------ |
+| Spark UI       | Monitor jobs                   |
+| AQE            | Runtime optimization           |
+| Broadcast Join | Avoid shuffle for small tables |
+| Partitioning   | Parallel processing            |
+| Repartition    | Increase/decrease partitions   |
+| Coalesce       | Reduce partitions              |
+| Cache          | Reuse DataFrames               |
+| Persist        | Flexible storage               |
+| Data Skew      | Detect uneven partitions       |
+| Shuffle        | Data movement                  |
+| Explain Plan   | View execution strategy        |
+
+---
+
+# 🎯 Most Asked Interview Questions
+
+### Q1. Why is one Spark task taking much longer than the others?
+
+**Answer:** Most likely **Data Skew**. Verify using Spark UI and consider better partitioning, AQE, or Broadcast Join.
+
+---
+
+### Q2. Which Spark operations usually trigger a Shuffle?
+
+**Answer:** `JOIN`, `GROUP BY`, `ORDER BY`, `DISTINCT`, and `REPARTITION`.
+
+---
+
+### Q3. Before optimizing a query, what should you check?
+
+**Answer:**
+
+1. **Explain Plan** to understand the execution strategy.
+2. **Spark UI** to identify runtime bottlenecks.
+
+---

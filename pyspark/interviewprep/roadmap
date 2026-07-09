@@ -1,0 +1,134 @@
+# PySpark Coding Interview Questions Roadmap
+
+## Level 1: DataFrame Fundamentals (1–20)
+
+1. Read CSV, JSON, and Parquet files
+2. Select specific columns
+3. Rename columns
+4. Add a new column using `withColumn()`
+5. Drop columns
+6. Filter rows with single and multiple conditions
+7. Sort DataFrame by one or multiple columns
+8. Remove duplicate rows
+9. Handle null values (`drop`, `fill`, `replace`)
+10. Change column data types
+11. Create literal and derived columns
+12. Use string functions (`upper`, `lower`, `trim`, `split`)
+13. Use date and timestamp functions
+14. Apply conditional logic using `when` and `otherwise`
+15. Perform basic aggregations (`sum`, `avg`, `count`, `min`, `max`)
+16. Count distinct values
+17. Find unique values
+18. Use `orderBy()` vs `sort()`
+19. Create a DataFrame from Python objects
+20. Write DataFrame to different file formats
+
+---
+
+# Level 2: Joins & Aggregations (21–40)
+
+21. Inner Join
+22. Left Join
+23. Right Join
+24. Full Outer Join
+25. Left Semi Join
+26. Left Anti Join
+27. Self Join
+28. Join on multiple columns
+29. GroupBy with multiple aggregations
+30. GroupBy with `having`-like filtering
+31. Count records per group
+32. Average salary by department
+33. Find maximum and minimum values per group
+34. Aggregate using multiple functions
+35. Pivot operation
+36. Unpivot operation
+37. Rollup
+38. Cube
+39. Grouping Sets concept
+40. Aggregate nested data
+
+---
+
+# Level 3: Window Functions (41–60)
+
+41. Row Number
+42. Rank
+43. Dense Rank
+44. NTile
+45. Lead
+46. Lag
+47. Running Total
+48. Moving Average
+49. Cumulative Sum
+50. Cumulative Count
+51. First Value
+52. Last Value
+53. Find latest record per employee
+54. Top N records per department
+55. Bottom N records per department
+56. Second Highest Salary
+57. Nth Highest Salary
+58. Consecutive duplicate detection
+59. Gap between consecutive dates
+60. Sessionization using window functions
+
+---
+
+# Level 4: Complex Data Types (61–75)
+
+61. Explode Array
+62. Posexplode
+63. Explode Map
+64. Work with Struct columns
+65. Flatten nested JSON
+66. Access nested fields
+67. Create Struct columns
+68. Array transformations
+69. Array filtering
+70. Array sorting
+71. Array aggregation
+72. Map transformations
+73. JSON parsing
+74. Convert Struct to JSON
+75. Convert JSON to Struct
+
+---
+
+# Level 5: Real Interview Problems (76–100)
+
+76. Remove duplicates based on latest timestamp
+77. Remove duplicates based on multiple columns
+78. Identify duplicate records
+79. Find missing IDs
+80. Find missing dates
+81. Generate continuous date sequence
+82. Employee hierarchy traversal
+83. Customer lifetime value calculation
+84. Daily Active Users (DAU)
+85. Monthly Active Users (MAU)
+86. Rolling 7-day metrics
+87. Cohort analysis basics
+88. Retention calculation
+89. Funnel analysis
+90. Clickstream session analysis
+91. Detect late-arriving data
+92. Incremental load implementation
+93. Change Data Capture (CDC) logic
+94. Slowly Changing Dimension Type 2 (SCD2) coding
+95. Merge multiple DataFrames
+96. Compare two DataFrames and identify differences
+97. Log file analysis
+98. Sales trend analysis
+99. End-to-end ETL transformation pipeline
+100. Build a complete interview-style PySpark mini project
+
+## Preparation Strategy
+
+* **Questions 1–20:** DataFrame basics
+* **Questions 21–40:** Joins and aggregations
+* **Questions 41–60:** Window functions
+* **Questions 61–75:** Nested and complex data
+* **Questions 76–100:** Real-world interview scenarios
+
+This roadmap is comprehensive enough to prepare you for the majority of PySpark coding rounds in Data Engineering interviews. As we solve each question, we'll focus on writing clean, production-style PySpark code and discussing common interview follow-ups, rather than just getting the correct output.

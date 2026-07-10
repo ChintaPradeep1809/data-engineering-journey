@@ -1,0 +1,156 @@
+Question 3/100 (🟢 Easy)
+
+## 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to perform the following tasks:
+>
+> 1. Display employees whose **salary is greater than 50,000**.
+> 2. Display employees who belong to the **IT department**.
+> 3. Display employees whose **salary is greater than 50,000 AND department is IT**.
+> 4. Display employees whose **department is HR OR city is Chennai**.
+>
+> Write clean, readable PySpark code.
+
+---
+
+## Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## Expected Output
+
+### Task 1: Salary > 50,000
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|101   |John |IT        |60000 |Mumbai   |
+|103   |Alice|IT        |70000 |Pune     |
+|104   |Bob  |Finance   |55000 |Hyderabad|
++------+-----+----------+------+---------+
+```
+
+---
+
+### Task 2: Department = IT
+
+```text
++------+-----+----------+------+------+
+|emp_id|name |department|salary|city  |
++------+-----+----------+------+------+
+|101   |John |IT        |60000 |Mumbai|
+|103   |Alice|IT        |70000 |Pune  |
++------+-----+----------+------+------+
+```
+
+---
+
+### Task 3: Salary > 50,000 **AND** Department = IT
+
+```text
++------+-----+----------+------+------+
+|emp_id|name |department|salary|city  |
++------+-----+----------+------+------+
+|101   |John |IT        |60000 |Mumbai|
+|103   |Alice|IT        |70000 |Pune  |
++------+-----+----------+------+------+
+```
+
+---
+
+### Task 4: Department = HR **OR** City = Chennai
+
+```text
++------+-----+----------+------+--------+
+|emp_id|name |department|salary|city    |
++------+-----+----------+------+--------+
+|102   |David|HR        |45000 |Delhi   |
+|105   |Sam  |HR        |48000 |Chennai |
++------+-----+----------+------+--------+
+```
+
+---
+
+from pyspark.sql.functions import col
+
+# Task 1
+df.filter(col("salary") > 50000).select("name").show()
+
+# Task 2
+df.filter(col("department") == "IT").select("name").show()
+
+# Task 3
+df.filter(
+    (col("salary") > 50000) &
+    (col("department") == "IT")
+).select("name").show()
+
+# Task 4
+df.filter(
+    (col("department") == "HR") |
+    (col("city") == "Chennai")
+).select("name").show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+🎤 Interview Follow-up Questions
+Q1.
+
+What is the difference between:
+
+df.filter(...)
+
+and
+
+df.where(...)
+
+Are they different in PySpark?
+
+Q2.
+
+Which is preferred in production code?
+
+col("salary")
+
+or
+
+df.salary
+
+Why?
+
+Q3.
+
+Why does PySpark use:
+
+&
+
+instead of
+
+and
+
+for combining conditions?
+
+Once you submit your code, I'll review it like an interviewer, provide an optimized solution, ask follow-up questions, and then move to **Question 4/100**.

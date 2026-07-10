@@ -1,0 +1,113 @@
+## 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to:
+>
+> 1. Display only the **name**, **department**, and **salary** columns.
+> 2. Display only the **unique departments**.
+> 3. Rename the **department** column to **dept**.
+>
+> Write clean and readable PySpark code.
+
+---
+
+## Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## Expected Output
+
+### Task 1: Display Selected Columns
+
+```text
++-----+----------+------+
+|name |department|salary|
++-----+----------+------+
+|John |IT        |60000 |
+|David|HR        |45000 |
+|Alice|IT        |70000 |
+|Bob  |Finance   |55000 |
+|Sam  |HR        |48000 |
++-----+----------+------+
+```
+
+---
+
+### Task 2: Display Unique Departments
+
+```text
++----------+
+|department|
++----------+
+|IT        |
+|HR        |
+|Finance   |
++----------+
+```
+
+---
+
+### Task 3: Rename Column
+
+```text
++------+-----+------+-------+---------+
+|emp_id|name |dept  |salary |city     |
++------+-----+------+-------+---------+
+|101   |John |IT    |60000  |Mumbai   |
+|102   |David|HR    |45000  |Delhi    |
+|103   |Alice|IT    |70000  |Pune     |
+|104   |Bob  |Finance|55000 |Hyderabad|
+|105   |Sam  |HR    |48000  |Chennai  |
++------+-----+------+-------+---------+
+```
+
+---
+# Task 1
+df.select("name", "department", "salary").show()
+
+# Task 2
+df.select("department").distinct().show()
+
+# Task 3
+df = df.withColumnRenamed("department", "dept")
+df.show()
+
+
+
+
+
+
+
+
+🎤 Interview Follow-up Questions
+
+These are the kinds of questions an interviewer may ask immediately after the coding task.
+
+1. What is the difference between:
+df.select("department").distinct()
+
+and
+
+df.dropDuplicates(["department"])
+
+When would you use each?
+
+2. What is the difference between:
+withColumn()
+
+and
+
+withColumnRenamed()
+
+Can withColumn() rename a column?

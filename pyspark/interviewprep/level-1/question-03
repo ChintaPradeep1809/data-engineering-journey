@@ -88,7 +88,8 @@ from pyspark.sql.functions import col
 
 # Task 1
 df.filter(col("salary") > 50000).select("name").show()
-
+or
+df.filter(df.salary > 50000).select("name").show()
 # Task 2
 df.filter(col("department") == "IT").select("name").show()
 

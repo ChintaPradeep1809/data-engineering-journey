@@ -1,0 +1,103 @@
+Great! Let's finish **Session 1** strong.
+
+This question combines several concepts you've already practiced.
+
+---
+
+# Question 5/100 (🟢 Easy)
+
+## 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to perform the following tasks:
+>
+> 1. Sort the DataFrame by **salary in descending order**.
+> 2. Display only the **top 3 highest-paid employees**.
+> 3. Sort the DataFrame first by **department (ascending)** and then by **salary (descending)**.
+>
+> Write clean and readable PySpark code.
+
+---
+
+## Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## Expected Output
+
+### Task 1: Sort by Salary (Descending)
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|103   |Alice|IT        |70000 |Pune     |
+|101   |John |IT        |60000 |Mumbai   |
+|104   |Bob  |Finance   |55000 |Hyderabad|
+|105   |Sam  |HR        |48000 |Chennai  |
+|102   |David|HR        |45000 |Delhi    |
++------+-----+----------+------+---------+
+```
+
+---
+
+### Task 2: Top 3 Highest-Paid Employees
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|103   |Alice|IT        |70000 |Pune     |
+|101   |John |IT        |60000 |Mumbai   |
+|104   |Bob  |Finance   |55000 |Hyderabad|
++------+-----+----------+------+---------+
+```
+
+---
+
+### Task 3: Sort by Department (Ascending) and Salary (Descending)
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|104   |Bob  |Finance   |55000 |Hyderabad|
+|105   |Sam  |HR        |48000 |Chennai  |
+|102   |David|HR        |45000 |Delhi    |
+|103   |Alice|IT        |70000 |Pune     |
+|101   |John |IT        |60000 |Mumbai   |
++------+-----+----------+------+---------+
+```
+
+---
+
+## 🎯 Your Task
+
+Write the PySpark code only.
+
+---
+
+from pyspark.sql.functions import col
+
+# Task 1
+df.orderBy(col("salary").desc()).show()
+
+# Task 2
+df.orderBy(col("salary").desc()).limit(3).show()
+
+# Task 3
+df.orderBy(
+    col("department").asc(),
+    col("salary").desc()
+).show()

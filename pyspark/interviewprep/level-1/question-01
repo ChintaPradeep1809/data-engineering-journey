@@ -1,0 +1,74 @@
+ Question 1/100 (🟢 Easy)
+
+## 🎤 Interviewer
+
+> Assume you have a CSV file named `employees.csv`.
+>
+> Write PySpark code to:
+>
+> 1. Read the CSV file.
+> 2. Infer the schema.
+> 3. Treat the first row as the header.
+> 4. Display the schema.
+> 5. Display the first 5 records.
+
+---
+
+## Dataset
+
+**employees.csv**
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## Expected Output
+
+### Schema
+
+```text
+root
+ |-- emp_id: integer
+ |-- name: string
+ |-- department: string
+ |-- salary: integer
+ |-- city: string
+```
+
+### First Five Records
+
+```
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|101   |John |IT        |60000 |Mumbai   |
+|102   |David|HR        |45000 |Delhi    |
+|103   |Alice|IT        |70000 |Pune     |
+|104   |Bob  |Finance   |55000 |Hyderabad|
+|105   |Sam  |HR        |48000 |Chennai  |
++------+-----+----------+------+---------+
+```
+
+---
+
+Answers:
+
+df = (
+    spark.read
+         .option("header", True)
+         .option("inferSchema", True)
+         .csv("employees.csv")
+)
+
+df.printSchema()
+df.show(5)
+
+
+head=return row objects
+show() return in tabular form

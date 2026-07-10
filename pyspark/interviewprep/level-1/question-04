@@ -1,0 +1,96 @@
+Absolutely. You're making mistakes now, which is exactly what I want. It's much better to make them here than in an interview. I expect your syntax to improve significantly by around **Question 20**.
+
+---
+
+# Question 4/100 (🟢 Easy)
+
+## 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to perform the following tasks:
+>
+> 1. Add a new column named **bonus** which is **10% of the salary**.
+> 2. Add another column named **tax** which is **5% of the salary**.
+> 3. Add another column named **net_salary** where:
+>
+> ```
+> net_salary = salary + bonus - tax
+> ```
+>
+> Display the final DataFrame.
+
+---
+
+## Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## Expected Output
+
+```text
++------+-----+----------+------+---------+-------+------+----------+
+|emp_id|name |department|salary|city     |bonus  |tax   |net_salary|
++------+-----+----------+------+---------+-------+------+----------+
+|101   |John |IT        |60000 |Mumbai   |6000   |3000  |63000     |
+|102   |David|HR        |45000 |Delhi    |4500   |2250  |47250     |
+|103   |Alice|IT        |70000 |Pune     |7000   |3500  |73500     |
+|104   |Bob  |Finance   |55000 |Hyderabad|5500   |2750  |57750     |
+|105   |Sam  |HR        |48000 |Chennai  |4800   |2400  |50400     |
++------+-----+----------+------+---------+-------+------+----------+
+```
+
+---
+
+from pyspark.sql.functions import col
+
+df = df.withColumn("bonus", col("salary") * 0.10)
+
+df = df.withColumn("tax", col("salary") * 0.05)
+
+df = df.withColumn(
+    "net_salary",
+    col("salary") + col("bonus") - col("tax")
+)
+
+df.show()
+
+
+
+
+
+
+🎤 Interview Follow-up Questions
+1.
+
+Can you create all three columns in one statement using method chaining?
+
+(Hint: chain multiple withColumn() calls.)
+
+2.
+
+If the salary column contains NULL, what happens to:
+
+salary + bonus - tax
+
+How would you handle that?
+
+3.
+
+Suppose the interviewer says:
+
+"Round the bonus and tax values to two decimal places."
+
+Which PySpark function would you use?
+---
+

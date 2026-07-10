@@ -1,0 +1,135 @@
+Perfect. We'll continue exactly in the same interview format.
+
+# 🚀 PySpark Coding Interview Bootcamp
+
+## Phase 1 – DataFrame Fundamentals
+
+### Question 6/120 (🟢 Easy)
+
+---
+
+# 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Some records contain **NULL** values.
+>
+> Write PySpark code to perform the following tasks:
+>
+> 1. Display all employees whose **salary is NULL**.
+> 2. Replace all **NULL salary values with `0`**.
+> 3. Replace all **NULL city values with `"Unknown"`**.
+> 4. Remove all rows where **department is NULL**.
+>
+> Write clean, production-ready PySpark code.
+
+---
+
+## 📊 Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | NULL   | Delhi     |
+| 103    | Alice | IT         | 70000  | NULL      |
+| 104    | Bob   | NULL       | 55000  | Hyderabad |
+| 105    | Sam   | HR         | NULL   | Chennai   |
+
+---
+
+## ✅ Expected Output
+
+### Task 1 – Employees with NULL Salary
+
+```text
++------+-----+----------+------+--------+
+|emp_id|name |department|salary|city    |
++------+-----+----------+------+--------+
+|102   |David|HR        |NULL  |Delhi   |
+|105   |Sam  |HR        |NULL  |Chennai |
++------+-----+----------+------+--------+
+```
+
+---
+
+### Task 2 – Replace NULL Salary with 0
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|101   |John |IT        |60000 |Mumbai   |
+|102   |David|HR        |0     |Delhi    |
+|103   |Alice|IT        |70000 |NULL     |
+|104   |Bob  |NULL      |55000 |Hyderabad|
+|105   |Sam  |HR        |0     |Chennai  |
++------+-----+----------+------+---------+
+```
+
+---
+
+### Task 3 – Replace NULL City with `"Unknown"`
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|101   |John |IT        |60000 |Mumbai   |
+|102   |David|HR        |0     |Delhi    |
+|103   |Alice|IT        |70000 |Unknown  |
+|104   |Bob  |NULL      |55000 |Hyderabad|
+|105   |Sam  |HR        |0     |Chennai  |
++------+-----+----------+------+---------+
+```
+
+---
+
+### Task 4 – Remove Rows with NULL Department
+
+```text
++------+-----+----------+------+---------+
+|emp_id|name |department|salary|city     |
++------+-----+----------+------+---------+
+|101   |John |IT        |60000 |Mumbai   |
+|102   |David|HR        |0     |Delhi    |
+|103   |Alice|IT        |70000 |Unknown  |
+|105   |Sam  |HR        |0     |Chennai  |
++------+-----+----------+------+---------+
+```
+
+---
+
+answers
+from pyspark.sql.functions import col
+
+# Task 1: Display employees whose salary is NULL
+df.filter(col("salary").isNull()).show()
+>from pyspark.sql.functions import col
+
+# Task 1
+df.filter(col("salary").isNull()).show()
+
+# Task 2 & 3
+df = df.na.fill({
+    "salary": 0,
+    "city": "Unknown"
+})
+
+# Task 4
+df = df.na.drop(subset=["department"])
+
+df.show()
+# Task 2: Replace NULL salaries with 0
+df = df.fillna({"salary": 0})
+
+# Task 3: Replace NULL city values with "Unknown"
+df = df.fillna({"city": "Unknown"})
+
+# Task 4: Remove rows where department is NULL
+df = df.filter(col("department").isNotNull())
+
+# Display final DataFrame
+df.show()
+

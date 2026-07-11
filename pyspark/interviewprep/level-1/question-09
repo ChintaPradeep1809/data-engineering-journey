@@ -1,0 +1,168 @@
+### **Question 9/120 – Change Data Types (`cast()`)** 🟢
+
+---
+
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following schema:
+
+| Column       | Data Type |
+| ------------ | --------- |
+| emp_id       | String    |
+| name         | String    |
+| salary       | String    |
+| joining_date | String    |
+
+Write PySpark code to perform the following tasks:
+
+1. Convert **emp_id** from `String` to `Integer`.
+2. Convert **salary** from `String` to `Double`.
+3. Convert **joining_date** from `String` (`yyyy-MM-dd`) to `Date`.
+4. Display the updated schema and DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | salary | joining_date |
+| ------ | ----- | ------ | ------------ |
+| 101    | John  | 60000  | 2023-01-15   |
+| 102    | David | 45000  | 2022-05-20   |
+| 103    | Alice | 70000  | 2021-11-10   |
+| 104    | Bob   | 55000  | 2020-08-01   |
+| 105    | Sam   | 48000  | 2024-02-25   |
+
+---
+
+# ✅ Expected Output
+
+### Updated Schema
+
+```text
+root
+ |-- emp_id: integer
+ |-- name: string
+ |-- salary: double
+ |-- joining_date: date
+```
+
+### DataFrame
+
+| emp_id | name  |  salary | joining_date |
+| -----: | ----- | ------: | ------------ |
+|    101 | John  | 60000.0 | 2023-01-15   |
+|    102 | David | 45000.0 | 2022-05-20   |
+|    103 | Alice | 70000.0 | 2021-11-10   |
+|    104 | Bob   | 55000.0 | 2020-08-01   |
+|    105 | Sam   | 48000.0 | 2024-02-25   |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import col
+
+df = (
+    df.withColumn("emp_id", col("emp_id").cast("int"))
+      .withColumn("salary", col("salary").cast("double"))
+      .withColumn("joining_date", col("joining_date").cast("date"))
+)
+
+df.printSchema()
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `cast("int")` and `cast(IntegerType())`?
+
+**Answer:**
+
+Both perform the same conversion.
+
+Using strings:
+
+```python
+col("salary").cast("double")
+```
+
+Using data types:
+
+```python
+from pyspark.sql.types import DoubleType
+
+col("salary").cast(DoubleType())
+```
+
+`IntegerType()` and `DoubleType()` are often preferred in larger production codebases because they are explicit and reduce the chance of typos.
+
+---
+
+### 2. What happens if the value cannot be cast?
+
+Example:
+
+```text
+salary = "ABC"
+```
+
+**Answer:**
+
+PySpark does **not** throw an exception.
+
+The value becomes:
+
+```text
+NULL
+```
+
+Example:
+
+```python
+col("salary").cast("int")
+```
+
+Result:
+
+| salary |
+| ------ |
+| NULL   |
+
+---
+
+### 3. Why do we convert `joining_date` to `DateType` instead of leaving it as a string?
+
+**Answer:**
+
+Because date functions such as:
+
+* `datediff()`
+* `date_add()`
+* `date_sub()`
+* `year()`
+* `month()`
+
+work correctly on `DateType` columns. Keeping dates as strings limits date-based operations and comparisons.
+
+---
+
+### 4. Can multiple columns be cast in one statement?
+
+**Answer:**
+
+Yes, by chaining `withColumn()` calls as shown in the solution. Each call transforms one column, and chaining keeps the code concise and readable.
+
+---
+
+### 5. Is `cast()` a transformation or an action?
+
+**Answer:**
+
+`cast()` is used within `withColumn()` or `select()` and is part of a **transformation**. It returns a new DataFrame and does not modify the existing one in place.
+
+---
+
+This is the format we'll use for the remaining **111 questions** so your GitHub stays consistent, concise, and focused on interview preparation.

@@ -1,0 +1,175 @@
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `name`, `department`
+
+Some records contain leading and trailing spaces.
+
+Write PySpark code to perform the following tasks:
+
+1. Remove **leading and trailing spaces** from the `name` column.
+2. Remove only the **leading spaces** from the `department` column.
+3. Create a new column named `name_length` that stores the length of the employee's name after trimming.
+4. Display the updated DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name       | department     |
+| -----: | ---------- | -------------- |
+|    101 | `" John "` | `" IT"`        |
+|    102 | `" David"` | `" HR"`        |
+|    103 | `"Alice "` | `" Finance"`   |
+|    104 | `" Bob "`  | `" Sales"`     |
+|    105 | `" Sam "`  | `" Marketing"` |
+
+---
+
+# ✅ Expected Output
+
+| emp_id | name  | department | name_length |
+| -----: | ----- | ---------- | ----------: |
+|    101 | John  | IT         |           4 |
+|    102 | David | HR         |           5 |
+|    103 | Alice | Finance    |           5 |
+|    104 | Bob   | Sales      |           3 |
+|    105 | Sam   | Marketing  |           3 |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import trim, ltrim, length, col
+
+df = (
+    df.withColumn("name", trim(col("name")))
+      .withColumn("department", ltrim(col("department")))
+      .withColumn("name_length", length(col("name")))
+)
+
+df.show()
+```
+
+---
+
+# ⭐ Alternative Solution
+
+Using DataFrame column notation:
+
+```python
+from pyspark.sql.functions import trim, ltrim, length
+
+df = (
+    df.withColumn("name", trim(df.name))
+      .withColumn("department", ltrim(df.department))
+      .withColumn("name_length", length(df.name))
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `trim()`, `ltrim()`, and `rtrim()`?
+
+**Answer:**
+
+| Function  | Description                                    |
+| --------- | ---------------------------------------------- |
+| `trim()`  | Removes spaces from both left and right sides. |
+| `ltrim()` | Removes spaces only from the left side.        |
+| `rtrim()` | Removes spaces only from the right side.       |
+
+Example:
+
+Input:
+
+```text
+"  John  "
+```
+
+Results:
+
+```text
+trim()  -> "John"
+ltrim() -> "John  "
+rtrim() -> "  John"
+```
+
+---
+
+### 2. Why is `length()` applied after `trim()`?
+
+**Answer:**
+
+If you calculate the length before trimming, the leading and trailing spaces are included.
+
+Example:
+
+```text
+" John "
+```
+
+* Before `trim()` → Length = **6**
+* After `trim()` → Length = **4**
+
+Applying `trim()` first ensures you measure the actual content.
+
+---
+
+### 3. Does `length()` count spaces?
+
+**Answer:**
+
+Yes.
+
+Example:
+
+```text
+"John "
+```
+
+returns:
+
+```text
+5
+```
+
+because the trailing space is counted.
+
+---
+
+### 4. Can `trim()` remove tabs (`\t`) and newline characters (`\n`)?
+
+**Answer:**
+
+No, `trim()` is designed to remove leading and trailing spaces. For more complex whitespace cleanup, you would typically use regular expression functions such as `regexp_replace()`.
+
+---
+
+### 5. Can these functions be used inside `select()`?
+
+**Answer:**
+
+Yes.
+
+Example:
+
+```python
+from pyspark.sql.functions import trim, length, col
+
+df.select(
+    trim(col("name")).alias("clean_name"),
+    length(trim(col("name"))).alias("name_length")
+).show()
+```
+
+This is useful when you want transformed output without modifying the original columns.
+
+---
+

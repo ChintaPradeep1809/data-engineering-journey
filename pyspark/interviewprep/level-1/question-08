@@ -1,0 +1,182 @@
+ Interview Question
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to:
+>
+> 1. Drop the **city** column.
+> 2. Drop both **department** and **salary** columns in a single statement.
+> 3. Display the updated DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+# ✅ Expected Output
+
+### Task 1 – Drop `city`
+
+| emp_id | name  | department | salary |
+| ------ | ----- | ---------- | ------ |
+| 101    | John  | IT         | 60000  |
+| 102    | David | HR         | 45000  |
+| 103    | Alice | IT         | 70000  |
+| 104    | Bob   | Finance    | 55000  |
+| 105    | Sam   | HR         | 48000  |
+
+---
+
+### Task 2 – Drop `department` and `salary`
+
+| emp_id | name  | city      |
+| ------ | ----- | --------- |
+| 101    | John  | Mumbai    |
+| 102    | David | Delhi     |
+| 103    | Alice | Pune      |
+| 104    | Bob   | Hyderabad |
+| 105    | Sam   | Chennai   |
+
+---
+
+# ✅ Solution 1 – Drop One Column
+
+```python
+df = df.drop("city")
+
+df.show()
+```
+
+---
+
+# ✅ Solution 2 – Drop Multiple Columns
+
+```python
+df = df.drop("department", "salary")
+
+df.show()
+```
+
+---
+
+# ⭐ Alternative Solution
+
+Using `select()` instead of `drop()`:
+
+```python
+df = df.select(
+    "emp_id",
+    "name",
+    "department",
+    "salary"
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions
+
+## 1. What is the difference between `drop()` and `select()`?
+
+### ✅ Answer
+
+**`drop()`**
+
+* Removes unwanted columns.
+* Keeps all remaining columns.
+* Useful when only a few columns need to be removed.
+
+Example:
+
+```python
+df.drop("city")
+```
+
+---
+
+**`select()`**
+
+* Explicitly selects only the required columns.
+* Useful when you need only a subset of columns.
+
+Example:
+
+```python
+df.select("emp_id", "name", "salary")
+```
+
+---
+
+## 2. Which approach is preferred in production: `drop()` or `select()`?
+
+### ✅ Answer
+
+It depends on the use case.
+
+Use **`drop()`** when:
+
+* You need to remove one or two unnecessary columns.
+
+Use **`select()`** when:
+
+* Building ETL pipelines.
+* Creating curated datasets.
+* Reducing memory usage by selecting only required columns.
+* You want explicit control over the output schema.
+
+In production, **`select()` is generally preferred** because it makes the schema explicit and avoids accidentally carrying unnecessary columns through the pipeline.
+
+---
+
+## 3. What happens if you try to drop a column that doesn't exist?
+
+Example:
+
+```python
+df.drop("age")
+```
+
+### ✅ Answer
+
+PySpark **does not throw an error**.
+
+It simply returns the original DataFrame unchanged.
+
+This behavior is different from some SQL databases, where dropping a non-existent column may raise an error.
+
+---
+
+## 4. Can you drop columns using `select()`?
+
+### ✅ Answer
+
+Not directly.
+
+Instead, you select every column **except** the ones you want to remove.
+
+Example:
+
+```python
+df.select("emp_id", "name", "salary")
+```
+
+---
+
+
+
+
+
+

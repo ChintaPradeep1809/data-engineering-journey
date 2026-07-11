@@ -1,0 +1,230 @@
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `full_name`, `city`, `state`
+
+Write PySpark code to perform the following tasks:
+
+1. Split the `full_name` column into `first_name` and `last_name`.
+2. Create a new column `location` by concatenating `city` and `state` separated by a comma (`", "`).
+3. Create another column `employee_info` in the format:
+
+```text
+John Doe - Mumbai
+```
+
+4. Display the updated DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | full_name    | city      | state       |
+| -----: | ------------ | --------- | ----------- |
+|    101 | John Doe     | Mumbai    | Maharashtra |
+|    102 | David Warner | Delhi     | Delhi       |
+|    103 | Alice Smith  | Hyderabad | Telangana   |
+|    104 | Bob Martin   | Chennai   | Tamil Nadu  |
+|    105 | Sam Wilson   | Bengaluru | Karnataka   |
+
+---
+
+# ✅ Expected Output
+
+| emp_id | first_name | last_name | location             | employee_info           |
+| -----: | ---------- | --------- | -------------------- | ----------------------- |
+|    101 | John       | Doe       | Mumbai, Maharashtra  | John Doe - Mumbai       |
+|    102 | David      | Warner    | Delhi, Delhi         | David Warner - Delhi    |
+|    103 | Alice      | Smith     | Hyderabad, Telangana | Alice Smith - Hyderabad |
+|    104 | Bob        | Martin    | Chennai, Tamil Nadu  | Bob Martin - Chennai    |
+|    105 | Sam        | Wilson    | Bengaluru, Karnataka | Sam Wilson - Bengaluru  |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import split, concat, concat_ws, col, lit
+
+df = (
+    df.withColumn("first_name", split(col("full_name"), " ").getItem(0))
+      .withColumn("last_name", split(col("full_name"), " ").getItem(1))
+      .withColumn("location", concat_ws(", ", col("city"), col("state")))
+      .withColumn(
+          "employee_info",
+          concat(col("full_name"), lit(" - "), col("city"))
+      )
+)
+
+df.show()
+```
+
+---
+
+# ⭐ Alternative Solution
+
+Using array indexing after creating a temporary split column:
+
+```python
+from pyspark.sql.functions import split, concat_ws, concat, lit, col
+
+df = (
+    df.withColumn("name_array", split(col("full_name"), " "))
+      .withColumn("first_name", col("name_array")[0])
+      .withColumn("last_name", col("name_array")[1])
+      .withColumn("location", concat_ws(", ", col("city"), col("state")))
+      .withColumn(
+          "employee_info",
+          concat(col("full_name"), lit(" - "), col("city"))
+      )
+      .drop("name_array")
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `concat()` and `concat_ws()`?
+
+**Answer:**
+
+| `concat()`                                         | `concat_ws()`                                     |
+| -------------------------------------------------- | ------------------------------------------------- |
+| Concatenates columns directly without a separator. | Concatenates columns using a specified separator. |
+
+Example:
+
+```python
+concat(col("city"), col("state"))
+```
+
+Output:
+
+```text
+MumbaiMaharashtra
+```
+
+Example:
+
+```python
+concat_ws(", ", col("city"), col("state"))
+```
+
+Output:
+
+```text
+Mumbai, Maharashtra
+```
+
+---
+
+### 2. What does `split()` return?
+
+**Answer:**
+
+`split()` returns an **ArrayType** column.
+
+Example:
+
+```python
+split(col("full_name"), " ")
+```
+
+Output:
+
+```text
+["John", "Doe"]
+```
+
+You can access elements using:
+
+```python
+col("name_array")[0]
+```
+
+or
+
+```python
+split(col("full_name"), " ").getItem(0)
+```
+
+---
+
+### 3. Why do we use `lit()` inside `concat()`?
+
+**Answer:**
+
+`concat()` expects **Column** objects.
+
+A constant string such as `" - "` must be converted into a Spark column using `lit()`.
+
+Example:
+
+```python
+concat(col("full_name"), lit(" - "), col("city"))
+```
+
+Without `lit()`, PySpark raises a type error.
+
+---
+
+### 4. What happens if `full_name` contains three words?
+
+Example:
+
+```text
+John Michael Doe
+```
+
+**Answer:**
+
+Using:
+
+```python
+split(col("full_name"), " ").getItem(1)
+```
+
+returns:
+
+```text
+Michael
+```
+
+The third word (`Doe`) is ignored.
+
+For variable-length names, you need a more flexible parsing strategy based on the business requirement.
+
+---
+
+### 5. Can `concat_ws()` handle `NULL` values?
+
+**Answer:**
+
+Yes.
+
+`concat_ws()` skips `NULL` values instead of returning `NULL`.
+
+Example:
+
+| city   | state |
+| ------ | ----- |
+| Mumbai | NULL  |
+
+```python
+concat_ws(", ", col("city"), col("state"))
+```
+
+Output:
+
+```text
+Mumbai
+```
+
+By contrast, `concat()` may return `NULL` if one of its inputs is `NULL`.
+
+---
+

@@ -1,0 +1,152 @@
+# 🚀 PySpark Coding Interview Bootcamp
+
+
+### **Question 10/120 – Remove Duplicate Rows (`distinct()` & `dropDuplicates()`)** 🟢
+
+---
+
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `name`, `department`, `salary`
+
+The DataFrame contains duplicate records.
+
+Write PySpark code to perform the following tasks:
+
+1. Remove all duplicate rows from the DataFrame.
+2. Remove duplicate rows based only on the **department** column.
+3. Display the resulting DataFrames.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | department | salary |
+| -----: | ----- | ---------- | -----: |
+|    101 | John  | IT         |  60000 |
+|    102 | David | HR         |  45000 |
+|    101 | John  | IT         |  60000 |
+|    103 | Alice | IT         |  70000 |
+|    104 | Bob   | Finance    |  55000 |
+|    102 | David | HR         |  45000 |
+
+---
+
+# ✅ Expected Output
+
+### Task 1 – Remove Complete Duplicate Rows
+
+| emp_id | name  | department | salary |
+| -----: | ----- | ---------- | -----: |
+|    101 | John  | IT         |  60000 |
+|    102 | David | HR         |  45000 |
+|    103 | Alice | IT         |  70000 |
+|    104 | Bob   | Finance    |  55000 |
+
+---
+
+### Task 2 – Remove Duplicates Based on `department`
+
+| emp_id | name  | department | salary |
+| -----: | ----- | ---------- | -----: |
+|    101 | John  | IT         |  60000 |
+|    102 | David | HR         |  45000 |
+|    104 | Bob   | Finance    |  55000 |
+
+> **Note:** When using `dropDuplicates(["department"])`, Spark keeps one arbitrary row for each department unless you've explicitly sorted or used window functions beforehand.
+
+---
+
+# ✅ Recommended Solution
+
+```python
+# Task 1: Remove complete duplicate rows
+df_distinct = df.distinct()
+
+df_distinct.show()
+
+# Task 2: Remove duplicates based on department
+df_dept = df.dropDuplicates(["department"])
+
+df_dept.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `distinct()` and `dropDuplicates()`?
+
+**Answer:**
+
+* `distinct()` removes duplicate **entire rows**.
+* `dropDuplicates()` can remove duplicates based on **specific columns**.
+
+Example:
+
+```python
+df.distinct()
+```
+
+```python
+df.dropDuplicates(["department"])
+```
+
+---
+
+### 2. Which one is preferred in production?
+
+**Answer:**
+
+* Use `distinct()` when the **entire row** should be unique.
+* Use `dropDuplicates()` when business rules define uniqueness based on one or more columns.
+
+For example, if `email` identifies a customer uniquely:
+
+```python
+df.dropDuplicates(["email"])
+```
+
+---
+
+### 3. Does `dropDuplicates(["department"])` always keep the first row?
+
+**Answer:**
+
+No.
+
+Spark does **not guarantee** which row is retained because DataFrames are distributed across partitions.
+
+If you need to keep the **latest** or **highest-priority** record, use a **Window Function** with `row_number()` and filter for `row_number = 1`.
+
+This is a very common follow-up in interviews.
+
+---
+
+### 4. Is `distinct()` a transformation or an action?
+
+**Answer:**
+
+`distinct()` is a **transformation**. It returns a new DataFrame and does not modify the original DataFrame.
+
+---
+
+### 5. Can `dropDuplicates()` accept multiple columns?
+
+**Answer:**
+
+Yes.
+
+Example:
+
+```python
+df.dropDuplicates(["department", "salary"])
+```
+
+This removes duplicates based on the combination of `department` and `salary`.
+
+---
+
+This question is important because it introduces a concept that appears repeatedly in real projects. Later in the roadmap (Questions **96** and **97**), we'll revisit deduplication using **Window Functions** to keep the latest record by timestamp—a much more realistic production scenario than simple `dropDuplicates()`.

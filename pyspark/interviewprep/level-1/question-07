@@ -1,0 +1,251 @@
+### Question 7/120 (🟢 Easy)
+
+---
+
+# 🎤 Interviewer
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to perform the following tasks:
+>
+> 1. Rename the **department** column to **dept**.
+> 2. Rename the **salary** column to **emp_salary**.
+> 3. Rename **both columns in a single statement**.
+> 4. Display the updated DataFrame.
+
+---
+
+## 📊 Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## ✅ Expected Output
+
+```text
++------+-----+------+----------+---------+
+|emp_id|name |dept  |emp_salary|city     |
++------+-----+------+----------+---------+
+|101   |John |IT    |60000     |Mumbai   |
+|102   |David|HR    |45000     |Delhi    |
+|103   |Alice|IT    |70000     |Pune     |
+|104   |Bob  |Finance|55000    |Hyderabad|
+|105   |Sam  |HR    |48000     |Chennai  |
++------+-----+------+----------+---------+
+```
+
+---
+
+# 🎯 Your Task
+
+Write the PySpark code only.
+
+---
+
+## 🎤 Follow-up Questions (I'll ask these after you answer)
+
+1. What is the difference between:
+
+   * `withColumnRenamed()`
+   * `toDF()`
+   * `alias()`
+
+2. Can `withColumn()` be used to rename a column?
+
+3. If a DataFrame has **100 columns** and you need to rename **20 of them**, would you use `withColumnRenamed()` 20 times? If not, what approach would you prefer?
+
+---
+
+
+
+
+
+
+
+Got it! You mean **only for Question 7**, you want everything together in one response so you can directly save it in GitHub. That's actually a better format. From now on, I'll use this structure for every question.
+
+---
+
+# Question 7/120 – Rename Columns (🟢 Easy)
+
+## 🎤 Interview Question
+
+> You are given an employee DataFrame with the following columns:
+>
+> `emp_id`, `name`, `department`, `salary`, `city`
+>
+> Write PySpark code to:
+>
+> 1. Rename the **department** column to **dept**.
+> 2. Rename the **salary** column to **emp_salary**.
+> 3. Rename both columns in a single statement.
+> 4. Display the updated DataFrame.
+
+---
+
+## 📊 Input Dataset
+
+| emp_id | name  | department | salary | city      |
+| ------ | ----- | ---------- | ------ | --------- |
+| 101    | John  | IT         | 60000  | Mumbai    |
+| 102    | David | HR         | 45000  | Delhi     |
+| 103    | Alice | IT         | 70000  | Pune      |
+| 104    | Bob   | Finance    | 55000  | Hyderabad |
+| 105    | Sam   | HR         | 48000  | Chennai   |
+
+---
+
+## ✅ Expected Output
+
+| emp_id | name  | dept    | emp_salary | city      |
+| ------ | ----- | ------- | ---------: | --------- |
+| 101    | John  | IT      |      60000 | Mumbai    |
+| 102    | David | HR      |      45000 | Delhi     |
+| 103    | Alice | IT      |      70000 | Pune      |
+| 104    | Bob   | Finance |      55000 | Hyderabad |
+| 105    | Sam   | HR      |      48000 | Chennai   |
+
+---
+
+# ✅ Solution 1 – Rename One Column
+
+```python
+df = df.withColumnRenamed("department", "dept")
+
+df.show()
+```
+
+---
+
+# ✅ Solution 2 – Rename Another Column
+
+```python
+df = df.withColumnRenamed("salary", "emp_salary")
+
+df.show()
+```
+
+---
+
+# ✅ Solution 3 – Rename Multiple Columns (Recommended)
+
+```python
+df = (
+    df.withColumnRenamed("department", "dept")
+      .withColumnRenamed("salary", "emp_salary")
+)
+
+df.show()
+```
+
+---
+
+# ⭐ Alternative Solution
+
+If you want to rename **all** columns at once:
+
+```python
+df = df.toDF(
+    "emp_id",
+    "name",
+    "dept",
+    "emp_salary",
+    "city"
+)
+```
+
+This is useful when renaming many or all columns.
+
+---
+
+# 🎤 Interview Follow-up Questions
+
+## 1. What is the difference between `withColumnRenamed()` and `alias()`?
+
+### Answer
+
+**`withColumnRenamed()`**
+
+* Renames the column in the returned DataFrame.
+* The new name persists for subsequent operations.
+
+Example:
+
+```python
+df = df.withColumnRenamed("salary", "emp_salary")
+```
+
+---
+
+**`alias()`**
+
+* Renames the column only in the current query or projection.
+* The original DataFrame schema remains unchanged.
+
+Example:
+
+```python
+from pyspark.sql.functions import col
+
+df.select(col("salary").alias("emp_salary")).show()
+```
+
+---
+
+## 2. Can `withColumn()` be used to rename a column?
+
+### Answer
+
+**No.**
+
+`withColumn()` creates a new column or replaces an existing column's values.
+
+Example:
+
+```python
+df = df.withColumn("bonus", col("salary") * 0.10)
+```
+
+To rename a column, use:
+
+```python
+df.withColumnRenamed()
+```
+
+---
+
+## 3. If a DataFrame has 200 columns and you need to rename 50 of them, would you use `withColumnRenamed()` 50 times?
+
+### Answer
+
+Usually, **no**.
+
+Options include:
+
+* `toDF()` if you're renaming most or all columns.
+* `select()` with `alias()` if you need to rename many columns while also selecting or reordering them.
+
+Example:
+
+```python
+from pyspark.sql.functions import col
+
+df = df.select(
+    col("emp_id"),
+    col("name"),
+    col("department").alias("dept"),
+    col("salary").alias("emp_salary"),
+    col("city")
+)
+```
+
+

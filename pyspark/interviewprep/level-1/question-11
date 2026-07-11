@@ -1,0 +1,155 @@
+### **Question 11/120 – Create Literal Columns (`lit()`)** 🟢
+
+---
+
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `name`, `department`, `salary`
+
+Write PySpark code to perform the following tasks:
+
+1. Add a new column named **country** with the value **"India"** for all employees.
+2. Add a new column named **bonus** with the value **5000** for all employees.
+3. Add a new column named **is_active** with the value **True**.
+4. Display the updated DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | department | salary |
+| -----: | ----- | ---------- | -----: |
+|    101 | John  | IT         |  60000 |
+|    102 | David | HR         |  45000 |
+|    103 | Alice | IT         |  70000 |
+|    104 | Bob   | Finance    |  55000 |
+|    105 | Sam   | HR         |  48000 |
+
+---
+
+# ✅ Expected Output
+
+| emp_id | name  | department | salary | country | bonus | is_active |
+| -----: | ----- | ---------- | -----: | ------- | ----: | --------- |
+|    101 | John  | IT         |  60000 | India   |  5000 | True      |
+|    102 | David | HR         |  45000 | India   |  5000 | True      |
+|    103 | Alice | IT         |  70000 | India   |  5000 | True      |
+|    104 | Bob   | Finance    |  55000 | India   |  5000 | True      |
+|    105 | Sam   | HR         |  48000 | India   |  5000 | True      |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import lit
+
+df = (
+    df.withColumn("country", lit("India"))
+      .withColumn("bonus", lit(5000))
+      .withColumn("is_active", lit(True))
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. Why do we use `lit()`?
+
+**Answer:**
+
+`lit()` creates a **literal (constant) value** as a Spark `Column`. Since `withColumn()` expects a `Column` expression, constants like strings, numbers, or booleans should be wrapped with `lit()`.
+
+Example:
+
+```python
+from pyspark.sql.functions import lit
+
+df.withColumn("country", lit("India"))
+```
+
+---
+
+### 2. Can we write this instead?
+
+```python
+df.withColumn("country", "India")
+```
+
+**Answer:**
+
+❌ No.
+
+`withColumn()` expects a Spark `Column`, not a Python string. This will raise a type error.
+
+Correct:
+
+```python
+df.withColumn("country", lit("India"))
+```
+
+---
+
+### 3. Is `lit()` required for numeric values as well?
+
+**Answer:**
+
+Yes. The recommended approach is:
+
+```python
+lit(5000)
+```
+
+instead of passing the raw value directly.
+
+---
+
+### 4. Can `lit()` be used inside `when()`?
+
+**Answer:**
+
+Yes. It's very common.
+
+Example:
+
+```python
+from pyspark.sql.functions import when, lit, col
+
+df = df.withColumn(
+    "grade",
+    when(col("salary") > 50000, lit("High"))
+    .otherwise(lit("Low"))
+)
+```
+
+---
+
+### 5. What data types can `lit()` create?
+
+**Answer:**
+
+`lit()` supports many Python values, including:
+
+* String
+* Integer
+* Float
+* Boolean
+* Date/Timestamp (when used with appropriate objects)
+* `None` (creates a null literal)
+
+Examples:
+
+```python
+lit("India")
+lit(100)
+lit(99.5)
+lit(True)
+lit(None)
+```
+
+---

@@ -1,0 +1,209 @@
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `name`, `joining_date`
+
+Write PySpark code to perform the following tasks:
+
+1. Add a new column named **current_date** containing today's date.
+2. Add a new column named **current_timestamp** containing the current timestamp.
+3. Extract the **year** from `joining_date` into a column named `joining_year`.
+4. Extract the **month** from `joining_date` into a column named `joining_month`.
+5. Extract the **day** from `joining_date` into a column named `joining_day`.
+6. Display the updated DataFrame.
+
+> **Assume `joining_date` is already of `DateType`.**
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | joining_date |
+| -----: | ----- | ------------ |
+|    101 | John  | 2023-01-15   |
+|    102 | David | 2022-05-20   |
+|    103 | Alice | 2021-11-10   |
+|    104 | Bob   | 2020-08-01   |
+|    105 | Sam   | 2024-02-25   |
+
+---
+
+# ✅ Expected Output
+
+| emp_id | name  | joining_date | current_date | current_timestamp | joining_year | joining_month | joining_day |
+| -----: | ----- | ------------ | ------------ | ----------------- | -----------: | ------------: | ----------: |
+|    101 | John  | 2023-01-15   | Today's Date | Current Timestamp |         2023 |             1 |          15 |
+|    102 | David | 2022-05-20   | Today's Date | Current Timestamp |         2022 |             5 |          20 |
+|    103 | Alice | 2021-11-10   | Today's Date | Current Timestamp |         2021 |            11 |          10 |
+|    104 | Bob   | 2020-08-01   | Today's Date | Current Timestamp |         2020 |             8 |           1 |
+|    105 | Sam   | 2024-02-25   | Today's Date | Current Timestamp |         2024 |             2 |          25 |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import (
+    current_date,
+    current_timestamp,
+    year,
+    month,
+    dayofmonth,
+    col
+)
+
+df = (
+    df.withColumn("current_date", current_date())
+      .withColumn("current_timestamp", current_timestamp())
+      .withColumn("joining_year", year(col("joining_date")))
+      .withColumn("joining_month", month(col("joining_date")))
+      .withColumn("joining_day", dayofmonth(col("joining_date")))
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `current_date()` and `current_timestamp()`?
+
+**Answer:**
+
+| Function              | Returns                      |
+| --------------------- | ---------------------------- |
+| `current_date()`      | Current system date          |
+| `current_timestamp()` | Current system date and time |
+
+Example:
+
+```python
+current_date()
+```
+
+Output:
+
+```text
+2026-07-11
+```
+
+Example:
+
+```python
+current_timestamp()
+```
+
+Output:
+
+```text
+2026-07-11 18:45:23.123456
+```
+
+---
+
+### 2. What happens if `joining_date` is a String instead of a Date?
+
+**Answer:**
+
+Functions like `year()`, `month()`, and `dayofmonth()` expect a date or timestamp column.
+
+Convert it first:
+
+```python
+from pyspark.sql.functions import to_date, col
+
+df = df.withColumn(
+    "joining_date",
+    to_date(col("joining_date"), "yyyy-MM-dd")
+)
+```
+
+---
+
+### 3. What is the difference between `dayofmonth()` and `dayofyear()`?
+
+**Answer:**
+
+Example:
+
+Date:
+
+```text
+2024-02-25
+```
+
+```python
+dayofmonth()
+```
+
+returns:
+
+```text
+25
+```
+
+```python
+dayofyear()
+```
+
+returns:
+
+```text
+56
+```
+
+because February 25 is the **56th day** of the year 2024 (a leap year).
+
+---
+
+### 4. Can we extract the quarter from a date?
+
+**Answer:**
+
+Yes.
+
+```python
+from pyspark.sql.functions import quarter
+
+df.withColumn(
+    "quarter",
+    quarter(col("joining_date"))
+)
+```
+
+Output:
+
+| joining_date | quarter |
+| ------------ | ------- |
+| 2023-01-15   | 1       |
+| 2023-05-20   | 2       |
+| 2023-08-10   | 3       |
+| 2023-11-30   | 4       |
+
+---
+
+### 5. Which other date extraction functions are commonly asked in interviews?
+
+**Answer:**
+
+Some frequently used functions include:
+
+```python
+year()
+month()
+dayofmonth()
+dayofweek()
+dayofyear()
+weekofyear()
+quarter()
+last_day()
+next_day()
+date_format()
+```
+
+These are commonly used in ETL pipelines and reporting.
+
+---
+**Next:** **Question 16/120 – Date Arithmetic (`datediff()`, `date_add()`, `date_sub()`, `add_months()`)**. This is another favorite interview topic because it's widely used in business reporting and ETL workflows.

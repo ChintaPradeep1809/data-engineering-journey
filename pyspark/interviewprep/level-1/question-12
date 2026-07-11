@@ -1,0 +1,166 @@
+### **Question 12/120 – String Functions (`upper()`, `lower()`, `initcap()`)** 🟢
+
+---
+
+# 🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+`emp_id`, `name`, `department`, `city`
+
+Write PySpark code to perform the following tasks:
+
+1. Convert the **name** column to **uppercase**.
+2. Convert the **department** column to **lowercase**.
+3. Convert the **city** column to **proper case** (first letter of each word capitalized).
+4. Display the updated DataFrame.
+
+---
+
+# 📊 Input Dataset
+
+| emp_id | name  | department | city      |
+| -----: | ----- | ---------- | --------- |
+|    101 | john  | IT         | mumbai    |
+|    102 | DAVID | HR         | NEW DELHI |
+|    103 | aLiCe | Finance    | hyderabad |
+|    104 | bob   | Sales      | chennai   |
+|    105 | SAM   | Marketing  | bangalore |
+
+---
+
+# ✅ Expected Output
+
+| emp_id | name  | department | city      |
+| -----: | ----- | ---------- | --------- |
+|    101 | JOHN  | it         | Mumbai    |
+|    102 | DAVID | hr         | New Delhi |
+|    103 | ALICE | finance    | Hyderabad |
+|    104 | BOB   | sales      | Chennai   |
+|    105 | SAM   | marketing  | Bangalore |
+
+---
+
+# ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import upper, lower, initcap, col
+
+df = (
+    df.withColumn("name", upper(col("name")))
+      .withColumn("department", lower(col("department")))
+      .withColumn("city", initcap(col("city")))
+)
+
+df.show()
+```
+
+---
+
+# ⭐ Alternative Solution
+
+Using DataFrame column notation:
+
+```python
+from pyspark.sql.functions import upper, lower, initcap
+
+df = (
+    df.withColumn("name", upper(df.name))
+      .withColumn("department", lower(df.department))
+      .withColumn("city", initcap(df.city))
+)
+
+df.show()
+```
+
+---
+
+# 🎤 Interview Follow-up Questions & Answers
+
+### 1. What is the difference between `upper()`, `lower()`, and `initcap()`?
+
+**Answer:**
+
+* `upper()` → Converts all characters to uppercase.
+* `lower()` → Converts all characters to lowercase.
+* `initcap()` → Capitalizes the first letter of every word.
+
+Example:
+
+| Input       | Function    | Output      |
+| ----------- | ----------- | ----------- |
+| `john`      | `upper()`   | `JOHN`      |
+| `DAVID`     | `lower()`   | `david`     |
+| `new delhi` | `initcap()` | `New Delhi` |
+
+---
+
+### 2. Can we use Python string methods like `.upper()` on a PySpark column?
+
+**Answer:**
+
+❌ No.
+
+This will not work:
+
+```python
+df.withColumn("name", df.name.upper())
+```
+
+`df.name` is a Spark `Column`, not a Python string.
+
+Correct approach:
+
+```python
+from pyspark.sql.functions import upper
+
+df.withColumn("name", upper(col("name")))
+```
+
+---
+
+### 3. Do these functions modify the original DataFrame?
+
+**Answer:**
+
+No.
+
+PySpark DataFrames are immutable.
+
+Functions like `withColumn()` return a **new DataFrame**.
+
+---
+
+### 4. What happens if the column contains `NULL` values?
+
+**Answer:**
+
+The result remains `NULL`.
+
+Example:
+
+| Input  | Output (`upper()`) |
+| ------ | ------------------ |
+| `NULL` | `NULL`             |
+
+No exception is thrown.
+
+---
+
+### 5. Can these functions be used inside `select()`?
+
+**Answer:**
+
+Yes.
+
+Example:
+
+```python
+from pyspark.sql.functions import upper, col
+
+df.select(
+    upper(col("name")).alias("name_upper"),
+    col("department")
+).show()
+```
+

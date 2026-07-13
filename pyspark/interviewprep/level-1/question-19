@@ -1,0 +1,209 @@
+
+---
+
+🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+emp_id, email, phone
+
+Write PySpark code to perform the following tasks:
+
+1. Extract the first 5 characters from the email column into a new column named email_prefix.
+
+
+2. Find the position of "@" in the email column and store it in a new column named at_position.
+
+
+3. Remove all "-" (hyphens) from the phone column and store the cleaned value in clean_phone.
+
+
+4. Display the updated DataFrame.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	email	phone
+
+101	john.doe@gmail.com	98765-43210
+102	alice@yahoo.com	91234-56789
+103	bob@company.com	99887-66554
+104	sam@test.org	90123-45678
+105	david@gmail.com	95555-11122
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	email_prefix	at_position	clean_phone
+
+101	john.	9	9876543210
+102	alice	6	9123456789
+103	bob@c	4	9988766554
+104	sam@t	4	9012345678
+105	david	6	9555511122
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col, substring, instr, regexp_replace
+
+df = (
+    df.withColumn(
+        "email_prefix",
+        substring(col("email"), 1, 5)
+    )
+    .withColumn(
+        "at_position",
+        instr(col("email"), "@")
+    )
+    .withColumn(
+        "clean_phone",
+        regexp_replace(col("phone"), "-", "")
+    )
+)
+
+df.show()
+
+
+---
+
+⭐ Alternative Solution
+
+Using SQL expressions:
+
+from pyspark.sql.functions import expr
+
+df = (
+    df.withColumn(
+        "email_prefix",
+        expr("substring(email, 1, 5)")
+    )
+    .withColumn(
+        "at_position",
+        expr("instr(email, '@')")
+    )
+    .withColumn(
+        "clean_phone",
+        expr("replace(phone, '-', '')")
+    )
+)
+
+df.show()
+
+
+---
+
+🎤 Interview Follow-up Questions & Answers
+
+1. Does substring() use 0-based or 1-based indexing?
+
+Answer:
+
+PySpark substring() uses 1-based indexing.
+
+Example:
+
+substring(col("email"), 1, 5)
+
+For:
+
+john.doe@gmail.com
+
+Output:
+
+john.
+
+
+---
+
+2. What does instr() return if the substring is not found?
+
+Answer:
+
+It returns 0.
+
+Example:
+
+instr(col("email"), "#")
+
+Output:
+
+0
+
+
+---
+
+3. What is the difference between replace() and regexp_replace()?
+
+Answer:
+
+replace() replaces literal text.
+
+regexp_replace() replaces text using regular expressions.
+
+
+Example:
+
+regexp_replace(col("phone"), "-", "")
+
+removes all hyphens.
+
+You can also remove multiple special characters with a regex pattern.
+
+
+---
+
+4. Can regexp_replace() remove all non-numeric characters?
+
+Answer:
+
+Yes.
+
+Example:
+
+regexp_replace(
+    col("phone"),
+    "[^0-9]",
+    ""
+)
+
+Input:
+
++91-98765 43210
+
+Output:
+
+919876543210
+
+This is a common production use case.
+
+
+---
+
+5. What are some real-world uses of these functions?
+
+Answer:
+
+Extract username or domain from email IDs.
+
+Clean phone numbers.
+
+Remove unwanted characters from IDs.
+
+Parse product codes.
+
+Standardize customer data before loading into a data warehouse.
+
+
+
+---

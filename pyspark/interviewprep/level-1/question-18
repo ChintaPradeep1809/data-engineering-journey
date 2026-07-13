@@ -1,0 +1,189 @@
+
+---
+
+🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+emp_id, name, department, salary
+
+Write PySpark code to perform the following tasks:
+
+1. Display the name column as employee_name.
+
+
+2. Display the salary column as employee_salary.
+
+
+3. Display a new column named annual_salary (salary × 12).
+
+
+4. Display only these three columns:
+
+employee_name
+
+employee_salary
+
+annual_salary
+
+
+
+
+> Do not modify the original DataFrame.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	department	salary
+
+101	John	IT	60000
+102	David	HR	45000
+103	Alice	IT	70000
+104	Bob	Finance	55000
+105	Sam	HR	48000
+
+
+
+---
+
+✅ Expected Output
+
+employee_name	employee_salary	annual_salary
+
+John	60000	720000
+David	45000	540000
+Alice	70000	840000
+Bob	55000	660000
+Sam	48000	576000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+df.select(
+    col("name").alias("employee_name"),
+    col("salary").alias("employee_salary"),
+    (col("salary") * 12).alias("annual_salary")
+).show()
+
+
+---
+
+⭐ Alternative Solution
+
+Using DataFrame column notation:
+
+df.select(
+    df.name.alias("employee_name"),
+    df.salary.alias("employee_salary"),
+    (df.salary * 12).alias("annual_salary")
+).show()
+
+
+---
+
+🎤 Interview Follow-up Questions & Answers
+
+1. What is the difference between alias() and withColumnRenamed()?
+
+Answer:
+
+alias()	withColumnRenamed()
+
+Temporary name used in the current query.	Permanently renames the column in the returned DataFrame.
+Commonly used with select() and aggregations.	Used when you want the renamed column for future transformations.
+
+
+Example:
+
+df.select(col("name").alias("employee_name"))
+
+The original DataFrame still contains:
+
+name
+
+Whereas:
+
+df = df.withColumnRenamed("name", "employee_name")
+
+returns a DataFrame whose schema now contains:
+
+employee_name
+
+
+---
+
+2. Can alias() be used for expressions?
+
+Answer:
+
+Yes.
+
+Example:
+
+(col("salary") * 12).alias("annual_salary")
+
+This is one of the most common uses of alias().
+
+
+---
+
+3. Where is alias() most commonly used?
+
+Answer:
+
+select()
+
+groupBy().agg()
+
+SQL expressions
+
+Join result formatting
+
+
+Example:
+
+from pyspark.sql.functions import avg
+
+df.groupBy("department").agg(
+    avg("salary").alias("avg_salary")
+)
+
+
+---
+
+4. Can alias() rename multiple columns?
+
+Answer:
+
+Yes, by applying it to each selected column.
+
+Example:
+
+df.select(
+    col("name").alias("employee_name"),
+    col("salary").alias("employee_salary")
+)
+
+
+---
+
+5. Does alias() change the original DataFrame schema?
+
+Answer:
+
+No.
+
+It only changes the column name in the current projection or query output.
+
+
+---
+

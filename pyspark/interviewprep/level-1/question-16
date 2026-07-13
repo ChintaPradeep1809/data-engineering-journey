@@ -1,0 +1,195 @@
+
+
+🎤 Interview Question
+
+You are given an employee DataFrame with the following columns:
+
+emp_id, name, joining_date
+
+Write PySpark code to perform the following tasks:
+
+1. Calculate the number of days an employee has worked until today in a column named days_worked.
+
+
+2. Add 30 days to the joining_date and store it in next_review_date.
+
+
+3. Subtract 7 days from the joining_date and store it in previous_week.
+
+
+4. Add 6 months to the joining_date and store it in confirmation_date.
+
+
+5. Display the updated DataFrame.
+
+
+
+> Assume joining_date is already of DateType.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	joining_date
+
+101	John	2023-01-15
+102	David	2022-05-20
+103	Alice	2021-11-10
+104	Bob	2020-08-01
+105	Sam	2024-02-25
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	joining_date	days_worked	next_review_date	previous_week	confirmation_date
+
+101	John	2023-01-15	Calculated	2023-02-14	2023-01-08	2023-07-15
+102	David	2022-05-20	Calculated	2022-06-19	2022-05-13	2022-11-20
+103	Alice	2021-11-10	Calculated	2021-12-10	2021-11-03	2022-05-10
+104	Bob	2020-08-01	Calculated	2020-08-31	2020-07-25	2021-02-01
+105	Sam	2024-02-25	Calculated	2024-03-26	2024-02-18	2024-08-25
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import (
+    col,
+    current_date,
+    datediff,
+    date_add,
+    date_sub,
+    add_months
+)
+
+df = (
+    df.withColumn(
+        "days_worked",
+        datediff(current_date(), col("joining_date"))
+    )
+    .withColumn(
+        "next_review_date",
+        date_add(col("joining_date"), 30)
+    )
+    .withColumn(
+        "previous_week",
+        date_sub(col("joining_date"), 7)
+    )
+    .withColumn(
+        "confirmation_date",
+        add_months(col("joining_date"), 6)
+    )
+)
+
+df.show()
+
+
+---
+
+🎤 Interview Follow-up Questions & Answers
+
+1. What is the difference between date_add() and add_months()?
+
+Answer:
+
+date_add(date, n) adds a specified number of days.
+
+add_months(date, n) adds a specified number of months.
+
+
+Example:
+
+date_add(col("joining_date"), 30)
+
+adds 30 days.
+
+add_months(col("joining_date"), 6)
+
+adds 6 calendar months.
+
+
+---
+
+2. What does datediff() return?
+
+Answer:
+
+It returns the number of days between two dates.
+
+Syntax:
+
+datediff(end_date, start_date)
+
+Example:
+
+datediff(current_date(), col("joining_date"))
+
+returns the total number of days from the joining date until today.
+
+
+---
+
+3. Can datediff() return negative values?
+
+Answer:
+
+Yes.
+
+If the first date is earlier than the second date, the result is negative.
+
+Example:
+
+datediff(
+    col("joining_date"),
+    current_date()
+)
+
+If joining_date is in the future, the result is positive; if it's in the past, the result is negative because the order of arguments has changed. Always pay attention to which date is the start and which is the end.
+
+
+---
+
+4. Can we subtract months in PySpark?
+
+Answer:
+
+Yes.
+
+Use a negative value with add_months().
+
+Example:
+
+add_months(col("joining_date"), -3)
+
+This subtracts 3 months.
+
+
+---
+
+5. Which date arithmetic functions are commonly asked in interviews?
+
+Answer:
+
+Common functions include:
+
+datediff()
+date_add()
+date_sub()
+add_months()
+months_between()
+last_day()
+next_day()
+
+These are widely used in reporting, subscription analysis, payroll, and ETL jobs.
+
+
+---
+

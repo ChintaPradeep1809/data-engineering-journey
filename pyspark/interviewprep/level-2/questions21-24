@@ -1,0 +1,355 @@
+# 🚀 PySpark Coding Interview Bootcamp
+
+# Phase 2 – Aggregations
+
+## Session 1 (Questions 21–24)
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 21/120 – Count Records
+
+## 🎤 Interview Question
+
+You are given an employee DataFrame containing employee details.
+
+Write PySpark code to:
+
+1. Find the total number of employees.
+2. Count employees department-wise.
+
+---
+
+## 📊 Input Dataset
+
+| emp_id | name  | department | salary |
+| ------ | ----- | ---------- | ------ |
+| 101    | John  | IT         | 60000  |
+| 102    | David | HR         | 45000  |
+| 103    | Alice | IT         | 70000  |
+| 104    | Bob   | Finance    | 55000  |
+| 105    | Sam   | HR         | 48000  |
+
+---
+
+## ✅ Expected Output
+
+### Total Employees
+
+```text
+5
+```
+
+### Department-wise Count
+
+| department | employee_count |
+| ---------- | -------------: |
+| IT         |              2 |
+| HR         |              2 |
+| Finance    |              1 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import count
+
+# Total Employees
+df.count()
+
+# Department-wise Count
+df.groupBy("department") \
+  .agg(count("*").alias("employee_count")) \
+  .show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `count("*")` and `count("salary")`?
+
+**Answer**
+
+* `count("*")` counts **all rows**.
+* `count("salary")` counts only **non-null salary values**.
+
+---
+
+### Q2. Is `count()` an Action or Transformation?
+
+**Answer**
+
+`count()` is an **Action** because it triggers Spark job execution.
+
+---
+
+### Q3. Difference between `df.count()` and `groupBy().count()`?
+
+**Answer**
+
+* `df.count()` → Total rows.
+* `groupBy().count()` → Count per group.
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 22/120 – Count Distinct
+
+## 🎤 Interview Question
+
+Write PySpark code to:
+
+1. Find the total number of unique departments.
+2. Count distinct cities.
+
+---
+
+## 📊 Input Dataset
+
+| emp_id | department | city      |
+| -----: | ---------- | --------- |
+|    101 | IT         | Mumbai    |
+|    102 | HR         | Delhi     |
+|    103 | IT         | Pune      |
+|    104 | Finance    | Hyderabad |
+|    105 | HR         | Delhi     |
+
+---
+
+## ✅ Expected Output
+
+| unique_departments | unique_cities |
+| -----------------: | ------------: |
+|                  3 |             4 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import countDistinct
+
+df.select(
+    countDistinct("department").alias("unique_departments"),
+    countDistinct("city").alias("unique_cities")
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `distinct()` and `countDistinct()`?
+
+**Answer**
+
+* `distinct()` returns unique rows.
+* `countDistinct()` returns the number of unique values.
+
+---
+
+### Q2. Can `countDistinct()` accept multiple columns?
+
+**Answer**
+
+Yes.
+
+```python
+countDistinct("department", "city")
+```
+
+Counts unique combinations.
+
+---
+
+### Q3. Is `distinct().count()` same as `countDistinct()`?
+
+**Answer**
+
+Yes, logically they produce the same result for a single column:
+
+```python
+df.select("department").distinct().count()
+```
+
+but `countDistinct()` is shorter and generally preferred.
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 23/120 – Sum & Average
+
+## 🎤 Interview Question
+
+Write PySpark code to:
+
+1. Calculate the total salary.
+2. Calculate the average salary.
+3. Display both values.
+
+---
+
+## 📊 Input Dataset
+
+| emp_id | salary |
+| -----: | -----: |
+|    101 |  60000 |
+|    102 |  45000 |
+|    103 |  70000 |
+|    104 |  55000 |
+|    105 |  48000 |
+
+---
+
+## ✅ Expected Output
+
+| total_salary | average_salary |
+| -----------: | -------------: |
+|       278000 |          55600 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import sum, avg
+
+df.select(
+    sum("salary").alias("total_salary"),
+    avg("salary").alias("average_salary")
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `avg()` and `mean()`?
+
+**Answer**
+
+No difference.
+
+```python
+avg()
+```
+
+and
+
+```python
+mean()
+```
+
+are aliases.
+
+---
+
+### Q2. Does `avg()` ignore NULL values?
+
+**Answer**
+
+Yes.
+
+NULL values are ignored.
+
+---
+
+### Q3. Can multiple aggregations be done together?
+
+**Answer**
+
+Yes.
+
+```python
+df.select(
+    sum("salary"),
+    avg("salary")
+)
+```
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 24/120 – Min & Max
+
+## 🎤 Interview Question
+
+Write PySpark code to:
+
+1. Find the highest salary.
+2. Find the lowest salary.
+3. Display both values.
+
+---
+
+## 📊 Input Dataset
+
+| emp_id | salary |
+| -----: | -----: |
+|    101 |  60000 |
+|    102 |  45000 |
+|    103 |  70000 |
+|    104 |  55000 |
+|    105 |  48000 |
+
+---
+
+## ✅ Expected Output
+
+| minimum_salary | maximum_salary |
+| -------------: | -------------: |
+|          45000 |          70000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.functions import min, max
+
+df.select(
+    min("salary").alias("minimum_salary"),
+    max("salary").alias("maximum_salary")
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Can `min()` and `max()` work on String columns?
+
+**Answer**
+
+Yes.
+
+They use **lexicographical (alphabetical)** ordering.
+
+---
+
+### Q2. Do `min()` and `max()` ignore NULL values?
+
+**Answer**
+
+Yes.
+
+NULL values are ignored.
+
+---
+
+### Q3. Can we calculate `min()`, `max()`, `sum()`, and `avg()` together?
+
+**Answer**
+
+Yes.
+
+```python
+from pyspark.sql.functions import min, max, sum, avg
+
+df.select(
+    min("salary"),
+    max("salary"),
+    sum("salary"),
+    avg("salary")
+).show()
+```
+
+---

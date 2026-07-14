@@ -1,0 +1,353 @@
+
+⭐⭐⭐⭐⭐ Question 41/120 – Join on Multiple Columns
+
+🎤 Interview Question
+
+You are given two DataFrames:
+
+Employee
+
+emp_id	dept_id	city	salary
+
+101	1	Mumbai	60000
+102	2	Delhi	45000
+103	1	Pune	70000
+
+
+Department
+
+dept_id	city	department
+
+1	Mumbai	IT
+2	Delhi	HR
+1	Pune	IT
+
+
+Write PySpark code to:
+
+1. Join both DataFrames using dept_id and city.
+
+
+2. Display employee details along with department.
+
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	dept_id	city	department	salary
+
+101	1	Mumbai	IT	60000
+102	2	Delhi	HR	45000
+103	1	Pune	IT	70000
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on=["dept_id", "city"],
+    how="inner"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Can join() accept multiple columns?
+
+Answer
+
+Yes.
+
+df.join(df2, ["dept_id", "city"])
+
+
+---
+
+Q2. When is joining on multiple columns required?
+
+Answer
+
+When a single column is not sufficient to uniquely identify a record.
+
+Examples:
+
+Customer + Country
+
+Product + Store
+
+Department + City
+
+
+
+---
+
+Q3. Is the order of columns in the on list important?
+
+Answer
+
+No. The join is based on the specified columns regardless of their order.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 42/120 – Join with Different Column Names
+
+🎤 Interview Question
+
+You are given:
+
+Employee
+
+emp_id	dept_id
+
+101	1
+102	2
+
+
+Department
+
+department_id	department
+
+1	IT
+2	HR
+
+
+Write PySpark code to join the DataFrames where:
+
+emp.dept_id = dept.department_id
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	department
+
+101	IT
+102	HR
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+df_emp.join(
+    df_dept,
+    col("dept_id") == col("department_id"),
+    "inner"
+).select(
+    "emp_id",
+    "department"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why can't we use on="dept_id" here?
+
+Answer
+
+Because the column names are different:
+
+dept_id
+
+department_id
+
+
+An explicit join condition is required.
+
+
+---
+
+Q2. Which operator is used for join conditions?
+
+Answer
+
+==
+
+Example:
+
+col("dept_id") == col("department_id")
+
+
+---
+
+Q3. Can multiple conditions be combined?
+
+Answer
+
+Yes.
+
+(col("dept_id") == col("department_id")) &
+(col("city") == col("location"))
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 43/120 – Handling Duplicate Columns After Join
+
+🎤 Interview Question
+
+You are given:
+
+Employee
+
+emp_id	dept_id
+
+101	1
+102	2
+
+
+Department
+
+dept_id	department
+
+1	IT
+2	HR
+
+
+After joining, avoid duplicate columns and display:
+
+emp_id
+
+dept_id
+
+department
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.alias("e") \
+.join(
+    df_dept.alias("d"),
+    col("e.dept_id") == col("d.dept_id"),
+    "inner"
+).select(
+    col("e.emp_id"),
+    col("e.dept_id"),
+    col("d.department")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why do duplicate columns appear after joins?
+
+Answer
+
+Because both DataFrames contain columns with the same name.
+
+
+---
+
+Q2. How can duplicate columns be avoided?
+
+Answer
+
+Use:
+
+alias()
+
+select()
+
+
+to explicitly choose the required columns.
+
+
+---
+
+Q3. Why is using select() after a join recommended?
+
+Answer
+
+It avoids ambiguity, improves readability, and returns only the columns required by downstream transformations.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 44/120 – Broadcast Join
+
+🎤 Interview Question
+
+You have:
+
+Employee DataFrame → 100 million rows
+
+Department DataFrame → 100 rows
+
+
+Write PySpark code to optimize the join.
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import broadcast
+
+df_emp.join(
+    broadcast(df_dept),
+    "dept_id",
+    "inner"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Broadcast Join?
+
+Answer
+
+Spark sends the smaller DataFrame to every executor, avoiding a shuffle of the large DataFrame.
+
+
+---
+
+Q2. When should we use a Broadcast Join?
+
+Answer
+
+When one DataFrame is very small (lookup/dimension table) and the other is very large (fact table).
+
+Examples:
+
+Employee ↔ Department
+
+Sales ↔ Product
+
+Orders ↔ Country
+
+
+
+---
+
+Q3. What is the biggest advantage of a Broadcast Join?
+
+Answer
+
+It minimizes network shuffle, making joins significantly faster when the smaller DataFrame fits in memory.
+
+
+---
+

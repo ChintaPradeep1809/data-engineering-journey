@@ -1,0 +1,362 @@
+
+
+⭐⭐⭐⭐⭐ Question 25/120 – GroupBy Single Column
+
+🎤 Interview Question
+
+You are given an employee DataFrame.
+
+Write PySpark code to:
+
+1. Calculate the total salary for each department.
+
+
+2. Display the result.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	department	salary
+
+101	John	IT	60000
+102	David	HR	45000
+103	Alice	IT	70000
+104	Bob	Finance	55000
+105	Sam	HR	48000
+
+
+
+---
+
+✅ Expected Output
+
+department	total_salary
+
+IT	130000
+HR	93000
+Finance	55000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum
+
+df.groupBy("department") \
+  .agg(sum("salary").alias("total_salary")) \
+  .show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is the difference between groupBy().sum() and groupBy().agg(sum())?
+
+Answer
+
+df.groupBy("department").sum("salary")
+
+is a shortcut.
+
+df.groupBy("department").agg(sum("salary"))
+
+is more flexible because it supports multiple aggregations and aliases.
+
+
+---
+
+Q2. Does groupBy() shuffle data?
+
+Answer
+
+Yes.
+
+groupBy() causes a shuffle, making it one of the more expensive Spark operations.
+
+
+---
+
+Q3. Is groupBy() a transformation or an action?
+
+Answer
+
+It is a transformation. The Spark job executes only when an action like show() or count() is called.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 26/120 – GroupBy Multiple Columns
+
+🎤 Interview Question
+
+Write PySpark code to:
+
+1. Calculate the total salary grouped by both department and city.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	department	city	salary
+
+101	IT	Mumbai	60000
+102	HR	Delhi	45000
+103	IT	Mumbai	70000
+104	Finance	Hyderabad	55000
+105	HR	Delhi	48000
+
+
+
+---
+
+✅ Expected Output
+
+department	city	total_salary
+
+IT	Mumbai	130000
+HR	Delhi	93000
+Finance	Hyderabad	55000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum
+
+df.groupBy(
+    "department",
+    "city"
+).agg(
+    sum("salary").alias("total_salary")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Can groupBy() take multiple columns?
+
+Answer
+
+Yes.
+
+df.groupBy("department", "city")
+
+creates groups based on the combination of both columns.
+
+
+---
+
+Q2. Which column is grouped first?
+
+Answer
+
+Neither.
+
+Spark groups using the combined key (department, city).
+
+
+---
+
+Q3. Can we group by three or more columns?
+
+Answer
+
+Yes.
+
+There is no practical limit other than performance considerations.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 27/120 – Multiple Aggregations
+
+🎤 Interview Question
+
+Write PySpark code to calculate the following for each department:
+
+1. Total salary
+
+
+2. Average salary
+
+
+3. Maximum salary
+
+
+4. Minimum salary
+
+
+
+
+---
+
+📊 Input Dataset
+
+department	salary
+
+IT	60000
+HR	45000
+IT	70000
+Finance	55000
+HR	48000
+
+
+
+---
+
+✅ Expected Output
+
+department	total_salary	avg_salary	max_salary	min_salary
+
+IT	130000	65000	70000	60000
+HR	93000	46500	48000	45000
+Finance	55000	55000	55000	55000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum, avg, max, min
+
+df.groupBy("department").agg(
+    sum("salary").alias("total_salary"),
+    avg("salary").alias("avg_salary"),
+    max("salary").alias("max_salary"),
+    min("salary").alias("min_salary")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use agg() instead of calling sum(), avg(), etc. separately?
+
+Answer
+
+Using a single agg() performs all aggregations together, making the code cleaner and generally more efficient than multiple aggregation passes.
+
+
+---
+
+Q2. Can we mix different aggregation functions inside agg()?
+
+Answer
+
+Yes.
+
+You can combine sum(), avg(), min(), max(), count(), and many others.
+
+
+---
+
+Q3. Is agg() only used with groupBy()?
+
+Answer
+
+No.
+
+It can also be used after window specifications and in other aggregation contexts.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 28/120 – HAVING Condition
+
+🎤 Interview Question
+
+Write PySpark code to:
+
+1. Calculate the total salary for each department.
+
+
+2. Display only departments where the total salary is greater than 100000.
+
+
+
+
+---
+
+📊 Input Dataset
+
+department	salary
+
+IT	60000
+HR	45000
+IT	70000
+Finance	55000
+HR	48000
+
+
+
+---
+
+✅ Expected Output
+
+department	total_salary
+
+IT	130000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum, col
+
+df.groupBy("department") \
+  .agg(sum("salary").alias("total_salary")) \
+  .filter(col("total_salary") > 100000) \
+  .show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is the PySpark equivalent of SQL HAVING?
+
+Answer
+
+Filter after aggregation.
+
+df.groupBy(...)
+  .agg(...)
+  .filter(...)
+
+
+---
+
+Q2. Can we use where() instead of filter()?
+
+Answer
+
+Yes.
+
+where() and filter() are aliases in PySpark.
+
+
+---
+
+Q3. Why can't we filter on total_salary before groupBy()?
+
+Answer
+
+Because total_salary does not exist until the aggregation is computed. Filtering beforehand would correspond to a SQL WHERE, not a

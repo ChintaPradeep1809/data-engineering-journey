@@ -1,0 +1,387 @@
+
+⭐⭐⭐⭐⭐ Question 37/120 – Left Semi Join
+
+🎤 Interview Question
+
+You are given two DataFrames:
+
+Employee DataFrame
+
+emp_id	name	dept_id
+
+101	John	1
+102	David	2
+103	Alice	1
+104	Bob	3
+
+
+Department DataFrame
+
+dept_id	department
+
+1	IT
+2	HR
+
+
+Write PySpark code to:
+
+1. Perform a Left Semi Join.
+
+
+2. Return only employees whose dept_id exists in the Department DataFrame.
+
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	dept_id
+
+101	John	1
+102	David	2
+103	Alice	1
+
+
+> Note: Only columns from the left DataFrame are returned.
+
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="left_semi"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Left Semi Join?
+
+Answer
+
+Returns only matching rows from the left DataFrame.
+
+It does not return columns from the right DataFrame.
+
+
+---
+
+Q2. When do we use Left Semi Join?
+
+Answer
+
+When checking whether records exist in another DataFrame.
+
+Example:
+
+Existing customers
+
+Valid products
+
+Active employees
+
+
+
+---
+
+Q3. What is the SQL equivalent?
+
+Answer
+
+SELECT *
+FROM employee e
+WHERE EXISTS (
+    SELECT 1
+    FROM department d
+    WHERE e.dept_id = d.dept_id
+);
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 38/120 – Left Anti Join
+
+🎤 Interview Question
+
+Using the same DataFrames,
+
+Write PySpark code to:
+
+1. Perform a Left Anti Join.
+
+
+2. Return employees whose dept_id does not exist in the Department DataFrame.
+
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	dept_id
+
+104	Bob	3
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="left_anti"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Left Anti Join?
+
+Answer
+
+Returns rows from the left DataFrame that have no matching record in the right DataFrame.
+
+
+---
+
+Q2. Where is Left Anti Join used?
+
+Answer
+
+Finding orphan records
+
+Data quality checks
+
+Missing customers
+
+Invalid foreign keys
+
+ETL reconciliation
+
+
+
+---
+
+Q3. What is the SQL equivalent?
+
+Answer
+
+SELECT *
+FROM employee e
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM department d
+    WHERE e.dept_id = d.dept_id
+);
+
+
+---
+
+⭐⭐⭐⭐☆ Question 39/120 – Cross Join
+
+🎤 Interview Question
+
+You are given two DataFrames:
+
+Employee
+
+name
+
+John
+Alice
+
+
+Project
+
+project
+
+P1
+P2
+
+
+Write PySpark code to:
+
+1. Perform a Cross Join.
+
+
+2. Generate every possible employee-project combination.
+
+
+
+
+---
+
+✅ Expected Output
+
+name	project
+
+John	P1
+John	P2
+Alice	P1
+Alice	P2
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.crossJoin(df_project).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Cross Join?
+
+Answer
+
+Returns the Cartesian Product of two DataFrames.
+
+Every row from the first DataFrame is paired with every row from the second.
+
+
+---
+
+Q2. Why should Cross Join be used carefully?
+
+Answer
+
+Because the number of output rows grows rapidly.
+
+Example:
+
+1,000 × 1,000 = 1,000,000 rows
+
+100,000 × 100,000 = 10 billion rows
+
+
+This can cause serious performance issues.
+
+
+---
+
+Q3. What are common use cases?
+
+Answer
+
+Generating combinations
+
+Calendar tables
+
+Test data generation
+
+Matrix expansion
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 40/120 – Self Join
+
+🎤 Interview Question
+
+You are given an employee DataFrame.
+
+emp_id	employee	manager_id
+
+1	John	NULL
+2	David	1
+3	Alice	1
+4	Bob	2
+
+
+Write PySpark code to display:
+
+Employee Name
+
+Manager Name
+
+
+
+---
+
+✅ Expected Output
+
+employee	manager
+
+John	NULL
+David	John
+Alice	John
+Bob	David
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+emp = df.alias("emp")
+mgr = df.alias("mgr")
+
+emp.join(
+    mgr,
+    col("emp.manager_id") == col("mgr.emp_id"),
+    "left"
+).select(
+    col("emp.employee").alias("employee"),
+    col("mgr.employee").alias("manager")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Self Join?
+
+Answer
+
+A Self Join joins a DataFrame with itself.
+
+It is commonly used for hierarchical relationships.
+
+
+---
+
+Q2. Why do we use alias() in Self Join?
+
+Answer
+
+Without aliases, Spark cannot distinguish between the two references to the same DataFrame.
+
+
+---
+
+Q3. Where are Self Joins commonly used?
+
+Answer
+
+Employee → Manager hierarchy
+
+Category → Parent Category
+
+Organization structure
+
+Bill of Materials (BOM)
+
+
+
+---

@@ -1,0 +1,354 @@
+
+
+⭐⭐⭐⭐⭐ Question 33/120 – Inner Join
+
+🎤 Interview Question
+
+You are given two DataFrames:
+
+Employee DataFrame
+
+emp_id	name	dept_id
+
+101	John	1
+102	David	2
+103	Alice	1
+104	Bob	3
+
+
+Department DataFrame
+
+dept_id	department
+
+1	IT
+2	HR
+4	Finance
+
+
+Write PySpark code to:
+
+1. Perform an Inner Join on dept_id.
+
+
+2. Display employee name and department.
+
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	department
+
+101	John	IT
+102	David	HR
+103	Alice	IT
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="inner"
+).select(
+    "emp_id",
+    "name",
+    "department"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is an Inner Join?
+
+Answer
+
+Returns only the matching rows from both DataFrames.
+
+
+---
+
+Q2. What happens to unmatched rows?
+
+Answer
+
+They are discarded.
+
+
+---
+
+Q3. What is the default join type in PySpark?
+
+Answer
+
+inner
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 34/120 – Left Join
+
+🎤 Interview Question
+
+Using the same DataFrames,
+
+Write PySpark code to:
+
+1. Perform a Left Join.
+
+
+2. Display all employees, even if they don't have a matching department.
+
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	department
+
+101	John	IT
+102	David	HR
+103	Alice	IT
+104	Bob	NULL
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="left"
+).select(
+    "emp_id",
+    "name",
+    "department"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between Inner Join and Left Join?
+
+Answer
+
+Inner Join → Only matching rows.
+
+Left Join → All rows from the left DataFrame + matching rows from the right.
+
+
+
+---
+
+Q2. Which table is the left table?
+
+Answer
+
+The DataFrame before .join().
+
+Example:
+
+df_emp.join(df_dept)
+
+df_emp is the left table.
+
+
+---
+
+Q3. Where are Left Joins commonly used?
+
+Answer
+
+Customer master data
+
+Employee reports
+
+Transaction enrichment
+
+Data warehouse ETL
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 35/120 – Right Join
+
+🎤 Interview Question
+
+Using the same DataFrames,
+
+Write PySpark code to:
+
+1. Perform a Right Join.
+
+
+2. Display all departments, even if no employees belong to them.
+
+
+
+
+---
+
+✅ Expected Output
+
+dept_id	department	emp_id	name
+
+1	IT	101	John
+1	IT	103	Alice
+2	HR	102	David
+4	Finance	NULL	NULL
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="right"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between Left Join and Right Join?
+
+Answer
+
+The preserved table changes.
+
+Left Join → Keeps all rows from the left table.
+
+Right Join → Keeps all rows from the right table.
+
+
+
+---
+
+Q2. Is Right Join commonly used?
+
+Answer
+
+No.
+
+Most production code prefers Left Join because it is easier to read and reason about.
+
+
+---
+
+Q3. Can every Right Join be rewritten as a Left Join?
+
+Answer
+
+Yes.
+
+Swap the DataFrames and use a Left Join.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 36/120 – Full Outer Join
+
+🎤 Interview Question
+
+Using the same DataFrames,
+
+Write PySpark code to:
+
+1. Perform a Full Outer Join.
+
+
+2. Display all matching and non-matching rows.
+
+
+
+
+---
+
+✅ Expected Output
+
+dept_id	emp_id	name	department
+
+1	101	John	IT
+1	103	Alice	IT
+2	102	David	HR
+3	104	Bob	NULL
+4	NULL	NULL	Finance
+
+
+
+---
+
+✅ Recommended Solution
+
+df_emp.join(
+    df_dept,
+    on="dept_id",
+    how="outer"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between Outer Join and Full Outer Join?
+
+Answer
+
+There is no difference.
+
+Both:
+
+how="outer"
+
+and
+
+how="full"
+
+perform a Full Outer Join.
+
+
+---
+
+Q2. When do we use a Full Outer Join?
+
+Answer
+
+Data reconciliation
+
+Data validation
+
+Comparing two systems
+
+ETL audits
+
+
+
+---
+
+Q3. Which join returns the maximum number of rows?
+
+Answer
+
+Full Outer Join, because it includes all matching and non-matching rows from both DataFrames.
+
+
+---

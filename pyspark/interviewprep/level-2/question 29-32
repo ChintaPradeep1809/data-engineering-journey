@@ -1,0 +1,399 @@
+
+⭐⭐⭐⭐⭐ Question 29/120 – Pivot
+
+🎤 Interview Question
+
+You are given a sales DataFrame with the following columns:
+
+employee, department, sales
+
+Write PySpark code to:
+
+1. Pivot the department column.
+
+
+2. Display the total sales of each employee under separate department columns.
+
+
+
+
+---
+
+📊 Input Dataset
+
+employee	department	sales
+
+John	IT	1000
+John	HR	500
+Alice	IT	2000
+Bob	Finance	1500
+Alice	HR	800
+
+
+
+---
+
+✅ Expected Output
+
+employee	Finance	HR	IT
+
+John	NULL	500	1000
+Alice	NULL	800	2000
+Bob	1500	NULL	NULL
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum
+
+df.groupBy("employee") \
+  .pivot("department") \
+  .agg(sum("sales")) \
+  .show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Pivot?
+
+Answer
+
+Pivot converts row values into column names.
+
+
+---
+
+Q2. Which SQL operation is equivalent to Pivot?
+
+Answer
+
+It is conceptually similar to a PIVOT operation in SQL.
+
+
+---
+
+Q3. When is Pivot commonly used?
+
+Answer
+
+Sales reports
+
+Monthly reports
+
+Dashboard generation
+
+Cross-tab reporting
+
+
+
+---
+
+⭐⭐⭐⭐☆ Question 30/120 – Rollup
+
+🎤 Interview Question
+
+Write PySpark code to calculate:
+
+1. Total salary by department.
+
+
+2. Grand total salary of all departments.
+
+
+
+
+---
+
+📊 Input Dataset
+
+department	salary
+
+IT	60000
+IT	70000
+HR	45000
+HR	48000
+Finance	55000
+
+
+
+---
+
+✅ Expected Output
+
+department	total_salary
+
+IT	130000
+HR	93000
+Finance	55000
+NULL	278000
+
+
+> The NULL row represents the grand total.
+
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum
+
+df.rollup("department") \
+  .agg(sum("salary").alias("total_salary")) \
+  .show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Rollup?
+
+Answer
+
+rollup() generates hierarchical subtotals along with the grand total.
+
+
+---
+
+Q2. What does the NULL row represent?
+
+Answer
+
+The NULL row represents the overall total across all groups.
+
+
+---
+
+Q3. Where is Rollup used?
+
+Answer
+
+Financial reports
+
+Sales summaries
+
+BI dashboards
+
+Executive reporting
+
+
+
+---
+
+⭐⭐⭐⭐☆ Question 31/120 – Cube
+
+🎤 Interview Question
+
+Write PySpark code to calculate salary totals for every combination of:
+
+Department
+
+City
+
+
+including all subtotals and the grand total.
+
+
+---
+
+📊 Input Dataset
+
+department	city	salary
+
+IT	Mumbai	60000
+IT	Pune	70000
+HR	Delhi	45000
+Finance	Hyderabad	55000
+
+
+
+---
+
+✅ Expected Output (Sample)
+
+department	city	total_salary
+
+IT	Mumbai	60000
+IT	Pune	70000
+IT	NULL	130000
+HR	Delhi	45000
+HR	NULL	45000
+Finance	Hyderabad	55000
+Finance	NULL	55000
+NULL	Mumbai	60000
+NULL	Pune	70000
+NULL	Delhi	45000
+NULL	Hyderabad	55000
+NULL	NULL	230000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import sum
+
+df.cube(
+    "department",
+    "city"
+).agg(
+    sum("salary").alias("total_salary")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between Rollup and Cube?
+
+Answer
+
+rollup() generates hierarchical subtotals.
+
+cube() generates all possible combinations of grouping columns.
+
+
+
+---
+
+Q2. Which one produces more rows?
+
+Answer
+
+cube() generally produces more rows because it computes every grouping combination.
+
+
+---
+
+Q3. Which is more expensive?
+
+Answer
+
+cube() is more computationally expensive than rollup() due to the larger number of aggregations.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 32/120 – Real Interview Aggregation Challenge
+
+🎤 Interview Question
+
+You are given an employee DataFrame.
+
+Write PySpark code to calculate, for each department:
+
+1. Employee count
+
+
+2. Total salary
+
+
+3. Average salary
+
+
+4. Maximum salary
+
+
+5. Minimum salary
+
+
+
+Sort the output by total salary in descending order.
+
+
+---
+
+📊 Input Dataset
+
+department	salary
+
+IT	60000
+IT	70000
+HR	45000
+HR	48000
+Finance	55000
+
+
+
+---
+
+✅ Expected Output
+
+department	employee_count	total_salary	avg_salary	max_salary	min_salary
+
+IT	2	130000	65000	70000	60000
+HR	2	93000	46500	48000	45000
+Finance	1	55000	55000	55000	55000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import (
+    count,
+    sum,
+    avg,
+    max,
+    min,
+    col
+)
+
+df.groupBy("department") \
+  .agg(
+      count("*").alias("employee_count"),
+      sum("salary").alias("total_salary"),
+      avg("salary").alias("avg_salary"),
+      max("salary").alias("max_salary"),
+      min("salary").alias("min_salary")
+  ) \
+  .orderBy(col("total_salary").desc()) \
+  .show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use one agg() instead of multiple groupBy() calls?
+
+Answer
+
+A single agg() computes all required aggregations together, making the code cleaner and generally more efficient.
+
+
+---
+
+Q2. Can we sort aggregated results?
+
+Answer
+
+Yes.
+
+Use:
+
+.orderBy(col("total_salary").desc())
+
+
+---
+
+Q3. Is sorting done before or after aggregation?
+
+Answer
+
+After aggregation.
+
+The aggregated column (total_salary) does not exist until the agg() step completes.
+
+
+---

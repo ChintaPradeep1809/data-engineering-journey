@@ -1,0 +1,357 @@
+# ⭐⭐⭐⭐⭐ Question 49/120 – `lead()`
+
+## 🎤 Interview Question
+
+You are given an employee salary history DataFrame.
+
+Write PySpark code to:
+
+1. Display the next employee's salary within each department.
+2. Order employees by salary in ascending order.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | next_salary |
+| ---------- | -------- | -----: | ----------: |
+| IT         | John     |  60000 |       70000 |
+| IT         | Alice    |  70000 |       80000 |
+| IT         | Bob      |  80000 |        NULL |
+| HR         | David    |  45000 |       50000 |
+| HR         | Sam      |  50000 |        NULL |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lead, col
+
+window_spec = Window.partitionBy("department") \
+                    .orderBy(col("salary"))
+
+df.withColumn(
+    "next_salary",
+    lead("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What does `lead()` do?
+
+**Answer**
+
+Returns the value from the **next row** within the window partition.
+
+---
+
+### Q2. What is the default offset of `lead()`?
+
+**Answer**
+
+`1`
+
+Example:
+
+```python
+lead("salary")
+```
+
+is equivalent to:
+
+```python
+lead("salary", 1)
+```
+
+---
+
+### Q3. Can we specify a default value?
+
+**Answer**
+
+Yes.
+
+```python
+lead("salary", 1, 0)
+```
+
+If there is no next row, it returns `0` instead of `NULL`.
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 50/120 – `lag()`
+
+## 🎤 Interview Question
+
+Write PySpark code to:
+
+1. Display the previous employee's salary within each department.
+2. Order employees by salary in ascending order.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | previous_salary |
+| ---------- | -------- | -----: | --------------: |
+| IT         | John     |  60000 |            NULL |
+| IT         | Alice    |  70000 |           60000 |
+| IT         | Bob      |  80000 |           70000 |
+| HR         | David    |  45000 |            NULL |
+| HR         | Sam      |  50000 |           45000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag, col
+
+window_spec = Window.partitionBy("department") \
+                    .orderBy(col("salary"))
+
+df.withColumn(
+    "previous_salary",
+    lag("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `lead()` and `lag()`?
+
+**Answer**
+
+* `lead()` → Next row.
+* `lag()` → Previous row.
+
+---
+
+### Q2. Can `lag()` have an offset?
+
+**Answer**
+
+Yes.
+
+```python
+lag("salary", 2)
+```
+
+returns the value two rows before.
+
+---
+
+### Q3. Where are `lead()` and `lag()` commonly used?
+
+**Answer**
+
+* Trend analysis
+* Previous/next transaction
+* Stock prices
+* Customer activity
+* Time-series analytics
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 51/120 – Running Total
+
+## 🎤 Interview Question
+
+Write PySpark code to calculate the **running total of salary** within each department.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | running_total |
+| ---------- | -------- | -----: | ------------: |
+| IT         | John     |  60000 |         60000 |
+| IT         | Alice    |  70000 |        130000 |
+| IT         | Bob      |  80000 |        210000 |
+| HR         | David    |  45000 |         45000 |
+| HR         | Sam      |  50000 |         95000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import sum, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy("salary")
+          .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+)
+
+df.withColumn(
+    "running_total",
+    sum("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What does `Window.unboundedPreceding` mean?
+
+**Answer**
+
+The window starts from the **first row** in the partition.
+
+---
+
+### Q2. Why do we use `rowsBetween()`?
+
+**Answer**
+
+To define the window frame over which the aggregation is calculated.
+
+---
+
+### Q3. Common use cases?
+
+**Answer**
+
+* Running sales
+* Account balance
+* Inventory tracking
+* Financial reporting
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 52/120 – Running Average
+
+## 🎤 Interview Question
+
+Write PySpark code to calculate the **running average salary** within each department.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | running_avg |
+| ---------- | -------- | -----: | ----------: |
+| IT         | John     |  60000 |       60000 |
+| IT         | Alice    |  70000 |       65000 |
+| IT         | Bob      |  80000 |       70000 |
+| HR         | David    |  45000 |       45000 |
+| HR         | Sam      |  50000 |       47500 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import avg
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy("salary")
+          .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+)
+
+df.withColumn(
+    "running_avg",
+    avg("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `avg()` and running average?
+
+**Answer**
+
+* `avg()` computes one average per group.
+* Running average computes the average from the first row up to the current row.
+
+---
+
+### Q2. Can we calculate running `min()` and `max()`?
+
+**Answer**
+
+Yes.
+
+The same window specification can be used with:
+
+```python
+min()
+max()
+count()
+sum()
+avg()
+```
+
+---
+
+### Q3. What is the difference between a window aggregation and a `groupBy()` aggregation?
+
+**Answer**
+
+* `groupBy()` reduces multiple rows into one row per group.
+* Window functions retain every original row while adding calculated values.
+
+---

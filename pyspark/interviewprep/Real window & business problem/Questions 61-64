@@ -1,0 +1,406 @@
+
+Phase 5 – Real Window & Business Problems
+
+Session 1 (Questions 61–64)
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 61/120 – Latest Record Per Customer
+
+🎤 Interview Question
+
+You are given a customer transaction DataFrame.
+
+Write PySpark code to display only the latest transaction for each customer based on transaction_date.
+
+
+---
+
+📊 Input Dataset
+
+customer_id	transaction_id	transaction_date	amount
+
+101	T1	2024-01-10	1000
+101	T2	2024-03-15	1500
+102	T3	2024-02-20	2000
+102	T4	2024-01-18	1800
+103	T5	2024-04-01	2500
+
+
+
+---
+
+✅ Expected Output
+
+customer_id	transaction_id	transaction_date	amount
+
+101	T2	2024-03-15	1500
+102	T3	2024-02-20	2000
+103	T5	2024-04-01	2500
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number, col
+
+window_spec = (
+    Window.partitionBy("customer_id")
+          .orderBy(col("transaction_date").desc())
+)
+
+result = (
+    df.withColumn("rn", row_number().over(window_spec))
+      .filter(col("rn") == 1)
+      .drop("rn")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use row_number() instead of rank()?
+
+Answer
+
+row_number() guarantees exactly one latest record per customer.
+
+If two records have the same date:
+
+rank() returns multiple rows with rank = 1.
+
+row_number() returns only one row.
+
+
+
+---
+
+Q2. What if two transactions have the same transaction_date?
+
+Answer
+
+Use a secondary sort column.
+
+Example:
+
+.orderBy(
+    col("transaction_date").desc(),
+    col("transaction_id").desc()
+)
+
+This ensures deterministic results.
+
+
+---
+
+Q3. Where is this pattern used?
+
+Answer
+
+Latest customer record
+
+Latest employee salary
+
+Latest product price
+
+Latest order status
+
+Latest account balance
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 62/120 – Latest Salary Per Employee
+
+🎤 Interview Question
+
+Each employee can have multiple salary revisions.
+
+Write PySpark code to return only the latest salary record for each employee.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	salary	effective_date
+
+101	50000	2023-01-01
+101	60000	2024-01-01
+102	45000	2023-06-01
+102	52000	2024-02-01
+103	70000	2024-03-01
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	salary	effective_date
+
+101	60000	2024-01-01
+102	52000	2024-02-01
+103	70000	2024-03-01
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number, col
+
+window_spec = (
+    Window.partitionBy("emp_id")
+          .orderBy(col("effective_date").desc())
+)
+
+result = (
+    df.withColumn("rn", row_number().over(window_spec))
+      .filter(col("rn") == 1)
+      .drop("rn")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why not use groupBy().max(effective_date)?
+
+Answer
+
+groupBy().max() only returns the latest date.
+
+It does not return the corresponding salary or other columns.
+
+
+---
+
+Q2. Why is row_number() the preferred solution?
+
+Answer
+
+Because it returns the entire latest row, not just the maximum date.
+
+
+---
+
+Q3. Is this question common?
+
+Answer
+
+Yes. It is one of the most frequently asked PySpark and SQL interview problems.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 63/120 – Second Highest Salary Per Department
+
+🎤 Interview Question
+
+Write PySpark code to find the second highest salary in each department.
+
+
+---
+
+📊 Input Dataset
+
+department	employee	salary
+
+IT	John	90000
+IT	Alice	80000
+IT	Bob	70000
+HR	David	60000
+HR	Sam	50000
+
+
+
+---
+
+✅ Expected Output
+
+department	employee	salary
+
+IT	Alice	80000
+HR	Sam	50000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import dense_rank, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary").desc())
+)
+
+result = (
+    df.withColumn("rank", dense_rank().over(window_spec))
+      .filter(col("rank") == 2)
+      .drop("rank")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use dense_rank() instead of row_number()?
+
+Answer
+
+If two employees share the highest salary:
+
+90000
+90000
+80000
+
+row_number() assigns 1, 2, 3.
+
+dense_rank() assigns 1, 1, 2.
+
+
+dense_rank() correctly identifies the second distinct highest salary.
+
+
+---
+
+Q2. How would you find the third highest salary?
+
+Answer
+
+Simply change:
+
+.filter(col("rank") == 3)
+
+
+---
+
+Q3. Can this be solved using rank()?
+
+Answer
+
+Yes, but rank() skips numbers when there are ties, which may not match the business requirement.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 64/120 – Nth Highest Salary
+
+🎤 Interview Question
+
+Write PySpark code to find the Nth highest salary for each department.
+
+Assume:
+
+N = 3
+
+
+---
+
+📊 Input Dataset
+
+department	employee	salary
+
+IT	John	100000
+IT	Alice	90000
+IT	Bob	80000
+IT	Sam	70000
+HR	David	60000
+HR	Tom	50000
+HR	Mike	40000
+
+
+
+---
+
+✅ Expected Output (N = 3)
+
+department	employee	salary
+
+IT	Bob	80000
+HR	Mike	40000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import dense_rank, col
+
+N = 3
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary").desc())
+)
+
+result = (
+    df.withColumn("rank", dense_rank().over(window_spec))
+      .filter(col("rank") == N)
+      .drop("rank")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. How can the solution support any value of N?
+
+Answer
+
+Store the desired rank in a variable:
+
+N = 5
+
+Then filter:
+
+.filter(col("rank") == N)
+
+No other code changes are required.
+
+
+---
+
+Q2. Why is dense_rank() preferred here?
+
+Answer
+
+It ranks distinct salary values, making it suitable for "Nth highest salary" problems when duplicates exist.
+
+
+---
+
+Q3. Is this question asked in interviews?
+
+Answer
+
+Yes. Variations like "second highest salary," "third highest salary," and "Nth highest salary" are among the most common SQL and PySpark interview questions.
+
+
+---
+

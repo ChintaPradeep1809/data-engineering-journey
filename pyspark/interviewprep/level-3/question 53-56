@@ -1,0 +1,328 @@
+# ⭐⭐⭐⭐☆ Question 53/120 – Running Count
+
+## 🎤 Interview Question
+
+You are given an employee DataFrame.
+
+Write PySpark code to calculate the **running count of employees** within each department based on salary in ascending order.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | running_count |
+| ---------- | -------- | -----: | ------------: |
+| IT         | John     |  60000 |             1 |
+| IT         | Alice    |  70000 |             2 |
+| IT         | Bob      |  80000 |             3 |
+| HR         | David    |  45000 |             1 |
+| HR         | Sam      |  50000 |             2 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import count, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary"))
+          .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+)
+
+df.withColumn(
+    "running_count",
+    count("*").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Difference between `count()` and running `count()`?
+
+**Answer**
+
+* `count()` → Returns one count per group.
+* Running `count()` → Returns the cumulative count up to the current row.
+
+---
+
+### Q2. Which window frame is used?
+
+**Answer**
+
+```python
+.rowsBetween(Window.unboundedPreceding, Window.currentRow)
+```
+
+---
+
+### Q3. Real-world use case?
+
+**Answer**
+
+* Order sequence tracking
+* Customer transaction count
+* Running event count
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 54/120 – Cumulative Maximum
+
+## 🎤 Interview Question
+
+Write PySpark code to calculate the **highest salary seen so far** within each department.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  65000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | max_salary_so_far |
+| ---------- | -------- | -----: | ----------------: |
+| IT         | John     |  60000 |             60000 |
+| IT         | Bob      |  65000 |             65000 |
+| IT         | Alice    |  70000 |             70000 |
+| HR         | David    |  45000 |             45000 |
+| HR         | Sam      |  50000 |             50000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import max, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary"))
+          .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+)
+
+df.withColumn(
+    "max_salary_so_far",
+    max("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Why use `max().over()` instead of `groupBy().max()`?
+
+**Answer**
+
+* `groupBy().max()` returns one row per department.
+* `max().over()` keeps all rows and adds the cumulative maximum.
+
+---
+
+### Q2. Can this pattern be used with dates?
+
+**Answer**
+
+Yes. It can track the latest date reached so far.
+
+---
+
+### Q3. Business use case?
+
+**Answer**
+
+* Highest sales achieved
+* Maximum account balance
+* Peak stock price
+
+---
+
+# ⭐⭐⭐⭐☆ Question 55/120 – Cumulative Minimum
+
+## 🎤 Interview Question
+
+Write PySpark code to calculate the **lowest salary seen so far** within each department.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Bob      |  65000 |
+| IT         | Alice    |  70000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | min_salary_so_far |
+| ---------- | -------- | -----: | ----------------: |
+| IT         | John     |  60000 |             60000 |
+| IT         | Bob      |  65000 |             60000 |
+| IT         | Alice    |  70000 |             60000 |
+| HR         | David    |  45000 |             45000 |
+| HR         | Sam      |  50000 |             45000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import min, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary"))
+          .rowsBetween(Window.unboundedPreceding, Window.currentRow)
+)
+
+df.withColumn(
+    "min_salary_so_far",
+    min("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What is the difference between cumulative minimum and overall minimum?
+
+**Answer**
+
+* Overall minimum → Same value for every row in the group.
+* Cumulative minimum → Updates row by row as the window progresses.
+
+---
+
+### Q2. Can `min()` be used as a window function?
+
+**Answer**
+
+Yes. It supports both aggregation and window operations.
+
+---
+
+### Q3. Common use cases?
+
+**Answer**
+
+* Lowest stock price
+* Lowest temperature
+* Minimum transaction amount
+
+---
+
+# ⭐⭐⭐⭐⭐ Question 56/120 – `first_value()`
+
+## 🎤 Interview Question
+
+Write PySpark code to display the **first employee's salary** within each department based on salary in ascending order.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Bob      |  65000 |
+| IT         | Alice    |  70000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | first_salary |
+| ---------- | -------- | -----: | -----------: |
+| IT         | John     |  60000 |        60000 |
+| IT         | Bob      |  65000 |        60000 |
+| IT         | Alice    |  70000 |        60000 |
+| HR         | David    |  45000 |        45000 |
+| HR         | Sam      |  50000 |        45000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import first, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary"))
+)
+
+df.withColumn(
+    "first_salary",
+    first("salary").over(window_spec)
+).show()
+```
+
+> **Note:** In PySpark, `first_value()` functionality is commonly achieved using `first().over(window_spec)`.
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What does `first()` return in a window?
+
+**Answer**
+
+It returns the first value within the ordered window partition.
+
+---
+
+### Q2. Does ordering affect `first()`?
+
+**Answer**
+
+Yes. Without `orderBy()`, the "first" row is not guaranteed.
+
+---
+
+### Q3. Where is `first()` commonly used?
+
+**Answer**
+
+* First purchase amount
+* First login date
+* First order status
+* Initial account balance
+
+---

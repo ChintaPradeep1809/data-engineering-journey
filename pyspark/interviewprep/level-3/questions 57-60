@@ -1,0 +1,331 @@
+# ⭐⭐⭐⭐☆ Question 57/120 – `last()`
+
+## 🎤 Interview Question
+
+You are given an employee DataFrame.
+
+Write PySpark code to display the **highest salary** within each department for every employee using a window function.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Bob      |  65000 |
+| IT         | Alice    |  70000 |
+| HR         | David    |  45000 |
+| HR         | Sam      |  50000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | highest_salary |
+| ---------- | -------- | -----: | -------------: |
+| IT         | John     |  60000 |          70000 |
+| IT         | Bob      |  65000 |          70000 |
+| IT         | Alice    |  70000 |          70000 |
+| HR         | David    |  45000 |          50000 |
+| HR         | Sam      |  50000 |          50000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import last, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary"))
+          .rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+)
+
+df.withColumn(
+    "highest_salary",
+    last("salary").over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. Why do we use `Window.unboundedFollowing`?
+
+**Answer**
+
+It extends the window to the last row of the partition so that `last()` can access the final value.
+
+---
+
+### Q2. Without `unboundedFollowing`, what happens?
+
+**Answer**
+
+`last()` returns the last value **up to the current row**, not the last value in the entire partition.
+
+---
+
+### Q3. Common use cases?
+
+**Answer**
+
+* Latest salary
+* Last transaction
+* Final order status
+* Most recent account balance
+
+---
+
+# ⭐⭐⭐⭐☆ Question 58/120 – `nth_value()`
+
+## 🎤 Interview Question
+
+Write PySpark code to display the **second highest salary** in each department using a window function.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  80000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  60000 |
+| HR         | David    |  50000 |
+| HR         | Sam      |  45000 |
+
+---
+
+## ✅ Expected Output
+
+| department | employee | salary | second_highest_salary |
+| ---------- | -------- | -----: | --------------------: |
+| IT         | John     |  80000 |                 70000 |
+| IT         | Alice    |  70000 |                 70000 |
+| IT         | Bob      |  60000 |                 70000 |
+| HR         | David    |  50000 |                 45000 |
+| HR         | Sam      |  45000 |                 45000 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import nth_value, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary").desc())
+          .rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+)
+
+df.withColumn(
+    "second_highest_salary",
+    nth_value("salary", 2).over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What does `nth_value()` return?
+
+**Answer**
+
+It returns the **nth value** from the ordered window partition.
+
+---
+
+### Q2. Is `nth_value()` commonly asked?
+
+**Answer**
+
+Less frequently than `row_number()` or `rank()`, but it appears in product-company interviews.
+
+---
+
+### Q3. Can `row_number()` also solve the second-highest salary problem?
+
+**Answer**
+
+Yes. In fact, `row_number()` or `dense_rank()` is the more common interview solution.
+
+---
+
+# ⭐⭐⭐⭐☆ Question 59/120 – `percent_rank()`
+
+## 🎤 Interview Question
+
+Write PySpark code to calculate the **percentile rank** of employees within each department based on salary.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  60000 |
+| IT         | Alice    |  70000 |
+| IT         | Bob      |  80000 |
+
+---
+
+## ✅ Expected Output (Approximate)
+
+| employee | salary | percent_rank |
+| -------- | -----: | -----------: |
+| John     |  60000 |          0.0 |
+| Alice    |  70000 |          0.5 |
+| Bob      |  80000 |          1.0 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import percent_rank
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy("salary")
+)
+
+df.withColumn(
+    "percent_rank",
+    percent_rank().over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What is the range of `percent_rank()`?
+
+**Answer**
+
+From **0.0** to **1.0**.
+
+---
+
+### Q2. Where is `percent_rank()` used?
+
+**Answer**
+
+* Employee performance
+* Student ranking
+* Sales percentile
+* Customer segmentation
+
+---
+
+### Q3. Difference between `rank()` and `percent_rank()`?
+
+**Answer**
+
+* `rank()` returns integer positions.
+* `percent_rank()` returns normalized rankings between 0 and 1.
+
+---
+
+# ⭐⭐⭐⭐☆ Question 60/120 – `ntile()`
+
+## 🎤 Interview Question
+
+Write PySpark code to divide employees into **4 equal salary groups** within each department.
+
+---
+
+## 📊 Input Dataset
+
+| department | employee | salary |
+| ---------- | -------- | -----: |
+| IT         | John     |  50000 |
+| IT         | Alice    |  60000 |
+| IT         | Bob      |  70000 |
+| IT         | Sam      |  80000 |
+
+---
+
+## ✅ Expected Output
+
+| employee | salary | quartile |
+| -------- | -----: | -------: |
+| John     |  50000 |        1 |
+| Alice    |  60000 |        2 |
+| Bob      |  70000 |        3 |
+| Sam      |  80000 |        4 |
+
+---
+
+## ✅ Recommended Solution
+
+```python
+from pyspark.sql.window import Window
+from pyspark.sql.functions import ntile
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy("salary")
+)
+
+df.withColumn(
+    "quartile",
+    ntile(4).over(window_spec)
+).show()
+```
+
+---
+
+## 🎤 Most Asked Interview Questions
+
+### Q1. What does `ntile(4)` do?
+
+**Answer**
+
+It divides the ordered rows into **4 approximately equal groups**.
+
+---
+
+### Q2. Where is `ntile()` used?
+
+**Answer**
+
+* Customer segmentation
+* Income quartiles
+* Performance bands
+* Risk categorization
+
+---
+
+### Q3. Is `ntile()` the same as `percent_rank()`?
+
+**Answer**
+
+No.
+
+* `ntile()` creates buckets (1, 2, 3, 4, ...).
+* `percent_rank()` produces a continuous value between 0 and 1.
+
+---
+
+# 📚 Session 4 Complete (Q57–Q60)
+
+### ⭐ Interview Importance
+
+| Question             | Importance |
+| -------------------- | ---------- |
+| Q57 `last()`         | ⭐⭐⭐⭐☆      |
+| Q58 `nth_value()`    | ⭐⭐⭐⭐☆      |
+| Q59 `percent_rank()` | ⭐⭐⭐⭐☆      |
+| Q60 `ntile()`        | ⭐⭐⭐⭐☆      |
+
+---

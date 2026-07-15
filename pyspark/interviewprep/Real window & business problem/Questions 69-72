@@ -1,0 +1,408 @@
+
+⭐⭐⭐⭐⭐ Question 69/120 – Consecutive Login Days
+
+🎤 Interview Question
+
+You are given a user login DataFrame.
+
+Write PySpark code to identify users who logged in for 3 or more consecutive days.
+
+
+---
+
+📊 Input Dataset
+
+user_id	login_date
+
+101	2024-01-01
+101	2024-01-02
+101	2024-01-03
+101	2024-01-05
+102	2024-02-10
+102	2024-02-11
+103	2024-03-01
+
+
+
+---
+
+✅ Expected Output
+
+user_id
+
+101
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import (
+    row_number,
+    datediff,
+    date_sub,
+    col,
+    count
+)
+
+window_spec = Window.partitionBy("user_id").orderBy("login_date")
+
+result = (
+    df.withColumn("rn", row_number().over(window_spec))
+      .withColumn("grp", date_sub(col("login_date"), col("rn")))
+      .groupBy("user_id", "grp")
+      .agg(count("*").alias("days"))
+      .filter(col("days") >= 3)
+      .select("user_id")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why do we create a grouping key using date_sub() and row_number()?
+
+Answer
+
+It assigns the same group identifier to consecutive dates, making it easy to count consecutive-day streaks.
+
+
+---
+
+Q2. Is this question common?
+
+Answer
+
+Yes. It's frequently asked for user activity, attendance, and transaction streak analysis.
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+User login streaks
+
+Employee attendance
+
+Daily purchases
+
+App engagement metrics
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 70/120 – Find Gaps Between Transactions
+
+🎤 Interview Question
+
+Write PySpark code to calculate the number of days between consecutive transactions for each customer.
+
+
+---
+
+📊 Input Dataset
+
+customer_id	transaction_date
+
+101	2024-01-10
+101	2024-01-20
+101	2024-02-05
+102	2024-03-01
+102	2024-03-15
+
+
+
+---
+
+✅ Expected Output
+
+customer_id	transaction_date	previous_transaction	gap_days
+
+101	2024-01-10	NULL	NULL
+101	2024-01-20	2024-01-10	10
+101	2024-02-05	2024-01-20	16
+102	2024-03-01	NULL	NULL
+102	2024-03-15	2024-03-01	14
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag, datediff, col
+
+window_spec = (
+    Window.partitionBy("customer_id")
+          .orderBy("transaction_date")
+)
+
+result = (
+    df.withColumn(
+        "previous_transaction",
+        lag("transaction_date").over(window_spec)
+    )
+    .withColumn(
+        "gap_days",
+        datediff(
+            col("transaction_date"),
+            col("previous_transaction")
+        )
+    )
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which functions are used?
+
+Answer
+
+lag()
+
+datediff()
+
+
+
+---
+
+Q2. Common business use cases?
+
+Answer
+
+Customer inactivity
+
+Subscription renewals
+
+Fraud detection
+
+Purchase frequency analysis
+
+
+
+---
+
+Q3. Can we detect customers inactive for more than 30 days?
+
+Answer
+
+Yes.
+
+Filter:
+
+.filter(col("gap_days") > 30)
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 71/120 – First Purchase & Last Purchase
+
+🎤 Interview Question
+
+Write PySpark code to display the first purchase date and last purchase date for every customer.
+
+
+---
+
+📊 Input Dataset
+
+customer_id	purchase_date
+
+101	2024-01-10
+101	2024-03-20
+101	2024-04-01
+102	2024-02-15
+102	2024-05-05
+
+
+
+---
+
+✅ Expected Output
+
+customer_id	first_purchase	last_purchase
+
+101	2024-01-10	2024-04-01
+102	2024-02-15	2024-05-05
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import min, max
+
+df.groupBy("customer_id").agg(
+    min("purchase_date").alias("first_purchase"),
+    max("purchase_date").alias("last_purchase")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why not use first() and last()?
+
+Answer
+
+Without a defined order, first() and last() don't necessarily return the earliest or latest date. min() and max() are the correct choice for date extremes.
+
+
+---
+
+Q2. Which functions are preferred?
+
+Answer
+
+min() → First purchase
+
+max() → Last purchase
+
+
+
+---
+
+Q3. Business use cases?
+
+Answer
+
+Customer lifecycle analysis
+
+Loyalty programs
+
+Retention analysis
+
+Customer tenure
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 72/120 – Comprehensive Window Interview Challenge
+
+🎤 Interview Question
+
+For each department:
+
+1. Find the highest-paid employee.
+
+
+2. Find the second-highest salary.
+
+
+3. Calculate the salary difference from the previous employee.
+
+
+4. Display only the top 2 employees.
+
+
+
+
+---
+
+📊 Input Dataset
+
+department	employee	salary
+
+IT	John	100000
+IT	Alice	90000
+IT	Bob	80000
+HR	David	70000
+HR	Sam	60000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import (
+    row_number,
+    dense_rank,
+    lag,
+    col
+)
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary").desc())
+)
+
+result = (
+    df.withColumn("row_num", row_number().over(window_spec))
+      .withColumn("salary_rank", dense_rank().over(window_spec))
+      .withColumn(
+          "previous_salary",
+          lag("salary").over(window_spec)
+      )
+      .withColumn(
+          "salary_difference",
+          col("previous_salary") - col("salary")
+      )
+      .filter(col("row_num") <= 2)
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which window functions are used together?
+
+Answer
+
+row_number()
+
+dense_rank()
+
+lag()
+
+
+
+---
+
+Q2. Why is this a common interview question?
+
+Answer
+
+It tests your ability to combine multiple window functions to solve a realistic business problem instead of using a single API.
+
+
+---
+
+Q3. What skills does this evaluate?
+
+Answer
+
+Window partitioning
+
+Ordering
+
+Ranking
+
+Previous-row comparison
+
+Filtering top-N results
+
+
+
+---
+

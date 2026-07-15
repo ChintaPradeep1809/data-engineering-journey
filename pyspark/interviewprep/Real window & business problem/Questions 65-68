@@ -1,0 +1,403 @@
+
+⭐⭐⭐⭐⭐ Question 65/120 – Top 3 Employees Per Department
+
+🎤 Interview Question
+
+You are given an employee DataFrame.
+
+Write PySpark code to display the Top 3 highest-paid employees from each department.
+
+
+---
+
+📊 Input Dataset
+
+department	employee	salary
+
+IT	John	100000
+IT	Alice	90000
+IT	Bob	80000
+IT	Sam	70000
+HR	David	60000
+HR	Tom	55000
+HR	Mike	50000
+HR	James	45000
+
+
+
+---
+
+✅ Expected Output
+
+department	employee	salary
+
+IT	John	100000
+IT	Alice	90000
+IT	Bob	80000
+HR	David	60000
+HR	Tom	55000
+HR	Mike	50000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number, col
+
+window_spec = (
+    Window.partitionBy("department")
+          .orderBy(col("salary").desc())
+)
+
+result = (
+    df.withColumn("rn", row_number().over(window_spec))
+      .filter(col("rn") <= 3)
+      .drop("rn")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use row_number() instead of rank()?
+
+Answer
+
+row_number() guarantees exactly 3 rows per department.
+
+
+---
+
+Q2. What if two employees have the same salary?
+
+Answer
+
+row_number() still returns exactly three rows.
+
+If the business requires handling ties, use dense_rank().
+
+
+---
+
+Q3. Is this question frequently asked?
+
+Answer
+
+Yes. It's one of the most common PySpark and SQL interview questions.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 66/120 – Remove Duplicate Records (Keep Latest)
+
+🎤 Interview Question
+
+A customer table contains multiple records for the same customer.
+
+Write PySpark code to keep only the latest record based on updated_date.
+
+
+---
+
+📊 Input Dataset
+
+customer_id	name	updated_date
+
+101	John	2024-01-10
+101	John	2024-03-15
+102	David	2024-02-20
+102	David	2024-01-18
+
+
+
+---
+
+✅ Expected Output
+
+customer_id	name	updated_date
+
+101	John	2024-03-15
+102	David	2024-02-20
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number, col
+
+window_spec = (
+    Window.partitionBy("customer_id")
+          .orderBy(col("updated_date").desc())
+)
+
+result = (
+    df.withColumn("rn", row_number().over(window_spec))
+      .filter(col("rn") == 1)
+      .drop("rn")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why not use dropDuplicates()?
+
+Answer
+
+dropDuplicates() keeps an arbitrary record.
+
+It does not guarantee that the latest record is retained.
+
+
+---
+
+Q2. Why is this solution preferred?
+
+Answer
+
+It explicitly orders records by updated_date, ensuring the latest record is selected.
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+Customer master data
+
+Product catalog updates
+
+Employee records
+
+CDC pipelines
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 67/120 – Salary Difference from Previous Month
+
+🎤 Interview Question
+
+Each employee has monthly salary records.
+
+Write PySpark code to calculate the difference between the current month's salary and the previous month's salary.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	month	salary
+
+101	Jan	50000
+101	Feb	55000
+101	Mar	58000
+102	Jan	45000
+102	Feb	47000
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	month	salary	previous_salary	salary_difference
+
+101	Jan	50000	NULL	NULL
+101	Feb	55000	50000	5000
+101	Mar	58000	55000	3000
+102	Jan	45000	NULL	NULL
+102	Feb	47000	45000	2000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag, col
+
+window_spec = (
+    Window.partitionBy("emp_id")
+          .orderBy("month")
+)
+
+result = (
+    df.withColumn(
+        "previous_salary",
+        lag("salary").over(window_spec)
+    )
+    .withColumn(
+        "salary_difference",
+        col("salary") - col("previous_salary")
+    )
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which function is used?
+
+Answer
+
+lag()
+
+
+---
+
+Q2. Why is lag() preferred?
+
+Answer
+
+It retrieves the previous row without requiring a self-join.
+
+
+---
+
+Q3. Common business use cases?
+
+Answer
+
+Salary revisions
+
+Month-over-month sales
+
+Stock price changes
+
+Revenue growth
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 68/120 – Salary Growth Percentage
+
+🎤 Interview Question
+
+Using the previous month's salary, calculate the salary growth percentage for each employee.
+
+Formula:
+
+(Current Salary - Previous Salary) / Previous Salary * 100
+
+
+---
+
+📊 Input Dataset
+
+emp_id	month	salary
+
+101	Jan	50000
+101	Feb	55000
+101	Mar	60000
+102	Jan	45000
+102	Feb	49500
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	month	salary	growth_percentage
+
+101	Jan	50000	NULL
+101	Feb	55000	10.00
+101	Mar	60000	9.09
+102	Jan	45000	NULL
+102	Feb	49500	10.00
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.window import Window
+from pyspark.sql.functions import lag, col, round
+
+window_spec = (
+    Window.partitionBy("emp_id")
+          .orderBy("month")
+)
+
+result = (
+    df.withColumn(
+        "previous_salary",
+        lag("salary").over(window_spec)
+    )
+    .withColumn(
+        "growth_percentage",
+        round(
+            (
+                (col("salary") - col("previous_salary"))
+                / col("previous_salary")
+            ) * 100,
+            2
+        )
+    )
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why is the first month's growth NULL?
+
+Answer
+
+Because there is no previous month's salary to compare against.
+
+
+---
+
+Q2. What happens if the previous salary is 0?
+
+Answer
+
+Division by zero must be handled explicitly, typically using when() to avoid errors or invalid results.
+
+
+---
+
+Q3. Where is this calculation commonly used?
+
+Answer
+
+Salary growth
+
+Revenue growth
+
+Profit growth
+
+Month-over-month KPIs
+
+Financial reporting
+
+
+
+---
+
+📚 

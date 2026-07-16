@@ -1,0 +1,364 @@
+--
+
+⭐⭐⭐⭐⭐ Question 85/120 – Full Load ETL
+
+🎤 Interview Question
+
+You receive a complete employee dataset every day.
+
+Write PySpark code to:
+
+1. Read the source data.
+
+
+2. Replace the target table with the latest dataset.
+
+
+
+
+---
+
+📊 Source Data
+
+emp_id	name	department	salary
+
+101	John	IT	60000
+102	Alice	HR	50000
+103	Bob	Finance	70000
+
+
+
+---
+
+✅ Recommended Solution
+
+source_df = spark.read.parquet("/source/employees")
+
+source_df.write \
+    .mode("overwrite") \
+    .parquet("/target/employees")
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Full Load?
+
+Answer
+
+Every execution loads all records from the source and replaces the target.
+
+
+---
+
+Q2. When is Full Load preferred?
+
+Answer
+
+Small datasets
+
+Initial data migration
+
+Dimension tables with low volume
+
+
+
+---
+
+Q3. What is the drawback?
+
+Answer
+
+It is inefficient for large datasets because unchanged records are also reloaded.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 86/120 – Incremental Load
+
+🎤 Interview Question
+
+The source table contains a last_updated column.
+
+Load only records updated after the last successful ETL run.
+
+
+---
+
+📊 Source Data
+
+emp_id	name	last_updated
+
+101	John	2024-01-10
+102	Alice	2024-03-01
+103	Bob	2024-03-15
+
+
+Last ETL Run:
+
+2024-02-01
+
+
+---
+
+✅ Expected Output
+
+emp_id	name
+
+102	Alice
+103	Bob
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+last_run = "2024-02-01"
+
+incremental_df = source_df.filter(
+    col("last_updated") > last_run
+)
+
+incremental_df.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use Incremental Load?
+
+Answer
+
+It processes only new or changed records, reducing execution time and resource usage.
+
+
+---
+
+Q2. Which column is commonly used?
+
+Answer
+
+last_updated
+
+modified_date
+
+timestamp
+
+audit columns
+
+
+
+---
+
+Q3. What if timestamps are missing?
+
+Answer
+
+Incremental loading becomes difficult. Many systems then rely on CDC or business keys.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 87/120 – Change Data Capture (CDC)
+
+🎤 Interview Question
+
+You have:
+
+Source Table
+
+emp_id	salary
+
+101	65000
+102	50000
+104	70000
+
+
+Target Table
+
+emp_id	salary
+
+101	60000
+102	50000
+103	45000
+
+
+Identify:
+
+New records
+
+Updated records
+
+Deleted records
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+# New Records
+new_df = source_df.join(
+    target_df,
+    "emp_id",
+    "left_anti"
+)
+
+# Deleted Records
+deleted_df = target_df.join(
+    source_df,
+    "emp_id",
+    "left_anti"
+)
+
+# Updated Records
+updated_df = (
+    source_df.alias("s")
+    .join(target_df.alias("t"), "emp_id")
+    .filter(col("s.salary") != col("t.salary"))
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What are the three CDC operations?
+
+Answer
+
+Insert
+
+Update
+
+Delete
+
+
+
+---
+
+Q2. Which join is commonly used for new records?
+
+Answer
+
+left_anti
+
+
+---
+
+Q3. Why is CDC important?
+
+Answer
+
+It minimizes data movement by processing only changed records.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 88/120 – SCD Type 1
+
+🎤 Interview Question
+
+Customer Address changes from:
+
+Hyderabad
+
+to
+
+Bangalore
+
+Implement SCD Type 1.
+
+
+---
+
+📊 Target Before
+
+customer_id	city
+
+101	Hyderabad
+
+
+
+---
+
+📊 Source
+
+customer_id	city
+
+101	Bangalore
+
+
+
+---
+
+✅ Expected Output
+
+customer_id	city
+
+101	Bangalore
+
+
+
+---
+
+✅ Recommended Solution
+
+result = (
+    target_df.alias("t")
+    .join(source_df.alias("s"), "customer_id", "full")
+    .select(
+        col("customer_id"),
+        col("s.city").alias("city")
+    )
+)
+
+> In production environments (especially Delta Lake), this is commonly implemented using a MERGE statement rather than rebuilding the table manually.
+
+
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is SCD Type 1?
+
+Answer
+
+The old value is overwritten with the new value. No history is maintained.
+
+
+---
+
+Q2. Is history preserved?
+
+Answer
+
+No.
+
+
+---
+
+Q3. Where is SCD Type 1 used?
+
+Answer
+
+Correcting spelling mistakes
+
+Updating phone numbers
+
+Updating email addresses
+
+Non-historical reference data
+
+
+
+---

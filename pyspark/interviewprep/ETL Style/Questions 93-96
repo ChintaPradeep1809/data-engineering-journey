@@ -1,0 +1,382 @@
+⭐⭐⭐⭐⭐ Question 93/120 – Merge Source & Target
+
+🎤 Interview Question
+
+You have:
+
+Source
+
+emp_id	name	salary
+
+101	John	65000
+102	Alice	50000
+104	Bob	70000
+
+
+Target
+
+emp_id	name	salary
+
+101	John	60000
+102	Alice	50000
+103	David	45000
+
+
+Write PySpark code to:
+
+Insert new employees.
+
+Update existing employees if salary changes.
+
+
+
+---
+
+✅ Recommended Solution
+
+from delta.tables import DeltaTable
+
+target = DeltaTable.forPath(spark, "/target/employees")
+
+(
+    target.alias("t")
+    .merge(
+        source_df.alias("s"),
+        "t.emp_id = s.emp_id"
+    )
+    .whenMatchedUpdate(
+        condition="t.salary <> s.salary",
+        set={
+            "salary": "s.salary"
+        }
+    )
+    .whenNotMatchedInsertAll()
+    .execute()
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which command is used to merge data in Delta Lake?
+
+Answer
+
+MERGE
+
+
+---
+
+Q2. What operations can MERGE perform?
+
+Answer
+
+Insert
+
+Update
+
+Delete
+
+
+
+---
+
+Q3. Why is MERGE preferred over overwrite?
+
+Answer
+
+It updates only changed records instead of rewriting the entire dataset.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 94/120 – Find Missing Records
+
+🎤 Interview Question
+
+Find employees present in the source but missing from the target.
+
+
+---
+
+📊 Source
+
+emp_id
+
+101
+102
+103
+104
+
+
+
+---
+
+📊 Target
+
+emp_id
+
+101
+103
+
+
+
+---
+
+✅ Expected Output
+
+emp_id
+
+102
+104
+
+
+
+---
+
+✅ Recommended Solution
+
+missing_df = source_df.join(
+    target_df,
+    "emp_id",
+    "left_anti"
+)
+
+missing_df.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which join is used?
+
+Answer
+
+left_anti
+
+
+---
+
+Q2. Why not use an Inner Join?
+
+Answer
+
+Inner Join returns matching records, whereas Left Anti returns only records missing from the target.
+
+
+---
+
+Q3. Common use cases?
+
+Answer
+
+Incremental loads
+
+CDC
+
+Data reconciliation
+
+Audit reporting
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 95/120 – Duplicate Detection
+
+🎤 Interview Question
+
+Find duplicate employee IDs in a DataFrame.
+
+
+---
+
+📊 Input Dataset
+
+emp_id
+
+101
+101
+102
+103
+103
+103
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	duplicate_count
+
+101	2
+103	3
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import count, col
+
+duplicates = (
+    df.groupBy("emp_id")
+      .agg(count("*").alias("duplicate_count"))
+      .filter(col("duplicate_count") > 1)
+)
+
+duplicates.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why detect duplicates?
+
+Answer
+
+Duplicates can lead to incorrect aggregations, reporting errors, and inconsistent master data.
+
+
+---
+
+Q2. How do you remove duplicates while keeping the latest record?
+
+Answer
+
+Use row_number() with a window ordered by a timestamp, then keep only row_number = 1.
+
+
+---
+
+Q3. Which is better: dropDuplicates() or window functions?
+
+Answer
+
+dropDuplicates() → Simple deduplication.
+
+Window functions → Business-rule-based deduplication (for example, keeping the latest record).
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 96/120 – End-to-End ETL Pipeline Challenge
+
+🎤 Interview Question
+
+Build an ETL pipeline that performs the following:
+
+1. Read employee data.
+
+
+2. Validate records.
+
+
+3. Remove duplicates (keep latest record).
+
+
+4. Identify new and updated records.
+
+
+5. Merge data into the target.
+
+
+6. Perform reconciliation checks.
+
+
+
+
+---
+
+✅ Recommended Solution (Pipeline Flow)
+
+Read Source
+      ↓
+Validate Data
+      ↓
+Remove Duplicates
+      ↓
+CDC (Insert / Update)
+      ↓
+MERGE into Target
+      ↓
+Reconciliation
+      ↓
+Success Report
+
+Key PySpark Components
+
+Read data → spark.read
+
+Validation → filter()
+
+Deduplication → row_number()
+
+CDC → left_anti, join()
+
+Merge → Delta Lake MERGE
+
+Validation → count(), sum(), countDistinct()
+
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What are the main stages of an ETL pipeline?
+
+Answer
+
+Extract
+
+Validate
+
+Transform
+
+Load
+
+Reconcile
+
+
+
+---
+
+Q2. What happens if reconciliation fails?
+
+Answer
+
+The pipeline should log the issue, raise an alert, and avoid promoting incorrect data to downstream systems.
+
+
+---
+
+Q3. Which PySpark concepts are combined here?
+
+Answer
+
+Joins
+
+Window Functions
+
+Aggregations
+
+Filtering
+
+CDC
+
+SCD
+
+MERGE
+
+Data Validation
+
+
+
+---

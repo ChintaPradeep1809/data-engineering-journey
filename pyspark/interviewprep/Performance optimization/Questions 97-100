@@ -1,0 +1,256 @@
+
+⭐⭐⭐⭐⭐ Question 97/120 – Cache vs Persist
+
+🎤 Interview Question
+
+You have a DataFrame that is used multiple times in an ETL pipeline.
+
+Write PySpark code to optimize the pipeline using caching.
+
+
+---
+
+✅ Recommended Solution
+
+# Cache the DataFrame
+df.cache()
+
+# Trigger caching
+df.count()
+
+# Reuse multiple times
+df.filter("salary > 50000").show()
+
+df.groupBy("department").count().show()
+
+df.select("name", "salary").show()
+
+Using Persist
+
+from pyspark import StorageLevel
+
+df.persist(StorageLevel.MEMORY_AND_DISK)
+
+df.count()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between cache() and persist()?
+
+Answer
+
+cache()	persist()
+
+Uses MEMORY_AND_DISK (default in Spark)	User chooses storage level
+Simple to use	More flexible
+
+
+
+---
+
+Q2. When should you use cache?
+
+Answer
+
+When the same DataFrame is reused multiple times in the pipeline.
+
+
+---
+
+Q3. When should you use persist?
+
+Answer
+
+When the DataFrame is too large to fit entirely in memory or when a different storage level is required.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 98/120 – Repartition vs Coalesce
+
+🎤 Interview Question
+
+Your DataFrame has 200 partitions, but you need to write only 20 output files.
+
+Which operation should you use?
+
+
+---
+
+✅ Recommended Solution
+
+Reduce partitions
+
+df = df.coalesce(20)
+
+Increase partitions
+
+df = df.repartition(400)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between repartition() and coalesce()?
+
+Answer
+
+repartition()	coalesce()
+
+Can increase or decrease partitions	Only decreases partitions
+Causes a shuffle	Minimizes shuffle where possible
+
+
+
+---
+
+Q2. Which is faster for reducing partitions?
+
+Answer
+
+coalesce() is generally faster because it avoids a full shuffle when possible.
+
+
+---
+
+Q3. When should you use repartition()?
+
+Answer
+
+When increasing partitions or when you need a more even data distribution before expensive operations.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 99/120 – Broadcast Join Optimization
+
+🎤 Interview Question
+
+You have:
+
+Orders table → 500 million rows
+
+Product table → 2,000 rows
+
+
+Optimize the join.
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import broadcast
+
+result = orders_df.join(
+    broadcast(product_df),
+    "product_id"
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why use a Broadcast Join?
+
+Answer
+
+It sends the small DataFrame to all executors, avoiding a shuffle of the large DataFrame.
+
+
+---
+
+Q2. Which table should be broadcast?
+
+Answer
+
+The smaller lookup (dimension) table.
+
+
+---
+
+Q3. When should Broadcast Join be avoided?
+
+Answer
+
+When the table being broadcast is too large to fit comfortably in executor memory.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 100/120 – Partition Pruning
+
+🎤 Interview Question
+
+A sales table is partitioned by year and month.
+
+Write PySpark code to read only January 2024 data efficiently.
+
+
+---
+
+📂 Folder Structure
+
+sales/
+ ├── year=2023/
+ ├── year=2024/
+      ├── month=01/
+      ├── month=02/
+
+
+---
+
+✅ Recommended Solution
+
+df = (
+    spark.read.parquet("/sales")
+         .filter("year = 2024 AND month = 1")
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Partition Pruning?
+
+Answer
+
+Spark reads only the required partitions instead of scanning the entire dataset.
+
+
+---
+
+Q2. Why is Partition Pruning important?
+
+Answer
+
+It reduces disk I/O, network traffic, and query execution time.
+
+
+---
+
+Q3. Which columns should be used for partitioning?
+
+Answer
+
+Columns commonly used for filtering, such as:
+
+Date
+
+Year
+
+Month
+
+Region
+
+Country
+
+
+
+---

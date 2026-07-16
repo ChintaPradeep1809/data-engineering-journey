@@ -1,0 +1,338 @@
+
+⭐⭐⭐⭐⭐ Question 73/120 – explode()
+
+🎤 Interview Question
+
+You are given a DataFrame where each employee has multiple skills stored in an array.
+
+Write PySpark code to create one row per skill.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	skills
+
+101	John	["Python","SQL","Spark"]
+102	Alice	["Java","AWS"]
+103	Bob	["Scala"]
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	skill
+
+101	John	Python
+101	John	SQL
+101	John	Spark
+102	Alice	Java
+102	Alice	AWS
+103	Bob	Scala
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import explode
+
+df.select(
+    "emp_id",
+    "name",
+    explode("skills").alias("skill")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What does explode() do?
+
+Answer
+
+It converts each element of an array into a separate row.
+
+
+---
+
+Q2. Where is explode() commonly used?
+
+Answer
+
+JSON processing
+
+Kafka events
+
+API responses
+
+Arrays stored in Parquet/Delta
+
+
+
+---
+
+Q3. What happens if the array is empty?
+
+Answer
+
+explode() returns no rows for that record.
+
+
+---
+
+⭐⭐⭐⭐☆ Question 74/120 – posexplode()
+
+🎤 Interview Question
+
+Write PySpark code to explode the skills array while also displaying the position of each skill.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	skills
+
+101	["Python","SQL","Spark"]
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	position	skill
+
+101	0	Python
+101	1	SQL
+101	2	Spark
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import posexplode
+
+df.select(
+    "emp_id",
+    posexplode("skills").alias("position", "skill")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between explode() and posexplode()?
+
+Answer
+
+explode() returns only the value.
+
+posexplode() returns both the array index (position) and the value.
+
+
+
+---
+
+Q2. When is posexplode() useful?
+
+Answer
+
+When the order of array elements matters, such as ranked recommendations or ordered event sequences.
+
+
+---
+
+Q3. Does indexing start from 0?
+
+Answer
+
+Yes. Array positions are zero-based.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 75/120 – array_contains() & size()
+
+🎤 Interview Question
+
+You are given an employee DataFrame with a skills array.
+
+Write PySpark code to:
+
+1. Find employees who have the "Python" skill.
+
+
+2. Display the total number of skills for each employee.
+
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	skills
+
+101	John	["Python","SQL","Spark"]
+102	Alice	["Java","AWS"]
+103	Bob	["Python","Scala"]
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	skill_count
+
+101	John	3
+103	Bob	2
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import array_contains, size
+
+df.filter(
+    array_contains("skills", "Python")
+).withColumn(
+    "skill_count",
+    size("skills")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What does array_contains() return?
+
+Answer
+
+It returns True if the specified value exists in the array; otherwise, False.
+
+
+---
+
+Q2. What does size() return?
+
+Answer
+
+The number of elements in the array.
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+Finding users with specific interests
+
+Filtering products by tags
+
+Skill-based employee searches
+
+Category matching
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 76/120 – Flatten Nested Arrays
+
+🎤 Interview Question
+
+You are given a DataFrame where each employee has an array of project names.
+
+Write PySpark code to flatten the array so that each project appears in a separate row.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	projects
+
+101	["Banking","Retail"]
+102	["Healthcare"]
+103	["Finance","Insurance","E-Commerce"]
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	project
+
+101	Banking
+101	Retail
+102	Healthcare
+103	Finance
+103	Insurance
+103	E-Commerce
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import explode
+
+df.select(
+    "emp_id",
+    explode("projects").alias("project")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Is flattening arrays different from explode()?
+
+Answer
+
+For a single array column, flattening is typically done using explode().
+
+
+---
+
+Q2. Why do we flatten arrays?
+
+Answer
+
+Many downstream operations (joins, aggregations, filters) work more naturally on one value per row than on arrays.
+
+
+---
+
+Q3. Where is this used?
+
+Answer
+
+API response processing
+
+Event logs
+
+Product categories
+
+Customer interests
+
+Survey responses
+

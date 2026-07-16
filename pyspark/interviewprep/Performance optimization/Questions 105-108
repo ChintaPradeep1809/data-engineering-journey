@@ -1,0 +1,713 @@
+Excellent. This is one of the most practical sessions in the entire roadmap. These questions are very common if you're working with Kafka, REST APIs, MongoDB, or cloud event streams.
+
+
+---
+
+🚀 PySpark Coding Interview Bootcamp
+
+Phase 6 – Complex Data Types
+
+Session 3 (Questions 81–84)
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 81/120 – Flatten Nested JSON
+
+🎤 Interview Question
+
+You are given a DataFrame with a nested JSON column.
+
+Write PySpark code to flatten the JSON and display:
+
+emp_id
+
+name
+
+department
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee
+
+101	{"name":"John","department":"IT"}
+102	{"name":"Alice","department":"HR"}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	department
+
+101	John	IT
+102	Alice	HR
+
+
+
+---
+
+✅ Recommended Solution
+
+df.select(
+    "emp_id",
+    "employee.name",
+    "employee.department"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. How do you access nested struct fields?
+
+Answer
+
+Using dot notation.
+
+df.select("employee.name")
+
+
+---
+
+Q2. Is explode() required here?
+
+Answer
+
+No.
+
+explode() is only needed for arrays, not for struct fields.
+
+
+---
+
+Q3. Where is this commonly used?
+
+Answer
+
+API responses
+
+Kafka JSON events
+
+Nested Delta tables
+
+Cloud event data
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 82/120 – Flatten JSON with Nested Arrays
+
+🎤 Interview Question
+
+Each employee contains an array of skills inside the JSON.
+
+Write PySpark code to display one row per skill.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee
+
+101	{"name":"John","skills":["Python","SQL"]}
+102	{"name":"Alice","skills":["Java","AWS"]}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	skill
+
+101	John	Python
+101	John	SQL
+102	Alice	Java
+102	Alice	AWS
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import explode
+
+df.select(
+    "emp_id",
+    "employee.name",
+    explode("employee.skills").alias("skill")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why is explode() used?
+
+Answer
+
+Because skills is an array, and each element needs to become its own row.
+
+
+---
+
+Q2. Can nested arrays be exploded directly?
+
+Answer
+
+Yes.
+
+explode("employee.skills")
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+Product tags
+
+Customer interests
+
+User roles
+
+Event attributes
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 83/120 – Parse Deeply Nested JSON
+
+🎤 Interview Question
+
+You are given the following nested structure:
+
+{
+  "employee": {
+    "name": "John",
+    "address": {
+      "city": "Hyderabad",
+      "state": "Telangana"
+    }
+  }
+}
+
+Write PySpark code to display:
+
+name
+
+city
+
+state
+
+
+
+---
+
+✅ Expected Output
+
+name	city	state
+
+John	Hyderabad	Telangana
+
+
+
+---
+
+✅ Recommended Solution
+
+df.select(
+    "employee.name",
+    "employee.address.city",
+    "employee.address.state"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. How do you access multiple nested levels?
+
+Answer
+
+Use chained dot notation.
+
+employee.address.city
+
+
+---
+
+Q2. Is there a limit to nesting?
+
+Answer
+
+No practical limit, but deeply nested schemas can become harder to maintain and query.
+
+
+---
+
+Q3. Where is this commonly seen?
+
+Answer
+
+REST APIs
+
+MongoDB documents
+
+Kafka events
+
+Cloud audit logs
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 84/120 – End-to-End JSON Interview Challenge
+
+🎤 Interview Question
+
+You receive employee records from Kafka in the following format:
+
+{
+  "emp_id":101,
+  "employee":{
+      "name":"John",
+      "department":"IT",
+      "skills":["Python","Spark","SQL"]
+  }
+}
+
+Write PySpark code to:
+
+1. Parse the JSON.
+
+
+2. Flatten the employee details.
+
+
+3. Explode the skills array.
+
+
+4. Display one row per employee skill.
+
+
+
+
+---
+
+📊 Expected Output
+
+emp_id	name	department	skill
+
+101	John	IT	Python
+101	John	IT	Spark
+101	John	IT	SQL
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import from_json, explode, col
+from pyspark.sql.types import *
+
+schema = StructType([
+    StructField("emp_id", IntegerType()),
+    StructField(
+        "employee",
+        StructType([
+            StructField("name", StringType()),
+            StructField("department", StringType()),
+            StructField("skills", ArrayType(StringType()))
+        ])
+    )
+])
+
+parsed_df = df.withColumn(
+    "json_data",
+    from_json(col("value"), schema)
+)
+
+result = parsed_df.select(
+    "json_data.emp_id",
+    "json_data.employee.name",
+    "json_data.employee.department",
+    explode("json_data.employee.skills").alias("skill")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which PySpark concepts are combined here?
+
+Answer
+
+from_json()
+
+StructType
+
+ArrayType
+
+Dot notation
+
+explode()
+
+
+
+---
+
+Q2. Why is this a popular interview problem?
+
+Answer
+
+Because it closely resembles how Spark processes Kafka events, REST API responses, and semi-structured data in production.
+
+
+---
+
+Q3. What skills does this evaluate?
+
+Answer
+
+JSON parsing
+
+Nested data handling
+
+Array processing
+
+Data transformation
+
+End-to-end ETL logic
+
+
+
+---
+
+📚 Phase 6 Complete ✅
+
+⭐ Interview Importance
+
+Phase	Status
+
+Arrays	✅
+Structs	✅
+Maps	✅
+JSON Parsing	✅
+Nested JSON	✅
+Nested Arrays	✅
+End-to-End JSON Challenge	✅
+
+
+
+---
+
+📈 Progress
+
+✅ 84 / 120 Questions Completed
+
+🎯 Next Phase: ETL Interview Problems (Q85–Q96)
+
+
+These next questions are some of the highest-value in the roadmap because they simulate day-to-day Data Engineering work rather than isolated API usage.
+
+You'll solve problems involving:
+
+Full Load
+
+Incremental Load
+
+Change Data Capture (CDC)
+
+SCD Type 1
+
+SCD Type 2
+
+Comparing source and target datasets
+
+Data quality validation
+
+End-to-end ETL pipelines
+
+
+These topics are especially common in interviews for candidates with 2–5 years of Data Engineering experience.
+⭐⭐⭐⭐⭐ Question 101/120 – Predicate Pushdown
+
+🎤 Interview Question
+
+You have a Parquet file containing 100 million employee records.
+
+You need only employees whose salary is greater than 50,000.
+
+How do you optimize the read?
+
+
+---
+
+✅ Recommended Solution
+
+df = (
+    spark.read.parquet("/employee")
+         .filter("salary > 50000")
+)
+
+> If the file format supports it (Parquet/ORC), Spark pushes the filter down to the storage layer and reads only the required data.
+
+
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Predicate Pushdown?
+
+Answer
+
+Spark pushes filter conditions to the data source so unnecessary rows are not read.
+
+
+---
+
+Q2. Which file formats support Predicate Pushdown?
+
+Answer
+
+Parquet
+
+ORC
+
+Many JDBC sources (depending on the database)
+
+
+
+---
+
+Q3. Why is Predicate Pushdown important?
+
+Answer
+
+It reduces disk I/O, memory usage, and query execution time.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 102/120 – Lazy Evaluation
+
+🎤 Interview Question
+
+Consider the following code:
+
+df = spark.read.parquet("/employee")
+
+df = df.filter("salary > 50000")
+
+df = df.select("emp_id", "salary")
+
+When does Spark actually execute the job?
+
+
+---
+
+✅ Recommended Solution
+
+Spark executes only when an Action is called.
+
+Example:
+
+df.show()
+
+# or
+
+df.count()
+
+# or
+
+df.collect()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Lazy Evaluation?
+
+Answer
+
+Spark records transformations but delays execution until an action is invoked.
+
+
+---
+
+Q2. Give examples of Transformations.
+
+Answer
+
+filter()
+
+select()
+
+join()
+
+groupBy()
+
+withColumn()
+
+
+
+---
+
+Q3. Give examples of Actions.
+
+Answer
+
+show()
+
+count()
+
+collect()
+
+write()
+
+take()
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 103/120 – Catalyst Optimizer
+
+🎤 Interview Question
+
+What is the Catalyst Optimizer, and how can you inspect Spark's execution plan?
+
+
+---
+
+✅ Recommended Solution
+
+df = (
+    spark.read.parquet("/employee")
+         .filter("salary > 50000")
+         .select("emp_id", "salary")
+)
+
+df.explain(True)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Catalyst Optimizer?
+
+Answer
+
+Catalyst is Spark SQL's query optimizer. It analyzes and rewrites logical plans into optimized physical execution plans.
+
+
+---
+
+Q2. What does explain(True) display?
+
+Answer
+
+It shows:
+
+Parsed Logical Plan
+
+Analyzed Logical Plan
+
+Optimized Logical Plan
+
+Physical Execution Plan
+
+
+
+---
+
+Q3. Why is Catalyst important?
+
+Answer
+
+It automatically optimizes queries, reducing execution time without requiring manual query rewrites.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 104/120 – Tungsten Execution Engine
+
+🎤 Interview Question
+
+What is Project Tungsten, and why is it important for Spark performance?
+
+
+---
+
+✅ Recommended Solution
+
+There is no coding requirement for this question.
+
+This is primarily a conceptual interview topic.
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is Project Tungsten?
+
+Answer
+
+Project Tungsten is Spark's execution engine focused on improving CPU and memory efficiency.
+
+
+---
+
+Q2. What optimizations does Tungsten provide?
+
+Answer
+
+Better memory management
+
+Efficient binary data format
+
+Reduced garbage collection
+
+CPU-efficient execution
+
+
+
+---
+
+Q3. Difference between Catalyst and Tungsten?
+
+Answer
+
+Catalyst	Tungsten
+
+Optimizes query plans	Optimizes execution
+Logical optimization	Physical execution optimization
+Decides what plan to run	Executes the plan efficiently
+
+
+
+---

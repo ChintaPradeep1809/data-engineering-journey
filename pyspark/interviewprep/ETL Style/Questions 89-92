@@ -1,0 +1,307 @@
+
+⭐⭐⭐⭐⭐ Question 89/120 – SCD Type 2
+
+🎤 Interview Question
+
+You have the following target table:
+
+customer_id	city	start_date	end_date	is_current
+
+101	Hyderabad	2023-01-01	NULL	Y
+
+
+The source contains:
+
+customer_id	city
+
+101	Bangalore
+
+
+Implement SCD Type 2.
+
+
+---
+
+✅ Expected Output
+
+Existing Record
+
+customer_id	city	start_date	end_date	is_current
+
+101	Hyderabad	2023-01-01	2024-06-30	N
+
+
+New Record
+
+customer_id	city	start_date	end_date	is_current
+
+101	Bangalore	2024-07-01	NULL	Y
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col, lit, current_date
+
+# Close existing record
+expired_df = (
+    target_df.filter(col("is_current") == "Y")
+             .join(source_df, "customer_id")
+             .filter(target_df.city != source_df.city)
+             .withColumn("end_date", current_date())
+             .withColumn("is_current", lit("N"))
+)
+
+# Insert new record
+new_df = (
+    source_df.withColumn("start_date", current_date())
+             .withColumn("end_date", lit(None))
+             .withColumn("is_current", lit("Y"))
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Difference between SCD Type 1 and Type 2?
+
+Answer
+
+SCD Type 1	SCD Type 2
+
+Overwrites old value	Keeps history
+No history	Full history
+One record	Multiple records
+Faster	More storage
+
+
+
+---
+
+Q2. Why use is_current?
+
+Answer
+
+It helps identify the active version of a record quickly without checking dates.
+
+
+---
+
+Q3. Where is SCD Type 2 used?
+
+Answer
+
+Customer address history
+
+Employee salary history
+
+Product price history
+
+Account status history
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 90/120 – Compare Source & Target
+
+🎤 Interview Question
+
+Compare two DataFrames and identify:
+
+Matching records
+
+Changed records
+
+Missing records
+
+
+
+---
+
+📊 Source
+
+emp_id	salary
+
+101	60000
+102	50000
+103	45000
+
+
+
+---
+
+📊 Target
+
+emp_id	salary
+
+101	60000
+102	55000
+104	70000
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+comparison_df = (
+    source_df.alias("s")
+    .join(target_df.alias("t"),
+          "emp_id",
+          "full")
+)
+
+Then classify:
+
+Both present & same → Match
+
+Both present & different → Update
+
+Only source → Insert
+
+Only target → Delete
+
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which join is commonly used?
+
+Answer
+
+full (Full Outer Join)
+
+
+---
+
+Q2. Why Full Outer Join?
+
+Answer
+
+Because it includes:
+
+Matching rows
+
+Source-only rows
+
+Target-only rows
+
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+Data migration
+
+ETL reconciliation
+
+CDC validation
+
+Audit reports
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 91/120 – Data Validation
+
+🎤 Interview Question
+
+Validate an employee dataset using the following rules:
+
+Salary must be greater than 0.
+
+Department cannot be NULL.
+
+Email cannot be NULL.
+
+
+Return only valid records.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	salary	department	email
+
+101	60000	IT	a@test.com
+102	-1000	HR	b@test.com
+103	50000	NULL	c@test.com
+104	45000	Finance	NULL
+
+
+
+---
+
+✅ Expected Output
+
+emp_id
+
+101
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import col
+
+valid_df = (
+    df.filter(col("salary") > 0)
+      .filter(col("department").isNotNull())
+      .filter(col("email").isNotNull())
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why perform data validation?
+
+Answer
+
+To prevent invalid data from entering downstream systems and reports.
+
+
+---
+
+Q2. Where should validation happen?
+
+Answer
+
+As early as possible in the ETL pipeline, ideally before loading into the target.
+
+
+---
+
+Q3. Common validation rules?
+
+Answer
+
+NULL checks
+
+Duplicate checks
+
+Range validation
+
+Data type validation
+
+Referential integrity
+
+
+
+---

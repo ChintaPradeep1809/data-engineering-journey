@@ -1,0 +1,392 @@
+
+
+⭐⭐⭐⭐⭐ Question 81/120 – Flatten Nested JSON
+
+🎤 Interview Question
+
+You are given a DataFrame with a nested JSON column.
+
+Write PySpark code to flatten the JSON and display:
+
+emp_id
+
+name
+
+department
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee
+
+101	{"name":"John","department":"IT"}
+102	{"name":"Alice","department":"HR"}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	department
+
+101	John	IT
+102	Alice	HR
+
+
+
+---
+
+✅ Recommended Solution
+
+df.select(
+    "emp_id",
+    "employee.name",
+    "employee.department"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. How do you access nested struct fields?
+
+Answer
+
+Using dot notation.
+
+df.select("employee.name")
+
+
+---
+
+Q2. Is explode() required here?
+
+Answer
+
+No.
+
+explode() is only needed for arrays, not for struct fields.
+
+
+---
+
+Q3. Where is this commonly used?
+
+Answer
+
+API responses
+
+Kafka JSON events
+
+Nested Delta tables
+
+Cloud event data
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 82/120 – Flatten JSON with Nested Arrays
+
+🎤 Interview Question
+
+Each employee contains an array of skills inside the JSON.
+
+Write PySpark code to display one row per skill.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee
+
+101	{"name":"John","skills":["Python","SQL"]}
+102	{"name":"Alice","skills":["Java","AWS"]}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	name	skill
+
+101	John	Python
+101	John	SQL
+102	Alice	Java
+102	Alice	AWS
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import explode
+
+df.select(
+    "emp_id",
+    "employee.name",
+    explode("employee.skills").alias("skill")
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why is explode() used?
+
+Answer
+
+Because skills is an array, and each element needs to become its own row.
+
+
+---
+
+Q2. Can nested arrays be exploded directly?
+
+Answer
+
+Yes.
+
+explode("employee.skills")
+
+
+---
+
+Q3. Real-world use cases?
+
+Answer
+
+Product tags
+
+Customer interests
+
+User roles
+
+Event attributes
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 83/120 – Parse Deeply Nested JSON
+
+🎤 Interview Question
+
+You are given the following nested structure:
+
+{
+  "employee": {
+    "name": "John",
+    "address": {
+      "city": "Hyderabad",
+      "state": "Telangana"
+    }
+  }
+}
+
+Write PySpark code to display:
+
+name
+
+city
+
+state
+
+
+
+---
+
+✅ Expected Output
+
+name	city	state
+
+John	Hyderabad	Telangana
+
+
+
+---
+
+✅ Recommended Solution
+
+df.select(
+    "employee.name",
+    "employee.address.city",
+    "employee.address.state"
+).show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. How do you access multiple nested levels?
+
+Answer
+
+Use chained dot notation.
+
+employee.address.city
+
+
+---
+
+Q2. Is there a limit to nesting?
+
+Answer
+
+No practical limit, but deeply nested schemas can become harder to maintain and query.
+
+
+---
+
+Q3. Where is this commonly seen?
+
+Answer
+
+REST APIs
+
+MongoDB documents
+
+Kafka events
+
+Cloud audit logs
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 84/120 – End-to-End JSON Interview Challenge
+
+🎤 Interview Question
+
+You receive employee records from Kafka in the following format:
+
+{
+  "emp_id":101,
+  "employee":{
+      "name":"John",
+      "department":"IT",
+      "skills":["Python","Spark","SQL"]
+  }
+}
+
+Write PySpark code to:
+
+1. Parse the JSON.
+
+
+2. Flatten the employee details.
+
+
+3. Explode the skills array.
+
+
+4. Display one row per employee skill.
+
+
+
+
+---
+
+📊 Expected Output
+
+emp_id	name	department	skill
+
+101	John	IT	Python
+101	John	IT	Spark
+101	John	IT	SQL
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import from_json, explode, col
+from pyspark.sql.types import *
+
+schema = StructType([
+    StructField("emp_id", IntegerType()),
+    StructField(
+        "employee",
+        StructType([
+            StructField("name", StringType()),
+            StructField("department", StringType()),
+            StructField("skills", ArrayType(StringType()))
+        ])
+    )
+])
+
+parsed_df = df.withColumn(
+    "json_data",
+    from_json(col("value"), schema)
+)
+
+result = parsed_df.select(
+    "json_data.emp_id",
+    "json_data.employee.name",
+    "json_data.employee.department",
+    explode("json_data.employee.skills").alias("skill")
+)
+
+result.show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which PySpark concepts are combined here?
+
+Answer
+
+from_json()
+
+StructType
+
+ArrayType
+
+Dot notation
+
+explode()
+
+
+
+---
+
+Q2. Why is this a popular interview problem?
+
+Answer
+
+Because it closely resembles how Spark processes Kafka events, REST API responses, and semi-structured data in production.
+
+
+---
+
+Q3. What skills does this evaluate?
+
+Answer
+
+JSON parsing
+
+Nested data handling
+
+Array processing
+
+Data transformation
+
+End-to-end ETL logic
+
+
+
+---
+

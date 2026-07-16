@@ -1,0 +1,256 @@
+
+
+⭐⭐⭐⭐⭐ Question 105/120 – Adaptive Query Execution (AQE)
+
+🎤 Interview Question
+
+Your Spark job is slow because partition sizes vary significantly, and Spark chooses a suboptimal join strategy.
+
+How can AQE help?
+
+
+---
+
+✅ Recommended Solution
+
+Enable AQE:
+
+spark.conf.set(
+    "spark.sql.adaptive.enabled",
+    "true"
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is AQE?
+
+Answer
+
+Adaptive Query Execution optimizes the execution plan during runtime based on actual data statistics.
+
+
+---
+
+Q2. What can AQE optimize?
+
+Answer
+
+Join strategy
+
+Shuffle partitions
+
+Skewed partitions
+
+
+
+---
+
+Q3. Why is AQE useful?
+
+Answer
+
+It improves performance automatically without changing application code.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 106/120 – Shuffle Optimization
+
+🎤 Interview Question
+
+A groupBy() operation is taking a long time because it triggers a large shuffle.
+
+How can you reduce shuffle overhead?
+
+
+---
+
+✅ Recommended Solution
+
+Example:
+
+spark.conf.set(
+    "spark.sql.shuffle.partitions",
+    "200"
+)
+
+df.groupBy("department").count().show()
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a shuffle?
+
+Answer
+
+A shuffle redistributes data across executors so related records are grouped together.
+
+
+---
+
+Q2. Which operations trigger shuffles?
+
+Answer
+
+groupBy()
+
+join()
+
+distinct()
+
+orderBy()
+
+repartition()
+
+
+
+---
+
+Q3. Why are shuffles expensive?
+
+Answer
+
+They involve network I/O, disk I/O, and data serialization, making them one of the costliest Spark operations.
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 107/120 – Handling Data Skew
+
+🎤 Interview Question
+
+One department ("IT") contains 90% of the records, while the remaining departments have very few records.
+
+The join is extremely slow.
+
+How would you handle this?
+
+
+---
+
+✅ Recommended Solution
+
+Common approaches include:
+
+Broadcast the small table (if applicable).
+
+Use key salting for heavily skewed keys.
+
+Enable AQE to split skewed partitions automatically.
+
+
+Example (AQE):
+
+spark.conf.set(
+    "spark.sql.adaptive.skewJoin.enabled",
+    "true"
+)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is data skew?
+
+Answer
+
+Data skew occurs when one or a few keys contain a disproportionate amount of data, causing uneven workload across executors.
+
+
+---
+
+Q2. What problems does skew cause?
+
+Answer
+
+Long-running tasks
+
+Poor cluster utilization
+
+Slow joins and aggregations
+
+
+
+---
+
+Q3. How can skew be reduced?
+
+Answer
+
+Broadcast joins
+
+Key salting
+
+AQE skew join optimization
+
+Better partitioning strategy
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 108/120 – Spark UI & Job Debugging
+
+🎤 Interview Question
+
+A Spark job takes much longer than expected.
+
+How would you use the Spark UI to investigate the issue?
+
+
+---
+
+✅ Recommended Solution
+
+Inspect the following Spark UI tabs:
+
+Jobs → Overall job status
+
+Stages → Identify slow stages
+
+Tasks → Find skewed or failed tasks
+
+SQL → Analyze execution plans
+
+Storage → Verify cached DataFrames
+
+Executors → Monitor memory and CPU usage
+
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Which Spark UI tab helps identify slow tasks?
+
+Answer
+
+The Stages and Tasks tabs.
+
+
+---
+
+Q2. What symptoms indicate data skew?
+
+Answer
+
+One or a few tasks take much longer than all others in the same stage.
+
+
+---
+
+Q3. What information does the Storage tab provide?
+
+Answer
+
+It shows cached and persisted DataFrames along with their memory and disk usage.
+
+
+---

@@ -1,0 +1,359 @@
+
+⭐⭐⭐⭐⭐ Question 77/120 – struct()
+
+🎤 Interview Question
+
+You are given an employee DataFrame with the columns:
+
+emp_id
+
+name
+
+department
+
+
+Write PySpark code to combine name and department into a single struct column named employee_info.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	name	department
+
+101	John	IT
+102	Alice	HR
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	employee_info
+
+101	{John, IT}
+102	{Alice, HR}
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import struct
+
+df.select(
+    "emp_id",
+    struct("name", "department").alias("employee_info")
+).show(truncate=False)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a Struct in PySpark?
+
+Answer
+
+A StructType groups multiple columns into a single nested column.
+
+
+---
+
+Q2. Where is struct() commonly used?
+
+Answer
+
+Nested JSON creation
+
+API payload generation
+
+Delta Lake nested schemas
+
+Kafka message construction
+
+
+
+---
+
+Q3. How do you access fields inside a struct?
+
+Answer
+
+df.select("employee_info.name")
+
+or
+
+df.select("employee_info.department")
+
+
+---
+
+⭐⭐⭐⭐☆ Question 78/120 – create_map()
+
+🎤 Interview Question
+
+Write PySpark code to create a map where:
+
+Key = department
+
+Value = salary
+
+
+
+---
+
+📊 Input Dataset
+
+emp_id	department	salary
+
+101	IT	60000
+102	HR	50000
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	dept_salary
+
+101	{IT -> 60000}
+102	{HR -> 50000}
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import create_map, col
+
+df.select(
+    "emp_id",
+    create_map(
+        col("department"),
+        col("salary")
+    ).alias("dept_salary")
+).show(truncate=False)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What is a MapType?
+
+Answer
+
+A collection of key-value pairs.
+
+
+---
+
+Q2. When is create_map() useful?
+
+Answer
+
+Dynamic lookups
+
+Metadata storage
+
+JSON transformation
+
+Configuration data
+
+
+
+---
+
+Q3. How do you access a value from a map?
+
+Answer
+
+df.select(col("dept_salary")["IT"])
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 79/120 – from_json()
+
+🎤 Interview Question
+
+You receive employee information as a JSON string.
+
+Write PySpark code to parse it into structured columns.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee_json
+
+101	{"name":"John","salary":60000}
+102	{"name":"Alice","salary":70000}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	employee
+
+101	{John,60000}
+102	{Alice,70000}
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+
+schema = StructType([
+    StructField("name", StringType()),
+    StructField("salary", IntegerType())
+])
+
+df = df.withColumn(
+    "employee",
+    from_json(col("employee_json"), schema)
+)
+
+df.show(truncate=False)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. Why is a schema required?
+
+Answer
+
+from_json() needs a schema to interpret the JSON string and convert it into structured data.
+
+
+---
+
+Q2. What happens if the JSON doesn't match the schema?
+
+Answer
+
+Missing or incompatible fields are returned as NULL, and type mismatches may cause parsing issues depending on the data.
+
+
+---
+
+Q3. Where is from_json() used?
+
+Answer
+
+Kafka streams
+
+REST API responses
+
+Event data
+
+Log processing
+
+
+
+---
+
+⭐⭐⭐⭐⭐ Question 80/120 – to_json()
+
+🎤 Interview Question
+
+Convert a struct column into a JSON string.
+
+
+---
+
+📊 Input Dataset
+
+emp_id	employee_info
+
+101	{John,60000}
+102	{Alice,70000}
+
+
+
+---
+
+✅ Expected Output
+
+emp_id	employee_json
+
+101	{"name":"John","salary":60000}
+102	{"name":"Alice","salary":70000}
+
+
+
+---
+
+✅ Recommended Solution
+
+from pyspark.sql.functions import to_json, struct
+
+df = df.withColumn(
+    "employee_json",
+    to_json(
+        struct("name", "salary")
+    )
+)
+
+df.show(truncate=False)
+
+
+---
+
+🎤 Most Asked Interview Questions
+
+Q1. What does to_json() do?
+
+Answer
+
+It converts a struct, array, or map column into a JSON string.
+
+
+---
+
+Q2. Where is to_json() commonly used?
+
+Answer
+
+Writing API payloads
+
+Kafka producers
+
+Event publishing
+
+JSON exports
+
+
+
+---
+
+Q3. Can to_json() convert arrays and maps?
+
+Answer
+
+Yes. It supports:
+
+StructType
+
+ArrayType
+
+MapType
+
+
+
+---
+
